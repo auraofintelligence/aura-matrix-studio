@@ -1,6 +1,7 @@
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.1';
-import {livePage,parentPage,HOME,PROGRAMMER} from './original-routes.js?v=0.3.1';
-import {mountLiveMatrix} from './original-live.js?v=0.3.1';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.2';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.2';
+import {livePage,parentPage,HOME,PROGRAMMER} from './original-routes.js?v=0.3.2';
+import {mountLiveMatrix} from './original-live.js?v=0.3.2';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -100,6 +101,7 @@ export async function startOriginal(){
     warn(advanced?'Original screen artwork. The working model stays 12 × 24.':'Original screen layouts and links. Live tools are available in the matrix.');
     const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
     if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue});
+    if(current.id===SITEMAP)live=mountSiteMap({page:current,screen:$('original-screen'),pages,go,previewMode:new URLSearchParams(location.search).has('preview')});
     fit();
   }
   function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),scale=fitOriginal(current.width,current.height,rect.width,rect.height);$('original-screen').style.transform=`scale(${scale})`;Object.assign($('original-frame').style,{width:current.width*scale+'px',height:current.height*scale+'px'});live?.resize();$('rotate-note').hidden=!(current.width>current.height&&rect.height>rect.width);}

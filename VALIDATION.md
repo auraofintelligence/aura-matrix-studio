@@ -1,5 +1,11 @@
 # Validation record
 
+## Everyday QuickStart and site map (0.3.2)
+
+35 automated tests pass, including valid calendar dates, birthday row updates without duplicate entries, preserved unrelated tables, the requested everyday-life step order, and reachability of all 145 site-map pages. Browser checks at 360 by 640 covered the one-field birthday form, saving a leap-day birthday, the original avatar questions and progression, book navigation, searchable page names, a loaded Birthday page preview and its Open destination. A further 320 by 568 check found and corrected excess spacing in the family form. The name, relationship, optional birthday and save controls then fit without scrolling; the family birthday appeared alongside the first birthday in the shared table. QuickStart sheets now stay within 360 pixels on wider screens. Turning sheets use directional 3D transforms; reduced motion bypasses them. The browser inspection surface does not expose the animation timeline for frame-by-frame measurement.
+
+The screenshot checks do not establish all phone keyboards or browser combinations. Scheduled notification delivery and calendar synchronisation remain unimplemented.
+
 ## Aura navigation and QuickStart (0.3.1)
 
 33 Node tests pass. New checks cover recommendations for all 145 original pages, 37 datasets and ten reader cards, table and chakra-tag backup round trips, legacy defaults, 600-row facet allocation, stack append and repeat-allocation behaviour, rejected invalid allocations, logical back navigation and swipe thresholds. Existing geometry, camera, stack, ray and group-selection checks remain green.

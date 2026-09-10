@@ -1,8 +1,8 @@
-import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.3.1';
-import {AuraView} from './renderer.js?v=0.3.1';
-import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.3.1';
-import {mountSpatial} from './spatial-ui.js?v=0.3.1';
-import {mountWorkspace} from './workspace.js?v=0.3.1';
+import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.3.2';
+import {AuraView} from './renderer.js?v=0.3.2';
+import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.3.2';
+import {mountSpatial} from './spatial-ui.js?v=0.3.2';
+import {mountWorkspace} from './workspace.js?v=0.3.2';
 const $=id=>document.getElementById(id),page=document.body.dataset.page;
 const KEY='aura-matrix-studio:v3:project',LEGACY_KEY='aura-matrix-studio:v2:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
 let selection=null,pickKind='facet',spatialUI=null,multipleFacets=false;

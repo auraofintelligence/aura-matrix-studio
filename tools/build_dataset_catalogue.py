@@ -14,7 +14,7 @@ chakras = [
     ('Violet', 'Crown', 'Meaning, values, integration and wider perspective'),
 ]
 steps = [
-    ('self', 'Your starting point', 'Preferences, embodiment, boundaries and values.'),
+    ('self', 'Personal details and avatar', 'Avatar questions, preferences, embodiment, boundaries and values.'),
     ('people', 'People and relationships', 'Relationships, communication and commitments.'),
     ('time', 'Time and everyday life', 'Life events, schedules, counters and ceremonies.'),
     ('intent', 'Ideas into action', 'Goals, inspiration, learning and work.'),
@@ -76,9 +76,21 @@ for n,p in enumerate(pages,1):
                          role='navigation or presentation' if n in list(range(1,22))+[93,94,95,99,100,101,102,103,104,105] else 'dataset or proposed capability'))
 for s in specs:
     s['sourcePages']=[pages[n-1]['id'] for n in s.pop('sourceNumbers')]
+reader_steps = [
+ dict(id='birthday',title='Add your birthday',description='Your date of birth.',datasets=['life-events']),
+ dict(id='avatar',title='Build your avatar',description='The eight questions from your original Avatar Questionnaire.',datasets=['body','boundaries','accessibility']),
+ dict(id='family',title='Add your family',description='Names and relationships from Build Your Family Tree.',datasets=['relationships','commitments']),
+ dict(id='dates',title='Add key dates',description='Birthdays, milestones and ceremonies.',datasets=['life-events','ceremonies']),
+ dict(id='timing',title='Timing and signals',description='Schedules, reminders, counters and actions.',datasets=['schedules','counters']),
+ dict(id='favourites',title='Add favourites',description='Books, music, films, places and experiences you enjoy.',datasets=['inspiration']),
+ dict(id='skills',title='Add your skills',description='Skills you have and skills you are learning.',datasets=['learning','work']),
+ dict(id='goals',title='Add your goals',description='Wish lists, life goals and things you want to do.',datasets=['goals']),
+ dict(id='more',title='More from your app',description='Browse the other datasets or import existing tables.',datasets=[s['id'] for s in specs]),
+ dict(id='allocate',title='Place your data',description='Allocate your tables to facets or stack steps.',datasets=[]),
+]
 catalogue=dict(format='aura-dataset-catalogue/1',basis='Recommendations from all 145 original page records. Philosophical associations are editable suggestions, not measured properties.',
                chakras=[dict(shell=i,colour=c,name=n,meaning=m) for i,(c,n,m) in enumerate(chakras)],
-               steps=[dict(id=i,title=t,description=d) for i,t,d in steps],datasets=specs,pageReview=coverage)
+               steps=reader_steps,datasets=specs,pageReview=coverage)
 (root/'assets/dataset-catalogue.json').write_text(json.dumps(catalogue,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 lines=['# Recommended Aura datasets and chakra associations','',catalogue['basis'],'',
        'The seven chakras are used here as complementary philosophical perspectives. A dataset may relate to several; the user chooses its actual facet or stack address. Inside and outside remain address spaces, not access-control enforcement.','',

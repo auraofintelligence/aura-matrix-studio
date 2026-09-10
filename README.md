@@ -101,3 +101,13 @@ Create a table or import CSV, edit rows and columns, choose a shell, side and st
 Back arrows now return to a labelled logical parent. The original finite and coloured torus sections contain interactive fixed 12 by 24 geometry, actual inside/outside cameras and compact tools. Historical varying-size page IDs are retained, but their active geometry stays fixed.
 
 Earth, satellite and space-weather integrations remain future scope, as requested. See `FUTURE-DIRECTIONS.md`.
+
+## Everyday QuickStart and site map (0.3.2)
+
+The reader now starts with one concrete field: date of birth. Its sequence continues through the original eight avatar questions, family, key dates, timing and signals, favourites, skills and goals. Other datasets and allocation remain available later. A family member's optional birthday also creates a dated entry in Birthdays and life events. Existing records and tables remain intact. Save-and-continue and Skip are separate choices.
+
+Forward and backward book navigation animates a turning page. Reduced-motion preferences use immediate changes. QuickStart sheets are limited to phone width even on a desktop. Advanced table editing remains available separately; internal scrolling is a fallback for small heights, large content and the on-screen keyboard.
+
+The site map replaces the blurred image with searchable page names and parent/child sections, five names per page, adjustable text size and a real preview. Previews cycle by arrow or swipe and open the selected original page. Every one of the 145 source pages is reachable. Previewing the site map itself does not recursively create preview frames.
+
+These forms collect reusable everyday-life data. They do not yet deliver scheduled notifications or synchronise with an external calendar. Original archive pages outside the implemented flows can still contain design placeholders.

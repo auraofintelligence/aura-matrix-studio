@@ -1,10 +1,11 @@
+import {mapPages,pageTitle} from '../original-sitemap.js?v=0.3.2';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {blankProject,validateProject} from '../core.js?v=0.3.1';
-import {allocateTable,allocationPlan} from '../dataset-allocation.js?v=0.3.1';
-import {turnPage,swipeDirection} from '../quickstart.js?v=0.3.1';
-import {HOME,PROGRAMMER,FINITE,TORUS,COLOUR_PAGES,livePage,parentPage,stageBounds} from '../original-routes.js?v=0.3.1';
+import {blankProject,validateProject} from '../core.js?v=0.3.2';
+import {allocateTable,allocationPlan} from '../dataset-allocation.js?v=0.3.2';
+import {turnPage,swipeDirection,saveQuickEntry,validBirthday} from '../quickstart.js?v=0.3.2';
+import {HOME,PROGRAMMER,FINITE,TORUS,COLOUR_PAGES,livePage,parentPage,stageBounds} from '../original-routes.js?v=0.3.2';
 const source=JSON.parse(readFileSync(new URL('../assets/mockplus/pages.json',import.meta.url)));
 const catalogue=JSON.parse(readFileSync(new URL('../assets/dataset-catalogue.json',import.meta.url)));
 const fixture=(count=3)=>{const p=blankProject();p.tables=[{id:'t',name:'Chosen data',category:'assets',recommendation:'imports',columns:['Title','Details','Asset','Instructions'],chakraTags:[0,3,5],rows:Array.from({length:count},(_,i)=>({id:'r'+i,values:['Row '+i,'Required information '+i,'https://example.org/'+i,'Recall and review '+i]}))}];return p;};
@@ -49,4 +50,20 @@ test('back arrows resolve to a logical parent and every historical torus keeps f
 test('reader swipe direction uses distance and direction; previous and next clamp at boundaries',()=>{
   assert.equal(swipeDirection(-90,4),1);assert.equal(swipeDirection(90,4),-1);assert.equal(swipeDirection(8,2),0);assert.equal(swipeDirection(40,80),0);
   assert.equal(turnPage(0,-1,10),0);assert.equal(turnPage(9,1,10),9);assert.equal(turnPage(4,1,10),5);
+});
+
+test('birthday entry validates real dates and updates one row without losing other tables',()=>{
+ const rec=catalogue.datasets.find(d=>d.id==='life-events'),p=fixture();
+ const saved=saveQuickEntry(p,rec,{Title:'My birthday',Date:'2000-02-29'},'my-birthday');
+ assert.equal(saved.tables.length,2);assert.deepEqual(saved.tables[0],p.tables[0]);
+ const updated=saveQuickEntry(saved,rec,{Date:'2004-02-29'},'my-birthday');assert.equal(updated.tables[1].rows.length,1);assert.equal(updated.tables[1].rows[0].values[2],'2004-02-29');
+ assert.ok(validBirthday('2000-02-29'));assert.equal(validBirthday('2001-02-29'),false);assert.equal(validBirthday(''),false);
+ assert.deepEqual(catalogue.steps.slice(0,8).map(s=>s.id),['birthday','avatar','family','dates','timing','favourites','skills','goals']);
+ for(const step of catalogue.steps)for(const id of step.datasets)assert.ok(catalogue.datasets.some(d=>d.id===id));
+});
+
+test('site map reaches every original page through searchable names and parent sections',()=>{
+ const all=source.pages,seen=new Set();const visit=parent=>{for(const p of mapPages(all,parent)){if(seen.has(p.id))continue;seen.add(p.id);visit(p.id);}};visit('');assert.equal(seen.size,145);
+ assert.ok(mapPages(all,'','birthday').some(p=>p.name==='Birthdays'));assert.ok(mapPages(all,'','green torus').length);assert.equal(mapPages(all,'','no such page here').length,0);
+ for(const p of all)assert.ok(pageTitle(p).length);
 });

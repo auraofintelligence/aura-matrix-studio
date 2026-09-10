@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {blankProject,validateProject,PRESETS,SHELLS} from '../core.js?v=0.3.1';
-import {target,targetKey,targetLabel,selectFacetGroup,setFacetStacks,remembered,remember,parameters,targetPoint,rayEnd,stackColour,stackSamples,stackDepth,STACK_DRAW_LIMIT,fitStackFrame,sequenceLength,sequenceStep,agentPackage,cameraFrame,parseValues} from '../spatial.js?v=0.3.1';
+import {blankProject,validateProject,PRESETS,SHELLS} from '../core.js?v=0.3.2';
+import {target,targetKey,targetLabel,selectFacetGroup,setFacetStacks,remembered,remember,parameters,targetPoint,rayEnd,stackColour,stackSamples,stackDepth,STACK_DRAW_LIMIT,fitStackFrame,sequenceLength,sequenceStep,agentPackage,cameraFrame,parseValues} from '../spatial.js?v=0.3.2';
 
 test('each torus and side starts unselected, remembers its own choice, and clears independently',()=>{
   let selections={};const red=target(0,'O','facet',17),green=target(3,'O','facet',42),inner=target(0,'I','vertex',25);

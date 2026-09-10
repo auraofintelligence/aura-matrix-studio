@@ -16,9 +16,9 @@ The seven chakras are used here as complementary philosophical perspectives. A d
 | Indigo / Brow | Attention, interpretation, patterns and discernment |
 | Violet / Crown | Meaning, values, integration and wider perspective |
 
-## Your starting point
+## Personal details and avatar
 
-Preferences, embodiment, boundaries and values.
+Avatar questions, preferences, embodiment, boundaries and values.
 
 ### Personal and interface preferences
 

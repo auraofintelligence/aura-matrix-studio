@@ -47,54 +47,124 @@
   ],
   "steps": [
     {
-      "id": "self",
-      "title": "Your starting point",
-      "description": "Preferences, embodiment, boundaries and values."
+      "id": "birthday",
+      "title": "Add your birthday",
+      "description": "Your date of birth.",
+      "datasets": [
+        "life-events"
+      ]
     },
     {
-      "id": "people",
-      "title": "People and relationships",
-      "description": "Relationships, communication and commitments."
+      "id": "avatar",
+      "title": "Build your avatar",
+      "description": "The eight questions from your original Avatar Questionnaire.",
+      "datasets": [
+        "body",
+        "boundaries",
+        "accessibility"
+      ]
     },
     {
-      "id": "time",
-      "title": "Time and everyday life",
-      "description": "Life events, schedules, counters and ceremonies."
+      "id": "family",
+      "title": "Add your family",
+      "description": "Names and relationships from Build Your Family Tree.",
+      "datasets": [
+        "relationships",
+        "commitments"
+      ]
     },
     {
-      "id": "intent",
-      "title": "Ideas into action",
-      "description": "Goals, inspiration, learning and work."
+      "id": "dates",
+      "title": "Add key dates",
+      "description": "Birthdays, milestones and ceremonies.",
+      "datasets": [
+        "life-events",
+        "ceremonies"
+      ]
     },
     {
-      "id": "place",
-      "title": "Places and environments",
-      "description": "Locations, journeys, spatial anchors and observations."
+      "id": "timing",
+      "title": "Timing and signals",
+      "description": "Schedules, reminders, counters and actions.",
+      "datasets": [
+        "schedules",
+        "counters"
+      ]
     },
     {
-      "id": "community",
-      "title": "Care and participation",
-      "description": "Community projects, services, contributions and resources."
+      "id": "favourites",
+      "title": "Add favourites",
+      "description": "Books, music, films, places and experiences you enjoy.",
+      "datasets": [
+        "inspiration"
+      ]
     },
     {
-      "id": "knowledge",
-      "title": "Knowledge and reflection",
-      "description": "Definitions, evidence, reflections and questions."
+      "id": "skills",
+      "title": "Add your skills",
+      "description": "Skills you have and skills you are learning.",
+      "datasets": [
+        "learning",
+        "work"
+      ]
     },
     {
-      "id": "systems",
-      "title": "Tools and programs",
-      "description": "Devices, experiments, automation steps and data organisation."
+      "id": "goals",
+      "title": "Add your goals",
+      "description": "Wish lists, life goals and things you want to do.",
+      "datasets": [
+        "goals"
+      ]
     },
     {
-      "id": "assets",
-      "title": "Bring your existing data",
-      "description": "Media, exported tables, source references and discovery."
+      "id": "more",
+      "title": "More from your app",
+      "description": "Browse the other datasets or import existing tables.",
+      "datasets": [
+        "preferences",
+        "body",
+        "boundaries",
+        "values",
+        "relationships",
+        "communications",
+        "commitments",
+        "life-events",
+        "schedules",
+        "counters",
+        "ceremonies",
+        "goals",
+        "inspiration",
+        "learning",
+        "work",
+        "places",
+        "spatial-anchors",
+        "journeys",
+        "environment",
+        "celestial",
+        "community",
+        "resources",
+        "funding",
+        "participation",
+        "accessibility",
+        "wellbeing",
+        "reflection",
+        "knowledge",
+        "experiments",
+        "devices",
+        "programs",
+        "table-register",
+        "navigation",
+        "media",
+        "imports",
+        "provenance",
+        "discovery"
+      ]
     },
     {
       "id": "allocate",
-      "title": "Review and allocate",
-      "description": "Choose a table, shell, side and facets or stack steps."
+      "title": "Place your data",
+      "description": "Allocate your tables to facets or stack steps.",
+      "datasets": []
     }
   ],
   "datasets": [

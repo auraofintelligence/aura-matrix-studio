@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {PRESETS} from '../core.js?v=0.3.1';
-import {target,targetPoint} from '../spatial.js?v=0.3.1';
+import {PRESETS} from '../core.js?v=0.3.2';
+import {target,targetPoint} from '../spatial.js?v=0.3.2';
 
 test('actual Three scene draws all 100 layers and keeps markers and connections aligned after resizing the stack',async()=>{
   const context={};vm.runInNewContext(readFileSync(new URL('../vendor/three.min.js',import.meta.url),'utf8'),context);
@@ -12,7 +12,7 @@ test('actual Three scene draws all 100 layers and keeps markers and connections 
   // Canvas text stub only: this exercises scene geometry without a browser or WebGL.
   globalThis.document={createElement:()=>({getContext:()=>({fillRect(){},fillText(value){text.push(value);}})})};
   try{
-    const {AuraView}=await import('../renderer.js?v=0.3.1'),view=Object.create(AuraView.prototype);
+    const {AuraView}=await import('../renderer.js?v=0.3.2'),view=Object.create(AuraView.prototype);
     const mesh=()=>new T.Mesh(new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute([],3)).setAttribute('color',new T.Float32BufferAttribute([],3)),new T.MeshBasicMaterial());
     const anchor=target(0,'O','stack',159,50);
     Object.assign(view,{pose:{...PRESETS.horn},shell:0,face:'O',selection:anchor,kind:'facet',vectors:[],records:[],links:[],stacks:[{shell:0,face:'O',cell:159,count:100}],meshes:Array.from({length:7},mesh),wires:Array.from({length:7},mesh),parameters:[],lineParameters:[],marker:new T.Object3D(),connect:mesh(),spatialGroup:new T.Group(),render(){}});

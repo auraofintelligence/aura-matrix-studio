@@ -30,11 +30,12 @@ jobs:
           node --check original.js
           node --check original-live.js
           node --check quickstart.js
+          node --check original-sitemap.js
       - uses: actions/configure-pages@v5
       - name: Prepare public files only
         run: |
           mkdir -p _site/tools
-          cp index.html matrix.html original.js original.css original-live.js original-routes.js quickstart.js dataset-schema.js dataset-allocation.js DATASET-CATALOGUE.md inventory.html explainer.html guide.html styles.css core.js renderer.js app.js spatial.js spatial-ui.js workspace.js LICENCE.md .nojekyll _site/
+          cp index.html matrix.html original.js original.css original-live.js original-routes.js original-sitemap.js quickstart.js dataset-schema.js dataset-allocation.js DATASET-CATALOGUE.md inventory.html explainer.html guide.html styles.css core.js renderer.js app.js spatial.js spatial-ui.js workspace.js LICENCE.md .nojekyll _site/
           cp -r assets vendor _site/
           cp tools/blender_import.py _site/tools/
       - uses: actions/upload-pages-artifact@v3
