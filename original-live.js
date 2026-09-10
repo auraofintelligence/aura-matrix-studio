@@ -1,14 +1,14 @@
-import {AuraView} from './renderer.js?v=0.3.2';
-import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.3.2';
-import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.3.2';
-import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.3.2';
-const KEY='aura-matrix-studio:v3:project',LEGACY='aura-matrix-studio:v2:project';
+import {AuraView} from './renderer.js?v=0.3.3';
+import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.3.3';
+import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.3.3';
+import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.3.3';
+const KEY='aura-matrix-studio:v4:project',LEGACY='aura-matrix-studio:v3:project';
 export function mountLiveMatrix({page,screen,config,go}){
   let {shell,face,shape}=config,project,selection,view,multi=false,disposed=false,readError=false;
   const abort=new AbortController(),make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
   const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
   const position=(n,[x,y,w,h])=>Object.assign(n.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});
-  function read(){try{const raw=localStorage.getItem(KEY)??localStorage.getItem(LEGACY)??localStorage.getItem('aura-matrix-studio:v1:project');project=raw?validateProject(JSON.parse(raw)):blankProject();readError=false;}catch{project=blankProject();readError=true;}}
+  function read(){try{const raw=localStorage.getItem(KEY)??localStorage.getItem(LEGACY)??localStorage.getItem('aura-matrix-studio:v2:project')??localStorage.getItem('aura-matrix-studio:v1:project');project=raw?validateProject(JSON.parse(raw)):blankProject();readError=false;}catch{project=blankProject();readError=true;}}
   read();
   const box=stageBounds(page),stage=make('section','live-stage');position(stage,box);
   stage.setAttribute('aria-label',shape==='flat'?'Live finite matrix':'Live torus');

@@ -1,11 +1,12 @@
-import {mapPages,pageTitle} from '../original-sitemap.js?v=0.3.2';
+import {emptyFavourites,updateFavourite,validateFavourites} from '../favourites-data.js?v=0.3.3';
+import {mapPages,pageTitle} from '../original-sitemap.js?v=0.3.3';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {blankProject,validateProject} from '../core.js?v=0.3.2';
-import {allocateTable,allocationPlan} from '../dataset-allocation.js?v=0.3.2';
-import {turnPage,swipeDirection,saveQuickEntry,validBirthday} from '../quickstart.js?v=0.3.2';
-import {HOME,PROGRAMMER,FINITE,TORUS,COLOUR_PAGES,livePage,parentPage,stageBounds} from '../original-routes.js?v=0.3.2';
+import {blankProject,validateProject} from '../core.js?v=0.3.3';
+import {allocateTable,allocationPlan} from '../dataset-allocation.js?v=0.3.3';
+import {turnPage,swipeDirection,saveQuickEntry,validBirthday} from '../quickstart.js?v=0.3.3';
+import {HOME,PROGRAMMER,FINITE,TORUS,COLOUR_PAGES,livePage,parentPage,stageBounds,canonicalPage,CAMERA_VARIANTS} from '../original-routes.js?v=0.3.3';
 const source=JSON.parse(readFileSync(new URL('../assets/mockplus/pages.json',import.meta.url)));
 const catalogue=JSON.parse(readFileSync(new URL('../assets/dataset-catalogue.json',import.meta.url)));
 const fixture=(count=3)=>{const p=blankProject();p.tables=[{id:'t',name:'Chosen data',category:'assets',recommendation:'imports',columns:['Title','Details','Asset','Instructions'],chakraTags:[0,3,5],rows:Array.from({length:count},(_,i)=>({id:'r'+i,values:['Row '+i,'Required information '+i,'https://example.org/'+i,'Recall and review '+i]}))}];return p;};
@@ -62,8 +63,22 @@ test('birthday entry validates real dates and updates one row without losing oth
  for(const step of catalogue.steps)for(const id of step.datasets)assert.ok(catalogue.datasets.some(d=>d.id===id));
 });
 
-test('site map reaches every original page through searchable names and parent sections',()=>{
- const all=source.pages,seen=new Set();const visit=parent=>{for(const p of mapPages(all,parent)){if(seen.has(p.id))continue;seen.add(p.id);visit(p.id);}};visit('');assert.equal(seen.size,145);
- assert.ok(mapPages(all,'','birthday').some(p=>p.name==='Birthdays'));assert.ok(mapPages(all,'','green torus').length);assert.equal(mapPages(all,'','no such page here').length,0);
- for(const p of all)assert.ok(pageTitle(p).length);
+test('destination finder opens everyday pages directly and removes camera variants from navigation',()=>{
+ const all=source.pages,shown=mapPages(all,'all');assert.equal(shown.length,142);assert.ok(shown.every(p=>!p.name.endsWith(' CK')&&p.name!=='Page'));
+ const daily=mapPages(all);assert.equal(daily.length,12);for(const name of ['Birthdays','Schedules','Reminders','We Are Family','Public Life Goals'])assert.ok(daily.some(p=>p.name===name));
+ assert.ok(mapPages(all,'daily','calendar').some(p=>p.name==='Schedules'));assert.ok(mapPages(all,'daily','family').some(p=>p.name==='We Are Family'));assert.equal(mapPages(all,'daily','no such page here').length,0);
+ const pages=new Map(all.map(p=>[p.id,p]));for(const [variant,base]of Object.entries(CAMERA_VARIANTS)){assert.equal(canonicalPage(variant),base);assert.equal(canonicalPage(base),base);}
+ for(const p of all.filter(p=>CAMERA_VARIANTS[p.parent]))assert.equal(parentPage(p,pages),canonicalPage(p.parent));
+ assert.ok(mapPages(all,'tools').some(p=>p.name==='System Preferences'));for(const p of shown)assert.ok(pageTitle(p));
+});
+
+test('favourites start empty, preserve icons in backups, swap occupied slots and migrate legacy data',()=>{
+ const empty=emptyFavourites();assert.ok(empty.menus[0].slots.every(s=>s===null));const icon='8CC6417FBAA5327E3F41379B1C75B109.png';
+ let f=updateFavourite(empty,'favourites',0,{pageId:HOME,icon});f=updateFavourite(f,'favourites',1,{pageId:PROGRAMMER,icon:''});
+ const moved=updateFavourite(f,'favourites',0,f.menus[0].slots[0],1);assert.equal(moved.menus[0].slots[0].pageId,PROGRAMMER);assert.equal(moved.menus[0].slots[1].pageId,HOME);assert.equal(f.menus[0].slots[0].pageId,HOME);
+ const p=blankProject();p.favourites=moved;assert.deepEqual(validateProject(JSON.parse(JSON.stringify(p))).favourites,moved);
+ const cleared=updateFavourite(moved,'favourites',1,null);assert.equal(cleared.menus[0].slots[1],null);assert.equal(cleared.menus[0].slots[0].pageId,PROGRAMMER);
+ delete p.favourites;assert.deepEqual(validateProject(p).favourites,empty);assert.throws(()=>updateFavourite(empty,'favourites',0,{pageId:HOME,icon:'https://bad.example/icon.svg'}));assert.throws(()=>updateFavourite(empty,'favourites',25,null));
+ assert.equal(updateFavourite(empty,'favourites',0,{pageId:Object.keys(CAMERA_VARIANTS)[0],icon:''}).menus[0].slots[0].pageId,HOME);
+ const menus=emptyFavourites();menus.menus.push({id:'work',name:'Work',slots:Array(25).fill(null)});menus.activeId='work';assert.deepEqual(validateFavourites(menus),menus);
 });

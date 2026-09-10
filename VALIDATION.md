@@ -1,5 +1,13 @@
 # Validation record
 
+## Direct destinations and camera variants (0.3.3)
+
+37 automated tests cover the existing model plus direct everyday destinations, 142 browsable pages without duplicate CK modes, calendar/family search aliases, legacy camera URL resolution and logical parents. Camera lifecycle tests use a simulated stream: no access at mount, explicit activation, stopping on toggle/navigation/tab hiding, late permission resolution and denied permission. No physical camera feed was accessed during QA.
+
+Browser checks at 360 by 640 verified the icon finder, separate birthday preview, direct Birthdays navigation and an old Aura Menu CK URL resolving to the main menu with its camera toggle off. Physical-camera appearance and performance remain to be checked on the user's device.
+
+Favourites tests cover blank slots, icon validation, camera-address normalisation, occupied-slot swaps, clearing, multiple-menu validation, backup preservation and legacy defaults. Phone browser checks covered adding Birthdays, its original icon replacing the square, persistence after reload, choosing a different app icon, moving to slot 2 and opening the correct page. New-menu creation is implemented but has not yet had a separate browser interaction check.
+
 ## Everyday QuickStart and site map (0.3.2)
 
 35 automated tests pass, including valid calendar dates, birthday row updates without duplicate entries, preserved unrelated tables, the requested everyday-life step order, and reachability of all 145 site-map pages. Browser checks at 360 by 640 covered the one-field birthday form, saving a leap-day birthday, the original avatar questions and progression, book navigation, searchable page names, a loaded Birthday page preview and its Open destination. A further 320 by 568 check found and corrected excess spacing in the family form. The name, relationship, optional birthday and save controls then fit without scrolling; the family birthday appeared alongside the first birthday in the shared table. QuickStart sheets now stay within 360 pixels on wider screens. Turning sheets use directional 3D transforms; reduced motion bypasses them. The browser inspection surface does not expose the animation timeline for frame-by-frame measurement.

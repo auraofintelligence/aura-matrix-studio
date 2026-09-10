@@ -1,9 +1,9 @@
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.2';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.2';
-import {targetLabel} from './spatial.js?v=0.3.2';
-import {TORUS} from './original-routes.js?v=0.3.2';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.3';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.3';
+import {targetLabel} from './spatial.js?v=0.3.3';
+import {TORUS} from './original-routes.js?v=0.3.3';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
-const KEY='aura-matrix-studio:v3:project';
+const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));
 export const swipeDirection=(dx,dy)=>Math.abs(dx)>=35&&Math.abs(dx)>Math.abs(dy)?dx<0?1:-1:0;
 export function saveQuickEntry(project,dataset,values,rowId){
@@ -29,7 +29,7 @@ export function mountQuickStart({page,screen,catalogue}){
   const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
   const button=(text,fn)=>{const b=make('button','',text);b.type='button';b.onclick=fn;return b;};
   let project,index=0,tableId='',recId='',rowPage=0,colPage=0,preview=null,pane='setup',flipping=false,flipAnimation=null,welcome=true,avatarIndex=0;
-  function read(){const raw=localStorage.getItem(KEY)??localStorage.getItem('aura-matrix-studio:v2:project')??localStorage.getItem('aura-matrix-studio:v1:project');project=raw?validateProject(JSON.parse(raw)):blankProject();}
+  function read(){const raw=localStorage.getItem(KEY)??localStorage.getItem('aura-matrix-studio:v3:project')??localStorage.getItem('aura-matrix-studio:v2:project')??localStorage.getItem('aura-matrix-studio:v1:project');project=raw?validateProject(JSON.parse(raw)):blankProject();}
   function mutate(fn){read();const next=fn(structuredClone(project));project=validateProject(next);localStorage.setItem(KEY,JSON.stringify(project));}
   function safely(fn){try{fn();}catch(e){message.textContent=e.message;}}
   read();index=project.quickStart.step;const requestedStep=new URLSearchParams(location.search).get('step'),requestedIndex=catalogue.steps.findIndex(s=>s.id===requestedStep);if(requestedIndex>=0)index=requestedIndex;

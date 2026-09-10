@@ -1,10 +1,10 @@
-import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.3.2';
-import {AuraView} from './renderer.js?v=0.3.2';
-import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.3.2';
-import {mountSpatial} from './spatial-ui.js?v=0.3.2';
-import {mountWorkspace} from './workspace.js?v=0.3.2';
+import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.3.3';
+import {AuraView} from './renderer.js?v=0.3.3';
+import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.3.3';
+import {mountSpatial} from './spatial-ui.js?v=0.3.3';
+import {mountWorkspace} from './workspace.js?v=0.3.3';
 const $=id=>document.getElementById(id),page=document.body.dataset.page;
-const KEY='aura-matrix-studio:v3:project',LEGACY_KEY='aura-matrix-studio:v2:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
+const KEY='aura-matrix-studio:v4:project',LEGACY_KEY='aura-matrix-studio:v3:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
 let selection=null,pickKind='facet',spatialUI=null,multipleFacets=false;
 const facetCells=()=>project.facetSelections[`${shell}/${face}`]||[];
 const pickedFacets=()=>selection?.kind==='facet'?(facetCells().length?facetCells():[selection.index]).map(n=>target(shell,face,'facet',n)):[];
@@ -12,7 +12,7 @@ const id=()=>crypto.randomUUID();
 function notify(message){$('toast').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').textContent='',7000);}
 function el(tag,text,className){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;}
 function saveStatus(text){if($('save-status'))$('save-status').textContent=text;}
-try{const saved=localStorage.getItem(KEY)??localStorage.getItem(LEGACY_KEY)??localStorage.getItem('aura-matrix-studio:v1:project');if(saved)project=validateProject(JSON.parse(saved));saveStatus('Saved on this browser');}catch(e){saveStatus('Stored project could not be read. A blank session is open.');notify('The stored copy was left untouched. Import a backup to recover it.');}
+try{const saved=localStorage.getItem(KEY)??localStorage.getItem(LEGACY_KEY)??localStorage.getItem('aura-matrix-studio:v2:project')??localStorage.getItem('aura-matrix-studio:v1:project');if(saved)project=validateProject(JSON.parse(saved));saveStatus('Saved on this browser');}catch(e){saveStatus('Stored project could not be read. A blank session is open.');notify('The stored copy was left untouched. Import a backup to recover it.');}
 function commit(next){spatialUI?.stop();next=validateProject(next);history.push(project);project=next;try{localStorage.setItem(KEY,JSON.stringify(project));saveStatus('Saved on this browser');}catch(e){saveStatus('Browser storage is unavailable or full. Download a backup now.');notify('Your changes are in this tab. Download a backup to keep them.');}if($('undo'))$('undo').disabled=!history.length;refresh();}
 function change(fn){const next=structuredClone(project);fn(next);commit(next);}
 function download(name,blob){const url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}

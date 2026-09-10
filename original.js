@@ -1,7 +1,9 @@
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.2';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.2';
-import {livePage,parentPage,HOME,PROGRAMMER} from './original-routes.js?v=0.3.2';
-import {mountLiveMatrix} from './original-live.js?v=0.3.2';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.3';
+import {mountMenuCamera} from './menu-camera.js?v=0.3.3';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.3';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.3';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.3';
+import {mountLiveMatrix} from './original-live.js?v=0.3.3';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -22,11 +24,12 @@ export function fitOriginal(width,height,availableWidth,availableHeight){return 
 export async function startOriginal(){
   if(new URLSearchParams(location.search).has('inspect'))document.body.dataset.inspect='true';
   const [response,catalogueResponse]=await Promise.all([fetch('assets/mockplus/pages.json'),fetch('assets/dataset-catalogue.json')]);if(!response.ok)throw Error('Original layouts could not be loaded.');
-  const catalogue=await catalogueResponse.json(),source=await response.json(),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live;
+  const catalogue=await catalogueResponse.json(),source=await response.json(),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live,menuCamera;
   const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
   const warn=text=>{$('original-status').textContent=text;};
   function go(id){
     if(id==='command:back')id=parentPage(current,pages);
+    if(CAMERA_VARIANTS[id]===current.id){menuCamera?.toggle();return;}id=canonicalPage(id);
     if(!pages.has(id)){warn('This control has no destination in the original Mockplus file.');return;}
     if(id===current.id)return;
     const query=new URLSearchParams({page:id});if(document.body.dataset.inspect)query.set('inspect','1');
@@ -45,7 +48,7 @@ export async function startOriginal(){
     if(type==='StatusBar(Android)'){
       node.classList.add('original-phone-status');node.append(make('span',null,'◉ ▰  02:18 PM'));
     }else if(p.URL){
-      const img=make('img');img.src='assets/mockplus/'+p.URL;img.alt=c.links[0]?.title||'';img.draggable=false;node.append(img);
+      const img=make('img');img.src='assets/mockplus/'+p.URL;img.alt=CAMERA_VARIANTS[c.links[0]?.target]?'Camera background':c.links[0]?.title||'';img.draggable=false;node.append(img);
     }else if(type==='AlarmIcon2'){
       node.classList.add('original-alarm');const alarm=c.children.find(child=>child.properties.alias==='alarm');
       if(alarm){const badge=make('span','original-count',alarm.properties.text);position(badge,bounds(alarm));badge.style.background=colour(alarm.properties.color);badge.style.color=colour(alarm.properties.textColor||4294967295);badge.style.fontSize=(Number(alarm.properties.textSize)||7)+'px';node.append(badge);}
@@ -78,8 +81,8 @@ export async function startOriginal(){
     for(const link of c.links){
       for(const area of link.areas.length?link.areas:[null]){
         const box=linkBounds(area,c);if(box[2]<=0||box[3]<=0)continue;
-        const destination=livePage(link.target),destinationTitle=destination?(destination.shape==='flat'?'Finite map':['Red','Orange','Yellow','Green','Blue','Indigo','Violet'][destination.shell]+' torus'):null;
-        const a=make('a','original-link');a.href=link.target==='command:back'?'#back':'?page='+link.target;a.title=destinationTitle||link.title||pages.get(link.target)?.name||'Back';a.setAttribute('aria-label',a.title);position(a,box);
+        const destination=livePage(canonicalPage(link.target)),destinationTitle=destination?(destination.shape==='flat'?'Finite map':['Red','Orange','Yellow','Green','Blue','Indigo','Violet'][destination.shell]+' torus'):null;
+        const a=make('a','original-link');a.href=link.target==='command:back'?'#back':'?page='+canonicalPage(link.target);a.title=CAMERA_VARIANTS[link.target]?'Camera background':destinationTitle||link.title||pages.get(link.target)?.name||'Back';a.setAttribute('aria-label',a.title);position(a,box);if(CAMERA_VARIANTS[link.target]){a.dataset.cameraToggle='true';a.setAttribute('role','button');}
         a.onclick=e=>{e.preventDefault();e.stopPropagation();go(link.target);};node.append(a);
       }
     }
@@ -92,7 +95,7 @@ export async function startOriginal(){
   }
 
   function show(id){
-    live?.dispose();live=null;current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
+    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(CAMERA_VARIANTS[id]){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
     Object.assign($('original-screen').style,{width:current.width+'px',height:current.height+'px'});
     for(const control of current.controls)draw(control,$('original-screen'));
     $('page-name').textContent=current.name;$('original-page').value=current.id;
@@ -101,7 +104,9 @@ export async function startOriginal(){
     warn(advanced?'Original screen artwork. The working model stays 12 × 24.':'Original screen layouts and links. Live tools are available in the matrix.');
     const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
     if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue});
+    if(current.id===FAVOURITES)live=mountFavourites({page:current,screen:$('original-screen'),pages,go});
     if(current.id===SITEMAP)live=mountSiteMap({page:current,screen:$('original-screen'),pages,go,previewMode:new URLSearchParams(location.search).has('preview')});
+    if([HOME,PROGRAMMER].includes(current.id))menuCamera=mountMenuCamera($('original-screen'));
     fit();
   }
   function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),scale=fitOriginal(current.width,current.height,rect.width,rect.height);$('original-screen').style.transform=`scale(${scale})`;Object.assign($('original-frame').style,{width:current.width*scale+'px',height:current.height*scale+'px'});live?.resize();$('rotate-note').hidden=!(current.width>current.height&&rect.height>rect.width);}

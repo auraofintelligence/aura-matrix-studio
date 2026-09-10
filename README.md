@@ -111,3 +111,17 @@ Forward and backward book navigation animates a turning page. Reduced-motion pre
 The site map replaces the blurred image with searchable page names and parent/child sections, five names per page, adjustable text size and a real preview. Previews cycle by arrow or swipe and open the selected original page. Every one of the 145 source pages is reachable. Previewing the site map itself does not recursively create preview frames.
 
 These forms collect reusable everyday-life data. They do not yet deliver scheduled notifications or synchronise with an external calendar. Original archive pages outside the implemented flows can still contain design placeholders.
+
+## Direct destinations and camera variants (0.3.3)
+
+The old site-map tree exposed Mockplus authoring groups as navigation. Find your way now starts with 12 everyday icon shortcuts. Tapping an icon opens its destination directly; the separate magnifier previews it. Search works across all destinations, with Everyday, People, Aura, Places, Tools and All filters.
+
+Aura Menu CK and Matrix Programmer CK are camera-background variants of the main menu and programmer, not intermediate pages. Their old URLs resolve to the corresponding normal page. Camera controls toggle a live video background on that same screen, after an explicit click and browser permission. The same menu destinations remain available. Camera tracks stop when switched off, when leaving the screen or when hiding the tab. No recording, audio request or upload is added.
+
+The 145-page source archive remains unchanged. The public finder lists 142 destinations, omitting the two duplicate CK variants and the unnamed blank source page. The original inspector remains available for source review.
+
+### Custom favourite pages
+
+The original Quick Navigation page now has 25 editable favourite slots in the source positions. Empty slots stay empty until chosen. Select a destination, keep its original app icon or choose another icon from the supplied artwork, and save. Normal mode opens the page; Edit mode replaces, moves or clears the slot. Moving into an occupied position swaps the two favourites. The book below selects named shortcut menus and provides name editing and new-menu creation.
+
+Favourites are included in the project JSON backup. Storage now uses `aura-matrix-studio:v4:project`, reading v3, v2 or v1 when v4 is absent. This keeps older app tabs from discarding new favourite-menu data; reload older tabs before continuing. This version does not change the 12 by 24 address model.
