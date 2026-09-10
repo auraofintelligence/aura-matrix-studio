@@ -1,5 +1,5 @@
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.3.0';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.3.0';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.3.1';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.3.1';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
@@ -26,13 +26,21 @@ export class AuraView {
     this.connect=new T.LineSegments(new T.BufferGeometry(),new T.LineBasicMaterial({color:'#11232d',transparent:true,opacity:.9,depthTest:false}));this.connect.renderOrder=3;this.scene.add(this.connect);
     this.marker=new T.Mesh(new T.SphereGeometry(.1,12,8),new T.MeshBasicMaterial({color:0x101b24,depthTest:false}));this.marker.renderOrder=4;this.scene.add(this.marker);
     this.spatialGroup=new T.Group();this.scene.add(this.spatialGroup);this.picking=[];
-    this.raycaster=new T.Raycaster();this.drag=null;
-    canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;this.drag={x:e.clientX,y:e.clientY,theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
-    canvas.addEventListener('pointermove',e=>{if(!this.drag||this.locked)return;const dx=e.clientX-this.drag.x,dy=e.clientY-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
-    canvas.addEventListener('pointerup',e=>{if(this.drag&&!this.drag.moved&&!this.locked)this.pick(e);this.drag=null;});
-    canvas.addEventListener('pointercancel',()=>this.drag=null);
-    canvas.addEventListener('wheel',e=>{if(this.locked)return;e.preventDefault();this.zoom=Math.max(.5,Math.min(3,this.zoom*Math.exp(-e.deltaY*.001)));this.render();},{passive:false});
+    this.raycaster=new T.Raycaster();this.drag=null;this.events=new AbortController();
+    const listen=(name,handler,options={})=>canvas.addEventListener(name,handler,{...options,signal:this.events.signal});
+    listen('pointerdown',e=>{if(e.button!==0)return;this.drag={x:e.clientX,y:e.clientY,theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
+    listen('pointermove',e=>{if(!this.drag||this.locked)return;const dx=e.clientX-this.drag.x,dy=e.clientY-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
+    listen('pointerup',e=>{if(this.drag&&!this.drag.moved&&!this.locked)this.pick(e);this.drag=null;});
+    listen('pointercancel',()=>this.drag=null);
+    listen('wheel',e=>{if(this.locked)return;e.preventDefault();this.zoom=Math.max(.5,Math.min(3,this.zoom*Math.exp(-e.deltaY*.001)));this.render();},{passive:false});
     this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(canvas.parentElement);this.update();
+  }
+  dispose(){
+    this.observer?.disconnect();this.events?.abort();
+    const geometries=new Set(),materials=new Set(),textures=new Set();
+    this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[]){materials.add(m);if(m.map)textures.add(m.map);}});
+    for(const t of textures)t.dispose();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();
+    this.renderer?.dispose();this.renderer?.forceContextLoss();this.renderer=null;
   }
   resize(){const {width,height}=this.canvas.getBoundingClientRect();if(width&&height){this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.render();}}
   set(pose,shell=this.shell,cell=this.cell,face=this.face){this.pose={...pose,explodeStacks:this.explodeStacks||0};this.shell=shell;this.cell=cell;if(face!==this.face){this.cameraViews[this.face]={theta:this.theta,phi:this.phi,zoom:this.zoom};Object.assign(this,this.cameraViews[face]);}this.face=face;if(pose.camera&&face==='O'){[this.theta,this.phi]=pose.camera;this.zoom=1;}this.update();}

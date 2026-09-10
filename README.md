@@ -6,7 +6,7 @@ Luke Nathan Hayes' original Aura phone app layouts and navigation, connected to 
 
 Double-click **Start Aura.cmd** in this folder. It opens the app at <http://127.0.0.1:4318/>. Node.js is installed on this laptop. The launcher starts a small local server in the background and reuses it when already running.
 
-The app opens at the original **Aura Menu**. Its **Enter the Matrix** image opens the original Matrix Programmer. Choose **Finite Map**, then a numbered cell to enter the working editor. The editor's Aura icon returns to the source screen. The editor remains directly available at `matrix.html`; its Inventory, Explainer and Help links open the working tools.
+The app opens at the original **Aura Menu**. Its **Enter the Matrix** image opens the original Matrix Programmer. Choose **Finite Map** or **Infinite Map** to use the live matrix in its original screen. **Tools** opens the full editor; **Done** returns to the torus. **QuickStart** opens the ten-page click, touch and swipe book. The editor remains directly available at `matrix.html`; its Inventory, Explainer and Help links open the working tools.
 
 Original pages retain their source orientation and scale uniformly to fit the screen. Most matrix screens were designed at 640 by 360 in landscape; portrait pages retain their 360 by 640 layout. They do not rearrange buttons on smaller screens. `?inspect=1` exposes an optional page selector for reviewing the whole archive.
 
@@ -27,7 +27,7 @@ Select through the 3D surface or keyboard-accessible numbered map. Change shell 
 
 The explainer supports six fixed-grid poses, camera transitions, editable captions and durations, duplicate/remove/reorder, playback, scrubbing, PNG export, real-time 720p WebM capture and a geometry-only JSON sequence. It does not generate sound. The Blender importer creates an additional scene with animated wire lattices, a camera, and captions retained as timeline markers.
 
-Browser state is localStorage under `aura-matrix-studio:v2:project`. The original layout manifest and artwork load from the same site. No account, tracking, model API or cloud storage is used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
+Browser state is localStorage under `aura-matrix-studio:v3:project`. Existing v2 or v1 data is read on first use and saved in v3 when changed; older tabs cannot overwrite the new tables. Reload older tabs before continuing. The original layout manifest and artwork load from the same site. No account, tracking, model API or cloud storage is used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
 
 ## Architecture
 
@@ -91,3 +91,13 @@ The programmer uses a fixed viewport, an icon-and-label tool rail and a collapsi
 Multi-selection works in the model and numbered map, with a visible mode switch, modifier clicks and Select all. `facetSelections` stores ordered groups independently for each shell/side, separately from the active record address. Groups survive backups and reloads. Stack counts can be applied to a group atomically and undone; orphaned stack records are rejected. Sequence append follows selection order.
 
 The phone-first reference is Luke's original Mockplus screens: Quick Navigation and Matrix Programmer, plus Finite Map / Interior / Exterior screenshots dated 6 July 2026 (135648, 135710, 135730, 135734 and 135749). These guide the central working area, edge shell controls and short tool pages. This update does not claim pixel-identical reconstruction.
+
+## QuickStart tables (0.3.1)
+
+The ten-card reader follows the original book layout. It offers 37 recommended datasets across ten categories, with an explicit review of all 145 original pages in `DATASET-CATALOGUE.md`. Chakra associations are editable philosophical suggestions and can include multiple shells. They do not determine placement automatically.
+
+Create a table or import CSV, edit rows and columns, choose a shell, side and starting facet, then preview allocation. Allocate across consecutive facets or append ordered steps to one outward stack. All columns survive as attached data. Instructions and asset links are retained where present. Repeating allocation adds only new rows; editing a table does not silently rewrite previously allocated records. Edit those copies through the matrix record tools. JSON backups include tables, associations, records and stacks together.
+
+Back arrows now return to a labelled logical parent. The original finite and coloured torus sections contain interactive fixed 12 by 24 geometry, actual inside/outside cameras and compact tools. Historical varying-size page IDs are retained, but their active geometry stays fixed.
+
+Earth, satellite and space-weather integrations remain future scope, as requested. See `FUTURE-DIRECTIONS.md`.

@@ -1,5 +1,13 @@
 # Validation record
 
+## Aura navigation and QuickStart (0.3.1)
+
+33 Node tests pass. New checks cover recommendations for all 145 original pages, 37 datasets and ten reader cards, table and chakra-tag backup round trips, legacy defaults, 600-row facet allocation, stack append and repeat-allocation behaviour, rejected invalid allocations, logical back navigation and swipe thresholds. Existing geometry, camera, stack, ray and group-selection checks remain green.
+
+Local browser checks at 360 by 640 covered the book layout, click and swipe paging, table creation and editing, a two-row allocation to Green inside stack layers 1 and 2, the Open this torus link, the correct embedded editor address, and retained source data in the saved record. The Maps return arrow reaches the original programmer page. The allocation form fits the phone viewport without scrolling; landscape source screens remain uniformly scaled and letterboxed. The embedded editor owner mismatch found during review was corrected and retested.
+
+CSV parsing and allocation are covered by automated tests; the browser file picker, backup downloads, virtual keyboard and all 145 pages have not each received end-to-end visual checks in this release. Earlier validation sections below describe their own releases and limits.
+
 ## Original layout restoration (0.3.0)
 
 26 Node tests pass. New checks cover all 145 extracted pages, all assigned original destinations, all 153 referenced assets, the original Enter the Matrix route and exact positions of the three Matrix Programmer buttons, source hit areas, portrait/landscape fit and inside/outside editor routes. All extracted artworks were also compared directly with the original archive and match byte for byte.

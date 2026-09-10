@@ -1,3 +1,6 @@
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.1';
+import {livePage,parentPage,HOME,PROGRAMMER} from './original-routes.js?v=0.3.1';
+import {mountLiveMatrix} from './original-live.js?v=0.3.1';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -17,11 +20,17 @@ export function fitOriginal(width,height,availableWidth,availableHeight){return 
 
 export async function startOriginal(){
   if(new URLSearchParams(location.search).has('inspect'))document.body.dataset.inspect='true';
-  const response=await fetch('assets/mockplus/pages.json');if(!response.ok)throw Error('Original layouts could not be loaded.');
-  const source=await response.json(),pages=new Map(source.pages.map(p=>[p.id,p]));let current;
+  const [response,catalogueResponse]=await Promise.all([fetch('assets/mockplus/pages.json'),fetch('assets/dataset-catalogue.json')]);if(!response.ok)throw Error('Original layouts could not be loaded.');
+  const catalogue=await catalogueResponse.json(),source=await response.json(),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live;
   const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
   const warn=text=>{$('original-status').textContent=text;};
-  function go(id){if(id==='command:back'){if(history.state?.auraOriginal)history.back();else go(current.parent||source.home);return;}if(!pages.has(id)){warn('This control has no destination in the original Mockplus file.');return;}history.pushState({auraOriginal:true},'',`?page=${id}`);show(id);}
+  function go(id){
+    if(id==='command:back')id=parentPage(current,pages);
+    if(!pages.has(id)){warn('This control has no destination in the original Mockplus file.');return;}
+    if(id===current.id)return;
+    const query=new URLSearchParams({page:id});if(document.body.dataset.inspect)query.set('inspect','1');
+    history.pushState({auraOriginal:true},'',`?${query}`);show(id);
+  }
   function position(node,box){Object.assign(node.style,{left:box[0]+'px',top:box[1]+'px',width:box[2]+'px',height:box[3]+'px'});}
   function textStyle(node,c){
     const p=c.properties,font=c.font,size=Number(p.textSize)||current.fontSize;
@@ -68,28 +77,32 @@ export async function startOriginal(){
     for(const link of c.links){
       for(const area of link.areas.length?link.areas:[null]){
         const box=linkBounds(area,c);if(box[2]<=0||box[3]<=0)continue;
-        const a=make('a','original-link');a.href=link.target==='command:back'?'#back':'?page='+link.target;a.title=link.title||pages.get(link.target)?.name||'Back';a.setAttribute('aria-label',a.title);position(a,box);
+        const destination=livePage(link.target),destinationTitle=destination?(destination.shape==='flat'?'Finite map':['Red','Orange','Yellow','Green','Blue','Indigo','Violet'][destination.shell]+' torus'):null;
+        const a=make('a','original-link');a.href=link.target==='command:back'?'#back':'?page='+link.target;a.title=destinationTitle||link.title||pages.get(link.target)?.name||'Back';a.setAttribute('aria-label',a.title);position(a,box);
         a.onclick=e=>{e.preventDefault();e.stopPropagation();go(link.target);};node.append(a);
       }
     }
-    // Original image remains in place; its cell regions now open the working editor.
-    if(p.URL==='E388F6EC9E64D1DBADF386A0F4CA496D.PNG'&&MATRIX_PAGES[current.id]){
-      const grid=make('div','original-live-grid');
-      for(let cell=1;cell<=288;cell++){const a=make('a');a.href=`matrix.html?shell=0&face=${MATRIX_PAGES[current.id]}&kind=facet&index=${cell}&from=${current.id}`;a.setAttribute('aria-label',`Edit facet ${cell}`);a.title=`Facet ${cell}`;grid.append(a);}node.append(grid);
+    if(c.links.some(link=>link.target==='command:back')){
+      const destination=parentPage(current,pages),name=destination===HOME?'Aura Menu':destination===PROGRAMMER?'Maps':pages.get(destination)?.name||'Back';
+      node.replaceChildren();node.classList.add('original-back-control');
+      if(livePage(current.id))position(node,[8,324,88,30]);
+      const a=make('a','original-link',livePage(current.id)?'← '+name:'←');a.href='?page='+destination;a.title='Back to '+name;a.setAttribute('aria-label',a.title);position(a,[0,0,livePage(current.id)?88:32,30]);a.onclick=e=>{e.preventDefault();go(destination);};node.append(a);
     }
-    if(p.URL&&['Image','Gif'].includes(type)&&Number(c.w)>150&&Number(c.h)>100&&!c.links.length&&current.parent==='1773263D-945B-4087-ACEF-8C088C29FB47'){const a=make('a','original-link');a.href=`matrix.html?shell=0&face=${MATRIX_PAGES[current.id]||'O'}&kind=facet&index=1&from=${current.id}`;a.setAttribute('aria-label','Open the live 12 by 24 Aura');a.title='Open the live 12 × 24 Aura';position(a,[0,0,+c.w,+c.h]);node.append(a);}
   }
+
   function show(id){
-    current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
+    live?.dispose();live=null;current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
     Object.assign($('original-screen').style,{width:current.width+'px',height:current.height+'px'});
     for(const control of current.controls)draw(control,$('original-screen'));
     $('page-name').textContent=current.name;$('original-page').value=current.id;
     $('live-matrix').href=`matrix.html?face=${MATRIX_PAGES[current.id]||'O'}&shell=0&kind=facet&index=1&from=${current.id}`;
     const advanced=/\d+ by \d+ Torus/.test(current.name);
     warn(advanced?'Original screen artwork. The working model stays 12 × 24.':'Original screen layouts and links. Live tools are available in the matrix.');
+    const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
+    if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue});
     fit();
   }
-  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),scale=fitOriginal(current.width,current.height,rect.width,rect.height);$('original-screen').style.transform=`scale(${scale})`;Object.assign($('original-frame').style,{width:current.width*scale+'px',height:current.height*scale+'px'});$('rotate-note').hidden=!(current.width>current.height&&rect.height>rect.width);}
+  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),scale=fitOriginal(current.width,current.height,rect.width,rect.height);$('original-screen').style.transform=`scale(${scale})`;Object.assign($('original-frame').style,{width:current.width*scale+'px',height:current.height*scale+'px'});live?.resize();$('rotate-note').hidden=!(current.width>current.height&&rect.height>rect.width);}
   for(const page of source.pages){const option=make('option',null,(page.parent?'  ':'')+page.name);option.value=page.id;$('original-page').append(option);}
   $('original-page').onchange=()=>go($('original-page').value);$('original-back').onclick=()=>go('command:back');$('original-home').onclick=()=>go(source.home);
   $('original-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{warn('Fullscreen is unavailable in this browser.');}};

@@ -15,6 +15,8 @@ header{height:79px;background:#fff;border-bottom:1px solid var(--line);display:f
 /* Fixed programmer workspace. Long user content scrolls only inside its editor. */
 [hidden]{display:none!important}
 body.compact-studio{height:100dvh;overflow:hidden;display:flex;flex-direction:column;background:#edf1f4}
+body.embedded-studio>header{display:none}
+@media(max-height:480px){.compact-studio .tool-rail{gap:2px;padding:2px}.compact-studio .tool-button{min-height:27px;padding:2px;flex-direction:row;gap:2px}.compact-studio .tool-button svg{width:15px;height:15px}.compact-studio .tool-button span{font-size:9px}}
 .compact-studio>header{height:54px;min-height:54px;padding:0 16px;flex-wrap:nowrap;gap:12px}
 .compact-studio .brand img{width:30px;height:30px}.compact-studio .brand strong{font-size:18px}.compact-studio .brand span{font-size:12px}
 .compact-studio .main-nav{width:auto;border:0;padding:0;gap:2px}.compact-studio .main-nav a{font-size:14px;padding:8px 10px}

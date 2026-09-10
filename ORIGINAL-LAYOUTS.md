@@ -1,8 +1,8 @@
 # Original Aura layouts
 
-10 September 2026, version 0.3.0.
+10 September 2026, version 0.3.1.
 
-The homepage now opens the original Aura Menu. Enter the Matrix leads to the original Matrix Programmer, with the original three buttons and their destinations. The working matrix editor lives at `matrix.html` and is reached through numbered map cells or the original torus artwork. Its return icon retains the source screen.
+The homepage now opens the original Aura Menu. Enter the Matrix leads to the original Matrix Programmer, with the original three buttons and their destinations. The finite and coloured torus sections now contain live geometry in the original graphic area. Compact tools open the full editor at `matrix.html` inside a dialogue; Done returns to the original source screen. Back arrows resolve to the logical parent.
 
 ## Source
 
@@ -27,8 +27,8 @@ The archive contains 145 page records. The source defines 621 links: 475 page de
 
 ## Working model and limits
 
-The working editor remains exactly 12 rows by 24 columns. Historical pages mentioning larger dimensions preserve original artwork and text only; they do not resize the working lattice. Numbered map links use the same 1 through 288 addresses. Inside and outside source maps open the corresponding side in the editor. Existing browser records and backups use the same storage key and schema.
+The working editor remains exactly 12 rows by 24 columns. Historical varying-size page IDs now open the corresponding coloured fixed torus. Source artwork and text remain intact in the archive manifest. Live overlays replace obsolete dimensions, pictures and camera captions in those sections. Inside and outside controls change the camera and address side in place. Existing browser data migrates to v3, which adds tables and the QuickStart cursor.
 
-The supplied matrix screenshots use images, text, buttons, icons and notification badges, which are reconstructed from their source controls. Browser font metrics and native widget rendering can differ from Mockplus. Elsewhere in the wider archive, some native charts, calendars and other widgets remain labelled placeholders; cover-flow graphics and the Android status bar are approximate. Extracting every page does not make every proposed feature operational.
+The supplied matrix screenshots use images, text, buttons, icons and notification badges, which are reconstructed from their source controls. Browser font metrics and native widget rendering can differ from Mockplus. Elsewhere in the wider archive, some native charts, calendars and other widgets remain labelled placeholders; the Android status bar remains approximate. QuickStart now replaces its original cover-flow placeholder with a working ten-card click, touch and swipe reader, with table collection and facet or stack allocation. Extracting every page does not make every proposed feature operational.
 
 Original prose about permissions, sharing, avatars and connected systems describes the design. No authentication, permission enforcement, synchronisation, avatar, clinical or external AI capability is added by this restoration. The active matrix stores records locally in the browser. Eight unassigned source links have no destination.
