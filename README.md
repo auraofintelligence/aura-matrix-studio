@@ -8,7 +8,7 @@ Aura Matrix Studio is the current working web implementation of Luke Nathan Haye
 
 ## Start with your everyday life
 
-Open **QuickStart** from the main menu. The book accepts clicks, touch and horizontal swipes, with animated page turns. Its short questions collect:
+The app opens at **Starting Point Aura / QuickStart**. The main Aura menu always uses landscape: on a portrait phone its layout turns sideways to fill the available screen, and returns upright when you turn the phone. This rotates the app content, not the browser or device orientation. Other pages keep their original layouts. The book accepts clicks, touch and horizontal swipes, with animated page turns. Its short questions collect:
 
 1. Your birthday.
 2. The original avatar questions.

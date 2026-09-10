@@ -74,3 +74,10 @@ On 10 September 2026, 46 Node tests and two Python market-filter tests passed. A
 Browser checks covered the favourites picker and an angled page-turn animation, accommodation maps with composed category/source/text filters, Travel Plans and a saved local test itinerary, travel QuickStart, the context preview, Crown navigation and the celestial views. The celestial controls and travel QuickStart were visually checked at 320 x 568; other flows were also reviewed at 360 x 640. Solar playback advanced the date and planet positions, and pause stopped it. The solar tab recorded no console errors.
 
 These are browser viewport checks, not tests on physical phones. Physical touch gestures, an actual camera feed, external calendar notifications and external agent execution were not exercised. Public deployment verification is reported separately after publishing. The original 145-page source archive remains unchanged.
+
+
+## Version 0.3.5: opening page and landscape menu
+
+The default route now opens Starting Point Aura / QuickStart; explicit page links retain their destination. The main Aura menu rotates its whole layout on a portrait viewport, including its links and camera layer. It returns upright on a landscape viewport. This is a layout rotation, not a browser or operating-system orientation lock. Other screens retain their original layout.
+
+All 48 Node tests passed. Added coverage checks default routes, camera aliases, transformed bounds and button coordinates. Browser review checked the opening page, the menu at 390 x 664 and 664 x 390, and the return link to QuickStart. No physical phone orientation lock is claimed.

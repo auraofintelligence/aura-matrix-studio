@@ -1,4 +1,4 @@
-import {blankProject,validateProject} from './core.js?v=0.3.4';
+import {blankProject,validateProject} from './core.js?v=0.3.5';
 export const TRAVEL='DAFCEEE9-7303-415D-975B-AB7176A59010',TIMELINES='2E5320C1-E2FE-4EE5-B62E-3CB9013D4010',CELESTIAL='04D7A1CD-024B-4CC1-8116-37139DF95A29';
 export const PROJECT_KEY='aura-matrix-studio:v4:project';
 export function readTravelProject(){const raw=[4,3,2,1].map(v=>localStorage.getItem(`aura-matrix-studio:v${v}:project`)).find(Boolean);return raw?validateProject(JSON.parse(raw)):blankProject();}

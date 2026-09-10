@@ -1,13 +1,13 @@
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.4';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.4';
-import {mountCelestial} from './celestial-clock.js?v=0.3.4';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.4';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.4';
-import {mountMenuCamera} from './menu-camera.js?v=0.3.4';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.4';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.4';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.4';
-import {mountLiveMatrix} from './original-live.js?v=0.3.4';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.5';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.5';
+import {mountCelestial} from './celestial-clock.js?v=0.3.5';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.5';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.5';
+import {mountMenuCamera} from './menu-camera.js?v=0.3.5';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.5';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.5';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.5';
+import {mountLiveMatrix} from './original-live.js?v=0.3.5';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -24,6 +24,13 @@ export function linkBounds(area,control){
   return coordinates?.length===4?[coordinates[0],coordinates[1],coordinates[2]-coordinates[0],coordinates[3]-coordinates[1]]:[0,0,+control.w,+control.h];
 }
 export function fitOriginal(width,height,availableWidth,availableHeight){return Math.max(.01,Math.min(availableWidth/width,availableHeight/height));}
+export function openingPage(id,pages){return pages.has(canonicalPage(id))?canonicalPage(id):QUICKSTART;}
+export function screenLayout(page,availableWidth,availableHeight){
+  const rotated=canonicalPage(page.id)===HOME&&availableHeight>availableWidth;
+  const scale=fitOriginal(page.width,page.height,rotated?availableHeight:availableWidth,rotated?availableWidth:availableHeight);
+  return {rotated,scale,width:(rotated?page.height:page.width)*scale,height:(rotated?page.width:page.height)*scale,
+    transform:rotated?`translateX(${page.height*scale}px) rotate(90deg) scale(${scale})`:`scale(${scale})`};
+}
 
 export async function startOriginal(){
   if(new URLSearchParams(location.search).has('inspect'))document.body.dataset.inspect='true';
@@ -99,7 +106,7 @@ export async function startOriginal(){
   }
 
   function show(id){
-    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(canonicalPage(id)!==id){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
+    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(canonicalPage(id)!==id){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(openingPage(id,pages));document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
     Object.assign($('original-screen').style,{width:current.width+'px',height:current.height+'px'});
     for(const control of current.controls)draw(control,$('original-screen'));
     $('page-name').textContent=current.name;$('original-page').value=current.id;
@@ -117,7 +124,7 @@ export async function startOriginal(){
     if([HOME,PROGRAMMER].includes(current.id))menuCamera=mountMenuCamera($('original-screen'));
     fit();
   }
-  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),scale=fitOriginal(current.width,current.height,rect.width,rect.height);$('original-screen').style.transform=`scale(${scale})`;Object.assign($('original-frame').style,{width:current.width*scale+'px',height:current.height*scale+'px'});live?.resize();$('rotate-note').hidden=!(current.width>current.height&&rect.height>rect.width);}
+  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=layout.rotated||!(current.width>current.height&&rect.height>rect.width);}
   for(const page of source.pages){const option=make('option',null,(page.parent?'  ':'')+page.name);option.value=page.id;$('original-page').append(option);}
   $('original-page').onchange=()=>go($('original-page').value);$('original-back').onclick=()=>go('command:back');$('original-home').onclick=()=>go(source.home);
   $('original-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{warn('Fullscreen is unavailable in this browser.');}};

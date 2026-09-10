@@ -1,9 +1,9 @@
-import {tripForm,goalForm} from './travel-ui.js?v=0.3.4';
-import {pageIcon} from './page-icons.js?v=0.3.4';
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.4';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.4';
-import {targetLabel} from './spatial.js?v=0.3.4';
-import {TORUS} from './original-routes.js?v=0.3.4';
+import {tripForm,goalForm} from './travel-ui.js?v=0.3.5';
+import {pageIcon} from './page-icons.js?v=0.3.5';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.5';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.5';
+import {targetLabel} from './spatial.js?v=0.3.5';
+import {TORUS} from './original-routes.js?v=0.3.5';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));

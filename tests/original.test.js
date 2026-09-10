@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
-import {bounds,linkBounds,fitOriginal,colour,MATRIX_PAGES} from '../original.js';
+import {bounds,linkBounds,fitOriginal,colour,MATRIX_PAGES,openingPage,screenLayout} from '../original.js';
+import {HOME,CAMERA_VARIANTS} from '../original-routes.js';
+import {QUICKSTART} from '../quickstart.js';
 
 const source=JSON.parse(readFileSync(new URL('../assets/mockplus/pages.json',import.meta.url),'utf8'));
 const pages=new Map(source.pages.map(p=>[p.id,p]));
@@ -51,4 +53,27 @@ test('inside and outside source maps route to the fixed working model',()=>{
   assert.equal(MATRIX_PAGES['A6C23855-5F57-4601-8F6A-02749BA0895E'],'O');
   for(const id of Object.keys(MATRIX_PAGES))assert.ok(pages.has(id));
   assert.ok(!MATRIX_PAGES['0D39C84A-0C31-40C0-BDEF-D8F334131ECB']);
+});
+
+test('the opening route is QuickStart while links and camera menu aliases retain their destinations',()=>{
+  for(const id of [null,undefined,'','missing'])assert.equal(openingPage(id,pages),QUICKSTART);
+  assert.equal(openingPage(HOME,pages),HOME);
+  const camera=Object.keys(CAMERA_VARIANTS).find(id=>CAMERA_VARIANTS[id]===HOME);
+  assert.equal(openingPage(camera,pages),HOME);
+  assert.equal(openingPage('DAFCEEE9-7303-415D-975B-AB7176A59010',pages),'DAFCEEE9-7303-415D-975B-AB7176A59010');
+});
+
+test('main menu fills landscape even on a portrait phone, without rotating QuickStart or losing hit targets',()=>{
+  const page=pages.get(HOME);
+  for(const [w,h]of [[320,568],[390,664],[568,320],[1280,720]]){
+    const layout=screenLayout(page,w,h);assert.equal(layout.rotated,h>w);
+    assert.ok(layout.width<=w+1e-8&&layout.height<=h+1e-8);
+    // Both opposing corners of a menu button stay within the transformed frame.
+    for(const c of page.controls)for(const [x,y]of [[+c.x,+c.y],[+c.x + +c.w,+c.y + +c.h]]){
+      if(x<0||y<0||x>page.width||y>page.height)continue;
+      const px=(layout.rotated?page.height-y:x)*layout.scale,py=(layout.rotated?x:y)*layout.scale;
+      assert.ok(px>=-1e-8&&px<=layout.width+1e-8&&py>=-1e-8&&py<=layout.height+1e-8);
+    }
+    assert.equal(screenLayout(pages.get(QUICKSTART),w,h).rotated,false);
+  }
 });
