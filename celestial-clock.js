@@ -1,6 +1,6 @@
-import {timingRows,timingDate,TIMING_GROUPS} from './timing-data.js?v=0.3.7';
-import {travelEntries,readTravelProject,writeTravelProject,saveTrip,dateValid,TIMELINES} from './travel-data.js?v=0.3.7';
-import {PLANETS,solarSystemState,orbitTracks,solarSystemSvg} from './solar-system.js?v=0.3.7';
+import {timingRows,timingDate,TIMING_GROUPS} from './timing-data.js?v=0.3.8';
+import {travelEntries,readTravelProject,writeTravelProject,saveTrip,dateValid,TIMELINES} from './travel-data.js?v=0.3.8';
+import {PLANETS,solarSystemState,orbitTracks,solarSystemSvg} from './solar-system.js?v=0.3.8';
 export const ZODIAC=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 export function clockState(A,date,hemisphere='south'){
  const sun=A.SunPosition(date).elon,phase=A.MoonPhase(date),rotation=A.SiderealTime(date),quarter=Math.floor(sun/90);

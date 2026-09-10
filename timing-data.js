@@ -1,5 +1,5 @@
-import {validateProject} from './core.js?v=0.3.7';
-import {dateValid} from './travel-data.js?v=0.3.7';
+import {validateProject} from './core.js?v=0.3.8';
+import {dateValid} from './travel-data.js?v=0.3.8';
 export const TIMING_PAGES={
  'DC827E51-FDDD-49EC-BB9D-7FFAE33159BC':'birthdays','951AAB58-F4AE-41E2-A790-4F204A0EC475':'milestones',
  '956F8AD0-B3EF-41E8-8817-89365312F363':'counters','F48AFCA1-102C-4305-981F-CF183DECB786':'schedules',

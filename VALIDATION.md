@@ -97,3 +97,12 @@ Automated coverage checks shared QuickStart row identity, goal/work date columns
 Browser review checked birthday previews and the complete schedule-to-reminder flow. A local test counter satisfied a linked threshold. Forms fit 320 x 568 and retained their designed orientation at 568 x 320. Earth review checked all eight layer switches, full Affinity display, Brisbane search, fitting results, and saving a named pin. Browser viewport tests do not establish physical-device performance or background notification delivery.
 
 All 57 Node tests and two Python market-filter tests passed. Every top-level JavaScript file passed syntax checks. The final Earth build retained search and map position between tall and wide frames; a centred pin in the rotated frame returned the saved point coordinates within map projection rounding. No console errors were recorded in the checked Earth and timing tabs.
+
+
+## Version 0.3.8: map selection and tap-to-zoom
+
+Pointer capture previously redirected clicks away from Leaflet's canvas markers. Selection now uses the same frame-coordinate conversion as dragging, with bounded touch targets and explicit group membership. A tap on a group zooms to its bounds; a single place zooms in and opens a compact information card. Coincident points and groups at maximum zoom can be read with previous/next cards. The permanent place list was removed, and search fits matching places.
+
+Direct coordinate clicks at 390 x 664 separated the Brisbane group twice, then opened the Consulate of Colombia - Brisbane card with its detail, category and coordinates. Automated tests cover marker target bounds, empty-map clicks and complete group membership.
+
+The same single-marker selection was verified with a direct coordinate click at 568 x 320 while the portrait frame was rotated. The selected marker remained visible beside its card. Dragging did not open a detail card. All 58 Node tests and two Python tests passed.

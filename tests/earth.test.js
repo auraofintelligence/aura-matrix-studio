@@ -2,11 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {blankProject,validateProject} from '../core.js';
-import {earthRows,filterEarth,importEarthPoints,saveEarthPoints,personalEarthRows,clusterEarth} from '../earth-data.js';
+import {earthRows,filterEarth,importEarthPoints,saveEarthPoints,personalEarthRows,clusterEarth,pickEarthMarker} from '../earth-data.js';
 const manifest=JSON.parse(readFileSync(new URL('../assets/earth/manifest.json',import.meta.url)));
 test('Earth retains every published Horn Torus layer and point with source metadata',()=>{
  assert.equal(manifest.layers.length,8);let total=0;for(const layer of manifest.layers){const data=JSON.parse(readFileSync(new URL('../'+layer.data,import.meta.url)));assert.equal(data.length,layer.mappedCount);total+=data.length;assert.ok(layer.publishedSource.startsWith(manifest.source));assert.ok(layer.snapshotSha256);for(const r of data){assert.ok(r[1]>=-90&&r[1]<=90&&r[2]>=-180&&r[2]<=180);}}
  assert.equal(total,91552);assert.equal(total,manifest.total);
+});
+test('marker picking retains every group member and uses a bounded touch target',()=>{
+ const rows=[{id:'a'},{id:'b'},{id:'c'}],groups=clusterEarth(rows,r=>r.id==='c'?{x:95,y:90}:{x:10,y:10});
+ assert.deepEqual(groups[0].members.map(r=>r.id),['a','b']);assert.equal(groups[1].count,1);
+ const markers=[{group:groups[0],point:{x:10,y:10},radius:15},{group:groups[1],point:{x:95,y:90},radius:5}];
+ assert.equal(pickEarthMarker(markers,{x:98,y:92}).group.first.id,'c');
+ assert.equal(pickEarthMarker(markers,{x:21,y:10}).group.count,2);
+ assert.equal(pickEarthMarker(markers,{x:50,y:50}),null);
 });
 test('Earth filters compose without applying the Affinity name rule to unrelated layers',()=>{
  const rows=[...earthRows({id:'world-cities'},[['Brisbane',-27,153,'Australia']]),...earthRows({id:'aura-affinity'},[['Yoga House',-27,153],['Unrelated business',-27,153]])],layers=new Set(['world-cities','aura-affinity']);

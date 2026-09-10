@@ -1,6 +1,6 @@
-import {framePoint} from './frame-display.js?v=0.3.7';
-import {pageIcon} from './page-icons.js?v=0.3.7';
-import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.3.7';
+import {framePoint} from './frame-display.js?v=0.3.8';
+import {pageIcon} from './page-icons.js?v=0.3.8';
+import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.3.8';
 export const SITEMAP='E3222692-1B76-4EAF-9517-C5E94323947C';
 const LABELS={'Aura Menu':'Main menu','QuickStart Aura':'QuickStart','We Are Family':'Family','Schedules':'Calendar','Public Life Goals':'Goals','Favorites Lists':'Favourites','Learning':'Skills & learning','Timelines':'Timing & signals','Private Wish Lists':'Hopes & wishes','Matrix Programmer':'Enter the matrix','System Preferences':'Settings','SiteMap':'Find your way'};
 export const SECTIONS=[['daily','Everyday'],['people','People'],['aura','Aura'],['places','Places'],['tools','Tools'],['all','All']];

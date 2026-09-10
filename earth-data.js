@@ -1,4 +1,4 @@
-import {parseCSV,validateProject} from './core.js?v=0.3.7';
+import {parseCSV,validateProject} from './core.js?v=0.3.8';
 export const EARTH='A54DE2EE-A009-467A-BE13-BA8C3BDF1018',EARTH_WIDE='665135E8-D026-47B2-8F17-01F31A8910C1';
 export const affinityName=name=>/(?<!\w)(aura|chakra|aurora|gajra|yoga|tai[ -]?chi|taichi)(?!\w)/iu.test(name.normalize('NFKD').replace(/\p{M}/gu,''));
 export function earthRows(layer,rows){return rows.map((r,i)=>({id:layer.id+':'+i,layer:layer.id,name:r[0],lat:r[1],lng:r[2],detail:r[3]||'',category:r[4]||'',url:/^https?:\/\//i.test(r[5]||'')?r[5]:'',search:r[6]||'',colour:layer.colour}));}
@@ -16,4 +16,7 @@ export function saveEarthPoints(project,points,source='Dropped pin'){
 }
 export function personalEarthRows(p){return p.tables.filter(t=>t.recommendation==='places'&&t.columns.includes('Latitude')&&t.columns.includes('Longitude')).flatMap(t=>t.rows.flatMap(r=>{const v=Object.fromEntries(t.columns.map((c,i)=>[c,r.values[i]]));try{return [{...point({name:v.Title,lat:v.Latitude,lng:v.Longitude,detail:v.Notes}),id:t.id+':'+r.id,layer:'personal',colour:'#e34b34',tableId:t.id,rowId:r.id}];}catch{return [];}}));}
 // Screen-space grouping draws every matching point, using count markers when close.
-export function clusterEarth(rows,project,size=30){const groups=new Map();for(const r of rows){const p=project(r);if(!p)continue;const key=Math.floor(p.x/size)+':'+Math.floor(p.y/size);let g=groups.get(key);if(!g){g={first:r,count:0};groups.set(key,g);}g.count++;}return [...groups.values()];}
+export function clusterEarth(rows,project,size=30){const groups=new Map();for(const r of rows){const p=project(r);if(!p)continue;const key=Math.floor(p.x/size)+':'+Math.floor(p.y/size);let g=groups.get(key);if(!g){g={first:r,count:0,members:[]};groups.set(key,g);}g.count++;g.members.push(r);}return [...groups.values()];}
+
+// Pick in the same original-frame coordinates used to draw and drag the map.
+export function pickEarthMarker(markers,point){let hit=null,distance=Infinity;for(const marker of markers){const d=Math.hypot(marker.point.x-point.x,marker.point.y-point.y);if(d<=Math.max(12,marker.radius)&&d<=distance){hit=marker;distance=d;}}return hit;}

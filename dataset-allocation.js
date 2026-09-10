@@ -1,5 +1,5 @@
-import {validateProject,address} from './core.js?v=0.3.7';
-import {remember,target} from './spatial.js?v=0.3.7';
+import {validateProject,address} from './core.js?v=0.3.8';
+import {remember,target} from './spatial.js?v=0.3.8';
 export function pendingRows(project,table){
   const assigned=new Set(project.records.filter(r=>r.fields['Aura table ID']===table.id).map(r=>r.fields['Aura row ID']));
   return table.rows.filter(r=>!assigned.has(r.id));
