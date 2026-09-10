@@ -27,3 +27,12 @@ The user reviews the pack, then copies or downloads it for their chosen AI. No L
 ## Source boundaries
 
 The travel seed contains names, city names and the source's approximate country coordinates only. Visa, advisory and activity claims are not copied or silently redated. Use the linked planning tools for their dated source material. Personal travel entries, plans and context packs remain in the user's browser or their own downloaded files.
+
+
+## Timing rules and Earth places, version 0.3.7
+
+The ten Timing and Signals pages now edit shared table rows from QuickStart. Milestones includes goals; Learning includes skills. Recurrences, reminder lead minutes, stop dates, numeric table conditions, agent instructions and matrix sequence references stay in those same rows. The Preview tab calculates the next three local reminder times and tests the condition against the current saved value. Save and export writes an aura-timing-rule/1 manifest with its real table and row reference. Nothing runs in the background.
+
+Crown Earth includes all eight layers in the published Horn Torus manifest. The snapshot contains 91,552 source records, with source metadata and hashes in assets/earth/manifest.json. tools/build_earth_data.py refreshes it from the published source without executing its JavaScript. Affinity matching is an optional display filter; all source records remain in the snapshot. Map markers are grouped by screen position for performance, without sampling away records.
+
+Named pins and GeoJSON/CSV point imports use the My Earth places table. Online OpenStreetMap tiles form the base map. Local datasets, layer switches, source notes, search and point lists are independent of Google APIs. Lines, polygons, offline tiles and satellite feeds are future work.

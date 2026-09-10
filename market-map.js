@@ -15,7 +15,7 @@ export function filterMarket(records,{category='all',source='all',query=''}={}){
  return records.filter(r=>(category==='all'||r.category===category)&&(source==='all'||r.source===source)&&words.every(w=>normalise(r.name+' '+r.place+' '+MARKET_CATEGORIES[r.category]).includes(w)));
 }
 let library;
-function loadMap(){
+export function loadMap(){
  if(window.L)return Promise.resolve(window.L);
  if(!library)library=new Promise((resolve,reject)=>{const css=document.createElement('link');css.rel='stylesheet';css.href='vendor/leaflet/leaflet.css';document.head.append(css);const script=document.createElement('script');script.src='vendor/leaflet/leaflet.js';script.onload=()=>resolve(window.L);script.onerror=()=>{library=null;script.remove();reject(Error('The map could not load. Close and try again.'));};document.head.append(script);});
  return library;
@@ -55,7 +55,7 @@ export function mountMarket({page,screen}){
  }
  async function open(mode='Map'){
   const token=++opening;category.value=MARKET_PAGES[page.id];source.value='all';search.value='';dialog.showModal();
-  try{const [L,loaded]=await Promise.all([loadMap(),data||fetch('assets/market-data.json?v=0.3.6').then(r=>{if(!r.ok)throw Error('Places could not load. Close and try again.');return r.json();})]);if(disposed||!dialog.open||token!==opening)return;data=loaded;
+  try{const [L,loaded]=await Promise.all([loadMap(),data||fetch('assets/market-data.json?v=0.3.7').then(r=>{if(!r.ok)throw Error('Places could not load. Close and try again.');return r.json();})]);if(disposed||!dialog.open||token!==opening)return;data=loaded;
    if(!map){map=L.map(canvas,{preferCanvas:true,minZoom:0,maxZoom:19}).setView([-15,135],2);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);layer=L.layerGroup().addTo(map);}
    map.invalidateSize();sourcesInfo();refresh();if(mode!=='Map')search.focus();
   }catch(e){if(!disposed)status.textContent=e.message;}

@@ -88,3 +88,12 @@ Each frame retains its source orientation in phone-sized viewports (a shortest s
 Matrix sizing and pointer coordinates, plus QuickStart, favourites and preview swipes, account for the rotated frame. Browser checks verified a sideways favourites-book swipe advances to the next page and a tap on the rotated torus selects a facet. No console errors were recorded in that test tab.
 
 Favourite options and the flipbook use nine relational groups. The picker adapts its row count to the available height; 15 icon choices were visually checked at 390 x 664. Search spans all groups. Tests confirm all 141 destinations occur exactly once, related tasks stay together, and all 145 original frame bounds fit after rotation. All 50 Node tests passed.
+
+
+## Version 0.3.7: timing editors and Crown Earth
+
+Automated coverage checks shared QuickStart row identity, goal/work date columns, repeat intervals, leap birthdays, month-end dates, long date gaps, lead times, paused signals, numeric conditions, missing references, and backup preservation. Earth checks cover every source layer and all 91,552 coordinate records, composed filters, grouping counts, point imports and atomic rejection of invalid data.
+
+Browser review checked birthday previews and the complete schedule-to-reminder flow. A local test counter satisfied a linked threshold. Forms fit 320 x 568 and retained their designed orientation at 568 x 320. Earth review checked all eight layer switches, full Affinity display, Brisbane search, fitting results, and saving a named pin. Browser viewport tests do not establish physical-device performance or background notification delivery.
+
+All 57 Node tests and two Python market-filter tests passed. Every top-level JavaScript file passed syntax checks. The final Earth build retained search and map position between tall and wide frames; a centred pin in the rotated frame returned the saved point coordinates within map projection rounding. No console errors were recorded in the checked Earth and timing tabs.

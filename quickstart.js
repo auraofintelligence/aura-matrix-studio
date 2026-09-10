@@ -1,10 +1,10 @@
-import {framePoint} from './frame-display.js?v=0.3.6';
-import {tripForm,goalForm} from './travel-ui.js?v=0.3.6';
-import {pageIcon} from './page-icons.js?v=0.3.6';
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.6';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.6';
-import {targetLabel} from './spatial.js?v=0.3.6';
-import {TORUS} from './original-routes.js?v=0.3.6';
+import {framePoint} from './frame-display.js?v=0.3.7';
+import {tripForm,goalForm} from './travel-ui.js?v=0.3.7';
+import {pageIcon} from './page-icons.js?v=0.3.7';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.7';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.7';
+import {targetLabel} from './spatial.js?v=0.3.7';
+import {TORUS} from './original-routes.js?v=0.3.7';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));

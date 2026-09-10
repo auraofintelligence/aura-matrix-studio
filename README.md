@@ -57,6 +57,22 @@ The starting goal of 256 destinations over 10 years is editable. It is a persona
 
 Trips can hold departure and return dates, seasonal region, preferred season, purpose and personal astrology notes. Dated trips appear in the travel timeline and can open Crown's celestial tools at that date. Travel Plans also links to the World Travel route and logistics tools, the Visa & Activity Atlas and the Strange But True Travel Oracle.
 
+## Working Timing and Signals pages
+
+QuickStart birthdays, key dates, schedules, skills and goals appear in their matching Timing and Signals sections. Ten working pages replace the old placeholders: Birthdays, Milestones and goals, Counters, Schedules, Reminders, Ceremonies, Learning, Work, Weather signals and Community. The original timing menu shows saved-entry counts.
+
+Each entry has compact Details, When, If, Action and Preview tabs. Set daily, weekly, monthly or yearly repeats, intervals, stop dates and advance reminder minutes. Conditions compare a current numeric table value with a threshold. Actions hold instructions, JSON data and an optional matrix sequence. Preview the next three reminders and the current condition result, then save or export an `aura-timing-rule/1` manifest for an agent. Editing preserves the original table and row identity.
+
+Times use the current device's local time. Monthly repeats use the final day of shorter months; 29 February birthdays use 28 February in other years. Rules are stored and previewed locally; background notifications, email/SMS delivery and automatic execution are not connected.
+
+## Crown Earth map
+
+Crown's Earth icon opens a working map in the original portrait or landscape frame. All eight published Horn Torus layers are included: 91,552 source point records covering starter places, First Aura Alliance, North Stradbroke references, Australian missions abroad, world cities, universities and education, foreign missions in Australia, and Aura Affinity.
+
+Switch layers, search across names and locations, fit the results, or zoom into count markers. The Affinity name filter is on initially and can be switched off to inspect the complete snapshot; it never removes places from unrelated layers. Sources, dates, coordinate precision and original qualifications remain available under Layers. This is a dated snapshot, not a live registry.
+
+Drop named pins or import named GeoJSON Point/MultiPoint features and CSV with name, latitude and longitude columns. Personal places are saved in Aura tables and normal project backups, ready for facet or stack allocation. Imports of lines and polygons are not supported yet. OpenStreetMap supplies the online base tiles; Google Maps is not required. The page supports drag and pin placement in rotated frames.
+
 ## Crown, celestial movements and Timing and Signals
 
 **Crown's star icon owns the celestial section.** Timing and Signals supplies dates and context to it. The celestial back arrow returns to Crown.

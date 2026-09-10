@@ -1,14 +1,18 @@
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.6';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.6';
-import {mountCelestial} from './celestial-clock.js?v=0.3.6';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.6';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.6';
-import {mountMenuCamera} from './menu-camera.js?v=0.3.6';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.6';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.6';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.6';
-import {mountLiveMatrix} from './original-live.js?v=0.3.6';
-import {frameOrientation} from './frame-display.js?v=0.3.6';
+import {mountEarth} from './earth-map.js?v=0.3.7';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.3.7';
+import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.3.7';
+import {TIMING_PAGES} from './timing-data.js?v=0.3.7';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.7';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.7';
+import {mountCelestial} from './celestial-clock.js?v=0.3.7';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.7';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.7';
+import {mountMenuCamera} from './menu-camera.js?v=0.3.7';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.7';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.7';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.7';
+import {mountLiveMatrix} from './original-live.js?v=0.3.7';
+import {frameOrientation} from './frame-display.js?v=0.3.7';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -118,7 +122,9 @@ export async function startOriginal(){
     const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
     if(MARKET_PAGES[current.id])live=mountMarket({page:current,screen:$('original-screen')});
     if(current.id===TRAVEL)live=mountTravel({page:current,screen:$('original-screen'),go});
-    if(current.id===TIMELINES)live=mountTravelTimeline({screen:$('original-screen'),go});
+    if(current.id===TIMELINES){live=mountTravelTimeline({screen:$('original-screen'),go});mountTimingBadges({page:current,screen:$('original-screen')});}
+    if(TIMING_PAGES[current.id])live=mountTiming({page:current,screen:$('original-screen'),go});
+    if([EARTH,EARTH_WIDE].includes(current.id)){live=mountEarth({page:current,screen:$('original-screen'),go});document.title='Earth map | Aura of Intelligence';}
     if(current.id===CELESTIAL)live=mountCelestial({page:current,screen:$('original-screen'),go});
     if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue});
     if(current.id===FAVOURITES)live=mountFavourites({page:current,screen:$('original-screen'),pages,go});

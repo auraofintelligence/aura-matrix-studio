@@ -1,12 +1,12 @@
-import {astronomy,clockState} from './celestial-clock.js?v=0.3.6';
-import {solarSystemState} from './solar-system.js?v=0.3.6';
-import {readTravelProject,dateValid} from './travel-data.js?v=0.3.6';
-export const CONTEXT_GROUPS={time:['life-events','schedules','counters','ceremonies'],travel:['journeys'],goals:['goals'],people:['relationships','commitments'],learning:['learning','work'],ideas:['inspiration','values','reflections','observations']};
+import {astronomy,clockState} from './celestial-clock.js?v=0.3.7';
+import {solarSystemState} from './solar-system.js?v=0.3.7';
+import {readTravelProject,dateValid} from './travel-data.js?v=0.3.7';
+export const CONTEXT_GROUPS={time:['life-events','schedules','counters','ceremonies','community','environment'],travel:['journeys'],goals:['goals'],people:['relationships','commitments'],learning:['learning','work'],ideas:['inspiration','values','reflections','observations']};
 export function buildTimeContext(project,{groups=['time','travel','goals'],includeMatrix=false,from='',to='',engine=null}={}){
  if(!dateValid(from)||!dateValid(to)||from&&to&&to<from)throw Error('Choose a valid date window.');
  const recommendations=new Set(groups.flatMap(g=>CONTEXT_GROUPS[g]||[]));
  const tables=project.tables.filter(t=>recommendations.has(t.recommendation)).map(t=>({...structuredClone(t),rows:t.rows.filter(r=>{
-  if(!from&&!to||['life-events','schedules'].includes(t.recommendation))return true; // Birthdays and repeating signals need their recurrence context, even with an old starting date.
+  if(!from&&!to||['life-events','schedules'].includes(t.recommendation)||r.values[t.columns.indexOf('Repeat')]&&r.values[t.columns.indexOf('Repeat')]!=='None')return true; // Birthdays and repeating signals need their recurrence context, even with an old starting date.
   const value=c=>r.values[t.columns.indexOf(c)]||'',date=value('Date')||value('Target date')||value('Due date'),end=value('Return date')||date;
   return !date||!dateValid(date)||(!from||end>=from)&&(!to||date<=to);
  })}));
