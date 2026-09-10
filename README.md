@@ -1,127 +1,129 @@
-# Aura Matrix Studio
+# Aura of Intelligence
 
-Luke Nathan Hayes' original Aura phone app layouts and navigation, connected to a working fixed 12 by 24 matrix editor and animated explanations.
+Aura brings the scattered parts of everyday life into one personal interface: family birthdays, reminders, calendars, skills, goals, hopes, favourites, learning and travel. The aim is to make useful connections between those things and have the right information ready when a person or their AI assistant needs it.
 
-## Open it on this laptop
+**[Open the public Aura app](https://auraofintelligence.github.io/aura-matrix-studio/)**
 
-Double-click **Start Aura.cmd** in this folder. It opens the app at <http://127.0.0.1:4318/>. Node.js is installed on this laptop. The launcher starts a small local server in the background and reuses it when already running.
+Aura Matrix Studio is the current working web implementation of Luke Nathan Hayes' Aura of Intelligence. It combines the original phone app's layouts and icons with a programmable, fixed 12 x 24 matrix. The matrix is one part of the wider Aura interface. This is a developing public-source application; some original screens still contain design placeholders.
 
-The app opens at the original **Aura Menu**. Its **Enter the Matrix** image opens the original Matrix Programmer. Choose **Finite Map** or **Infinite Map** to use the live matrix in its original screen. **Tools** opens the full editor; **Done** returns to the torus. **QuickStart** opens the ten-page click, touch and swipe book. The editor remains directly available at `matrix.html`; its Inventory, Explainer and Help links open the working tools.
+## Start with your everyday life
 
-Original pages retain their source orientation and scale uniformly to fit the screen. Most matrix screens were designed at 640 by 360 in landscape; portrait pages retain their 360 by 640 layout. They do not rearrange buttons on smaller screens. `?inspect=1` exposes an optional page selector for reviewing the whole archive.
+Open **QuickStart** from the main menu. The book accepts clicks, touch and horizontal swipes, with animated page turns. Its short questions collect:
 
-## Fixed address contract
+1. Your birthday.
+2. The original avatar questions.
+3. Family and important people, including birthdays.
+4. Key dates and life events.
+5. Timing, signals and reminders.
+6. Favourites.
+7. Skills and learning.
+8. Goals and hopes.
+9. Places you have travelled, places you want to visit and your travel goal.
+10. Tables and allocation into the matrix.
 
-- Every shell is exactly 12 rows by 24 columns: 288 cells.
-- Seven shells: Red, Orange, Yellow, Green, Blue, Indigo and Violet.
-- Each cell has an inside I address and an outside O address: 4,032 face addresses in total.
-- Example canonical address: `Red I97`. This matches `aura-spatial-perception/lib/aura-geometry.ts` and the horn-torus project.
-- A cell can hold multiple records. Importing more than 288 records does not increase the matrix dimensions.
-- Cell identities are independent of display triangles, transformations and camera positions.
+You can skip questions and return later. Information becomes editable tables rather than a discarded onboarding questionnaire. The catalogue contains 37 recommended datasets covering the 145 original source pages. Suggested chakra associations are philosophical, editable and may include more than one chakra.
 
-The source workbook's changing matrix dimensions are deliberately excluded, following Luke's explicit decision on 10 September 2026.
+## Find things and build your own shortcuts
 
-## What works
+The page finder offers everyday icons, search, category filters and page previews. It currently has 141 distinct destinations. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.
 
-Select through the 3D surface or keyboard-accessible numbered map. Change shell and face. Create, edit and remove records. Add labelled directed connections. Import a CSV with chosen columns and placement, retaining all source fields. Search the inventory. Download and restore validated JSON backups. Undo changes made during this session.
+**Favourites** retains the original 25-slot layout. Tap an empty square to select a page and its icon. Edit mode replaces, moves or clears a shortcut; moving onto an occupied slot swaps them. The turning book below cycles through page icons and titles. Tap the page to open it, or the star to add it to your favourites. Named shortcut menus can be created and renamed. Old blank or arrow icons are replaced with the destination's artwork.
 
-The explainer supports six fixed-grid poses, camera transitions, editable captions and durations, duplicate/remove/reorder, playback, scrubbing, PNG export, real-time 720p WebM capture and a geometry-only JSON sequence. It does not generate sound. The Blender importer creates an additional scene with animated wire lattices, a camera, and captions retained as timeline markers.
+The main menu and matrix programmer can place their controls over a camera feed. Camera use starts only after you request it and grant browser permission; tracks stop when you switch it off, leave the page or hide the tab. Nothing is recorded or uploaded.
 
-Browser state is localStorage under `aura-matrix-studio:v3:project`. Existing v2 or v1 data is read on first use and saved in v3 when changed; older tabs cannot overwrite the new tables. Reload older tabs before continuing. The original layout manifest and artwork load from the same site. No account, tracking, model API or cloud storage is used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
+## Enter the matrix
 
-## Architecture
+Every shell stays **12 rows x 24 columns**, or 288 facets. The seven shells are Red, Orange, Yellow, Green, Blue, Indigo and Violet. Each has inside and outside addresses, giving 4,032 face addresses. The underlying address does not change when the display transforms between a flat matrix, cylinder, torus, nested shells or body arrangement.
 
-`core.js` is independent of browser rendering: fixed lattice, continuous roll-path equations, record and link validation, CSV import and timeline interpolation. `renderer.js` draws those identities with a pinned, locally included Three.js r128. `app.js` connects the working pages and local storage. `tools/blender_import.py` translates the same geometry and timeline to Blender. No build service or package installation is required to serve the application.
+Selections are remembered separately for each shell and side. Select one or several facets, use the numbered map, move inside the chosen torus, or work with edges, vertices and cubic volume points. Rays terminate at actual vertices; the coincident horn registers do not create a ray sticking out of the torus.
 
-The application uses relative paths and plain static assets, suitable for a GitHub Pages project URL. There is no backend to deploy. Do not put private backups, supplied source archives or personal records in the repository. `.gitignore` excludes generated test outputs and videos.
+Attach records, data, instructions and asset links to an address. Stack additional facets outward to represent ordered steps. Each layer advances its 24-bit colour code by one, while its full address also retains shell, side, facet and layer. The corner badge shows the added layer count. Explode the stack to inspect its steps; collapse it to keep the model compact.
 
-## Validation
+Display height is independent of program length. Up to 256 layers are all drawn; larger stacks show evenly spaced samples and the selected layer, with an explicit sampled indicator. The complete addressed sequence is retained. The model supports up to 16,777,215 added layers without allocating a separate object for each one.
 
-Run `node --test tests/*.test.js`.
+## Tables, instructions and agent programs
 
-The suite checks the fixed dimensions, 4,032 distinct addresses, analytic closed horn geometry, wrapped neighbours, continuous/reversible seeking, 600-row CSV placement, backup round trips, malformed imports, source links and duplicate HTML IDs. It writes a cross-runtime fixture under ignored `test-results/`.
+Create tables or import CSV, keep your own columns, then preview allocation to consecutive facets or ordered stack steps. Repeated allocation adds only new rows. Editing a table does not silently overwrite records already copied into the matrix; those copies remain editable through the matrix tools.
 
-For Blender: run the importer from the Scripting workspace and choose the exported JSON. Automation can use `blender --background --python tools/blender_import.py -- explainer.json output.blend`. The importer adds a new scene and preserves existing scenes. The renderer samples the mathematical trajectory six times per second and Blender interpolates those baked poses; captions are timeline markers, not rendered text. The browser uses continuous evaluation.
+Programs support ordered Visit, Recall and Pause steps, repetitions and compact stack spans. The browser can run those local operations. Recall exposes the attached instructions, required data and asset references. Export a program as `aura-agent-program/1` JSON or as a generated `SKILL.md` containing the same manifest.
 
-See `VALIDATION.md` for the checks actually performed and remaining review gaps.
+These exports prepare work for an external agent. They do not install a skill, schedule an automation, call an LLM or authorise external actions automatically. Numerical vectors can be attached separately from their three-dimensional display position; no embedding or learning model is connected yet.
 
-## Source and design provenance
+## Travel Plans
 
-The supplied `Aura MockPlus Prototype - Alpha.mp` contains 145 page records, 621 link definitions and 153 referenced artwork files. Version 0.3.0 extracts the original coordinates, text, fonts, nested controls, link areas and artwork using `tools/import_mockplus.py`. All artwork matches the archive byte for byte. See `ORIGINAL-LAYOUTS.md` for the screenshot mapping and current limits. The source archive remains untouched and outside this repository. The rejected `aura-of-intelligence-web-app` was not used.
+Travel Plans starts with 201 seed destinations from the existing Australian World Travel and Visa & Activity Atlas projects. Mark destinations **Visited**, **Want to go** or **Planned**, or add any country, island, territory, disputed region or other place yourself.
 
-Geometry derives from the roll path in [Aura Horn Torus](https://auraofintelligence.github.io/aura-horn-torus/geometry.html) and the canonical addressing in Aura Spatial Perception. The deeper [personal Aura](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/personal-aura.html), [machinery](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/under-the-aura.html), [modelling harness](https://auraofintelligence.github.io/aura-direct-hardware/harness.html) and [learning](https://auraofintelligence.github.io/aura-direct-hardware/learning.html) pages informed the separation of addresses, relationships and learning. The original supplied documents remain outside this repository.
+The starting goal of 256 destinations over 10 years is editable. It is a personal target, not a fixed country count or a limit on the list. Repeat visits to the same named destination count once towards progress.
 
-Browser capture uses [canvas captureStream](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream) and [MediaRecorder](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder). Capture is real time; output smoothness depends on the laptop and browser.
+Trips can hold departure and return dates, seasonal region, preferred season, purpose and personal astrology notes. Dated trips appear in the travel timeline and can open Crown's celestial tools at that date. Travel Plans also links to the World Travel route and logistics tools, the Visa & Activity Atlas and the Strange But True Travel Oracle.
 
-## Next implementation steps
+## Crown, celestial movements and Timing and Signals
 
-Review the selection, camera, stacking and sequence interactions on phone and laptop. Then add explicit record movement and dataset group operations. Add a desktop Tauri wrapper with a dedicated data store and backup/migration tests. Learned associations and executable rules should consume the stable records and links, with repeatable comparisons that demonstrate any improvement. A new matrix size is not required for any of these steps.
+**Crown's star icon owns the celestial section.** Timing and Signals supplies dates and context to it. The celestial back arrow returns to Crown.
 
-No AI learning, authentication, encryption, synchronisation, hardware control, avatar or VR system is claimed by this prototype.
+The celestial section includes the Sun, all eight major planets and Earth's Moon, using locally calculated positions for the selected date. Choose the compact solar system, a view with projected distances to scale, the inner planets, or an Earth-Moon and rotation diagram. Compact distances are logarithmically compressed; planet markers and Moon separation are enlarged and labelled. This is a calculated map, not a photograph or a satellite feed.
+
+Change the UTC date, animate time, inspect a planet, or jump to the next new or full Moon. Dates can come from travel plans, birthdays, life events, schedules, counters and ceremonies. A selected date can be saved back as a trip's departure. The clock shows astronomical seasons by hemisphere, tropical Sun signs, lunar phase and Earth rotation. Personal astrology interpretations remain separate from calculated positions.
+
+Timing and Signals also provides **Prepare AI context**. Choose relevant tables and a date window, inspect the resulting information, then copy or download it for your chosen AI. The pack retains data, notes, instructions and facet references, with calculated celestial context for dated trips. Nothing is sent automatically.
+
+## Market maps
+
+Market pages open a map filtered to their category, including accommodation, creative industries, events, health and wellbeing, and cities. Search by name, place or service, switch between sources, or view the matching results.
+
+The map carries **316 original Aura Alliance places** and **10,528 filtered Affinity candidates** from the Horn Torus project's snapshots. Gold and blue distinguish the sources. Whole-name-word matching removes many unrelated substring matches from the Affinity automation's results. These are candidates, not confirmed alliance memberships. The upstream Affinity automation has not been changed by this release.
+
+The map uses locally bundled Leaflet and OpenStreetMap tiles with attribution. It works without a Google Maps key. Other Horn Torus layers, map-data imports, dropped pins and an optional Google Maps provider remain future additions. See [map sources and filtering](MARKET-DATA.md).
+
+## Explain and animate Aura
+
+The explainer includes six fixed-grid poses, editable camera transitions, captions and durations, playback and scrubbing. Export a PNG, real-time 720p WebM recording or geometric JSON sequence. The Blender importer builds an additional scene from that geometric sequence while preserving existing scenes.
+
+The Blender bridge currently handles the geometric explainer, not the newer record tables, stack programs or celestial tools. Browser recordings have no generated audio; smoothness depends on the device.
+
+## Related Aura projects
+
+| Project | Connection to this app |
+| --- | --- |
+| [Aura of Intelligence](https://auraofintelligence.github.io/) | The wider public project collection. |
+| [Aura Horn Torus](https://auraofintelligence.github.io/aura-horn-torus/) | Geometry, map layers and the wider torus research interface. |
+| [Luke Nathan Hayes: Man and Mind](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/index.html#top) | Personal narrative and examples of connecting assets to individual facets. |
+| [Aura Direct Hardware](https://auraofintelligence.github.io/aura-direct-hardware/) | The longer-term compute and hardware direction. |
+| [Aura Spatial Perception](https://auraofintelligence.github.io/aura-spatial-perception/) | Canonical addressing and exploratory spatial perception work. |
+| [Aura Affinity](https://auraofintelligence.github.io/aura-affinity/) | Source of automated place candidates; the market map adds its own filtering. |
+| [Australian World Travel](https://auraofintelligence.github.io/Australian-world-travel/) | Existing route, strategy and logistics planning tools. |
+| [Australian Visa & Activity Atlas](https://auraofintelligence.github.io/Australian-visa-activity-atlas/) | Destination, visa and activity research tools. |
+| [Strange But True Travel Oracle](https://auraofintelligence.github.io/strange-but-true-travel-oracle/) | Additional travel planning and builder tools. |
+| [Virtual Solar Swarm](https://auraofintelligence.github.io/virtual-solar-swarm/) | Related solar-system and satellite design studies for future connections. |
+
+These projects inform and complement Aura; linking them does not mean every feature or dataset has already been integrated. Travel entry requirements and advisories remain with their dated source tools rather than being copied as current facts.
+
+## Run locally and keep your data
+
+On this Windows laptop, double-click **Start Aura.cmd**. It uses Node.js to serve the app at [127.0.0.1:4318](http://127.0.0.1:4318/) and reuses an existing server. Alternatively, serve this repository with any static web server. No build service, account or backend is required.
+
+Personal tables, favourites, records and programs stay in browser storage under `aura-matrix-studio:v4:project`. Older v3, v2 or v1 projects are read when v4 is absent. Reload older app tabs before continuing. Download a project JSON backup regularly; browser storage can be cleared, and different browsers or origins have separate copies.
+
+The public repository does not contain your personal project data. GitHub Pages projects under the same account share an origin, so this browser edition is not a secure personal vault. Inside/outside matrix addresses do not provide encryption. External map tiles and links use the network; personal project records are not automatically sent to them.
+
+## What remains to build
+
+Calendar synchronisation, dependable scheduled notifications, an external agent runner, learned associations, richer avatar features, desktop packaging and a dedicated local data store remain future work. Existing forms collect their relevant data but do not yet provide all those services.
+
+Earth, space-weather and satellite pattern research is a longer-term direction. No satellite feed, forecasting system, predictive astrology service, hardware controller or external automation is enabled. The fixed 12 x 24 address model remains the foundation across implementations.
+
+## Development and reference notes
+
+Run `node --test tests/*.test.js` and `python tools/test_market_filter.py`. The checks cover fixed geometry, per-shell selections, inside cameras, stack spacing and colours, backups, table allocation, navigation, icons, market filtering, travel records and celestial calculations. GitHub Actions validates and publishes the static site.
+
+The original Mockplus archive contains 145 page records, 621 link definitions and 153 referenced artwork files. The archive stays outside this repository and is not modified. Original artwork and coordinates are preserved as source material; working overlays replace specific placeholders and navigation problems. Portrait and landscape source layouts scale to fit their respective screens.
+
+See [original layouts](ORIGINAL-LAYOUTS.md), [dataset catalogue](DATASET-CATALOGUE.md), [market data](MARKET-DATA.md), [travel and timing](TRAVEL-AND-TIMING.md), [future directions](FUTURE-DIRECTIONS.md) and [validation notes](VALIDATION.md) for details and limitations. Earlier validation notes describe their named releases; current checks run through the repository workflow.
+
+Geometry follows the [Horn Torus roll path](https://auraofintelligence.github.io/aura-horn-torus/geometry.html). The [personal Aura](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/personal-aura.html), [under the Aura](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/under-the-aura.html), [hardware harness](https://auraofintelligence.github.io/aura-direct-hardware/harness.html) and [learning](https://auraofintelligence.github.io/aura-direct-hardware/learning.html) pages inform the separation of addresses, relationships and learning.
 
 ## Licence
 
-Original code, design and content: Luke Nathan Hayes / Strange But True / Aura of Intelligence, under `LICENCE.md`. This is the Strange But True Public Source Licence, not a standard open-source licence. The included Three.js library remains MIT licensed; see `vendor/THREE-LICENSE.txt`.
+Original code, design and content are by **Luke Nathan Hayes / Strange But True / Aura of Intelligence**, under the [Strange But True Public Source Licence](LICENCE.md). This is a public-source licence, not a standard open-source licence. Read its terms before reuse.
 
-## Spatial programming update
-
-Selections are persisted independently for each shell and side. A new shell has no active selection. Inside moves the camera into the selected closed torus; Outside restores the exterior orbit. Open geometry uses a reverse-side view.
-
-`spatial.js` defines typed facet, edge-U, edge-V, vertex, volume and stack targets. Vertex labels retain the canonical R/L registers. Edge labels are this application's explicit E-U/E-V extension. Stack addresses combine shell, face, base facet and layer, with a computed 24-bit RGB colour code. 24-bit colour is an additional code, not a replacement for the full address.
-
-The cubic volume stores explicit 3D display positions separately from arbitrary-length numeric vectors. Its normalised display cube maps [-1,1] to [-4.4,4.4] in the scene. Vector entries may bind to geometry and accompany directly attached records in an agent export. No embedding model is called.
-
-Outward stack counts exclude the base facet. A corner +N badge reports added layers. Display height grows to a compact maximum of 1.2 scene units, with uniform spacing for every layer. Explode expands that height by up to four times; the outside camera fits the stack bounds at the reset zoom, including portrait viewports. User zoom remains available. Stacks through 256 layers draw every layer. Larger stacks draw 256 evenly spaced samples plus the selected layer, with an explicit sampled badge; the complete stack is addressed lazily up to 16,777,215 added layers. Explode changes only display spacing. Layer cards page through all steps.
-
-Records may additionally hold `anchor`, `instructions`, `data` (JSON) and `asset.url`. Old records and backups remain accepted. HTTP/HTTPS asset URLs are references, not uploaded files. The original public facet-to-asset pattern was reviewed in the personal story site's `index.html` and linked horn-torus interface.
-
-Programs support ordered Visit, Recall and Pause steps, optional repetition and compact stack spans. The browser executes these operations locally. Recall emits the entire attached record, including instructions, data, fields and asset reference. Programs and all spatial data are included in backups. `aura-agent-program/1` exports the chosen program and directly attached inputs. The generated SKILL.md embeds that same manifest; no skill is installed and no scheduled automation is created automatically. External agent tool execution requires a runner and the current user's authorisation.
-
-The Blender bridge still exports the original geometric explainer sequence only. The newer records, volume entries, stack programs and explosion controls remain in the browser and JSON/skill exports.
-
-The v2 browser storage key reads the earlier v1 project on first use and writes future changes separately. This preserves existing records while preventing an older open tab from overwriting the new spatial data. The old key is not deleted.
-
-Vertex rays terminate at the actual geometry position. Zero-length rays at the horn seam are omitted from the display; the 24 seam register identities remain intact. No artificial positive-Y ray is drawn.
-
-
-## Compact workspace and facet groups (0.2.3)
-
-The programmer uses a fixed viewport, an icon-and-label tool rail and a collapsible editor. Shape and inside/outside controls remain beside the model. Record fields and sequence controls use short pages; stack cards show four steps per page. The phone map pages through 6-row by 8-column windows without changing any of the 12 by 24 addresses. Larger displays retain the complete map. Long user data can still scroll inside its editor. `workspace.js` reparents existing editors, preserving their handlers and field contents.
-
-Multi-selection works in the model and numbered map, with a visible mode switch, modifier clicks and Select all. `facetSelections` stores ordered groups independently for each shell/side, separately from the active record address. Groups survive backups and reloads. Stack counts can be applied to a group atomically and undone; orphaned stack records are rejected. Sequence append follows selection order.
-
-The phone-first reference is Luke's original Mockplus screens: Quick Navigation and Matrix Programmer, plus Finite Map / Interior / Exterior screenshots dated 6 July 2026 (135648, 135710, 135730, 135734 and 135749). These guide the central working area, edge shell controls and short tool pages. This update does not claim pixel-identical reconstruction.
-
-## QuickStart tables (0.3.1)
-
-The ten-card reader follows the original book layout. It offers 37 recommended datasets across ten categories, with an explicit review of all 145 original pages in `DATASET-CATALOGUE.md`. Chakra associations are editable philosophical suggestions and can include multiple shells. They do not determine placement automatically.
-
-Create a table or import CSV, edit rows and columns, choose a shell, side and starting facet, then preview allocation. Allocate across consecutive facets or append ordered steps to one outward stack. All columns survive as attached data. Instructions and asset links are retained where present. Repeating allocation adds only new rows; editing a table does not silently rewrite previously allocated records. Edit those copies through the matrix record tools. JSON backups include tables, associations, records and stacks together.
-
-Back arrows now return to a labelled logical parent. The original finite and coloured torus sections contain interactive fixed 12 by 24 geometry, actual inside/outside cameras and compact tools. Historical varying-size page IDs are retained, but their active geometry stays fixed.
-
-Earth, satellite and space-weather integrations remain future scope, as requested. See `FUTURE-DIRECTIONS.md`.
-
-## Everyday QuickStart and site map (0.3.2)
-
-The reader now starts with one concrete field: date of birth. Its sequence continues through the original eight avatar questions, family, key dates, timing and signals, favourites, skills and goals. Other datasets and allocation remain available later. A family member's optional birthday also creates a dated entry in Birthdays and life events. Existing records and tables remain intact. Save-and-continue and Skip are separate choices.
-
-Forward and backward book navigation animates a turning page. Reduced-motion preferences use immediate changes. QuickStart sheets are limited to phone width even on a desktop. Advanced table editing remains available separately; internal scrolling is a fallback for small heights, large content and the on-screen keyboard.
-
-The site map replaces the blurred image with searchable page names and parent/child sections, five names per page, adjustable text size and a real preview. Previews cycle by arrow or swipe and open the selected original page. Every one of the 145 source pages is reachable. Previewing the site map itself does not recursively create preview frames.
-
-These forms collect reusable everyday-life data. They do not yet deliver scheduled notifications or synchronise with an external calendar. Original archive pages outside the implemented flows can still contain design placeholders.
-
-## Direct destinations and camera variants (0.3.3)
-
-The old site-map tree exposed Mockplus authoring groups as navigation. Find your way now starts with 12 everyday icon shortcuts. Tapping an icon opens its destination directly; the separate magnifier previews it. Search works across all destinations, with Everyday, People, Aura, Places, Tools and All filters.
-
-Aura Menu CK and Matrix Programmer CK are camera-background variants of the main menu and programmer, not intermediate pages. Their old URLs resolve to the corresponding normal page. Camera controls toggle a live video background on that same screen, after an explicit click and browser permission. The same menu destinations remain available. Camera tracks stop when switched off, when leaving the screen or when hiding the tab. No recording, audio request or upload is added.
-
-The 145-page source archive remains unchanged. The public finder lists 142 destinations, omitting the two duplicate CK variants and the unnamed blank source page. The original inspector remains available for source review.
-
-### Custom favourite pages
-
-The original Quick Navigation page now has 25 editable favourite slots in the source positions. Empty slots stay empty until chosen. Select a destination, keep its original app icon or choose another icon from the supplied artwork, and save. Normal mode opens the page; Edit mode replaces, moves or clears the slot. Moving into an occupied position swaps the two favourites. The book below selects named shortcut menus and provides name editing and new-menu creation.
-
-Favourites are included in the project JSON backup. Storage now uses `aura-matrix-studio:v4:project`, reading v3, v2 or v1 when v4 is absent. This keeps older app tabs from discarding new favourite-menu data; reload older tabs before continuing. This version does not change the 12 by 24 address model.
+Bundled Three.js, Leaflet and Astronomy Engine retain their MIT notices in `vendor/`. OpenStreetMap data and tiles retain their source attribution. Astronomy calculations use [Astronomy Engine 2.1.19](https://github.com/cosinekitty/astronomy).

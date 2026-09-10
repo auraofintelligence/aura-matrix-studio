@@ -85,7 +85,7 @@ reader_steps = [
  dict(id='favourites',title='Add favourites',description='Books, music, films, places and experiences you enjoy.',datasets=['inspiration']),
  dict(id='skills',title='Add your skills',description='Skills you have and skills you are learning.',datasets=['learning','work']),
  dict(id='goals',title='Add your goals',description='Wish lists, life goals and things you want to do.',datasets=['goals']),
- dict(id='more',title='More from your app',description='Browse the other datasets or import existing tables.',datasets=[s['id'] for s in specs]),
+ dict(id='travel',title='Your travels',description='Where have you travelled, and where do you want to go?',datasets=['journeys']+[s['id'] for s in specs if s['id']!='journeys']),
  dict(id='allocate',title='Place your data',description='Allocate your tables to facets or stack steps.',datasets=[]),
 ]
 catalogue=dict(format='aura-dataset-catalogue/1',basis='Recommendations from all 145 original page records. Philosophical associations are editable suggestions, not measured properties.',

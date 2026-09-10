@@ -66,3 +66,11 @@ The expanded Node suite passes selection isolation and persistence; distinct edg
 ## Facet groups and compact workspace (0.2.3)
 
 22 Node tests pass, including independent group toggling, selection order, empty groups, full 288-facet groups, backup round trips and legacy import. Batch stack checks retain unrelated shells/sides and reject shrinking stacks with attached records. The existing geometry, scene, camera and ray regressions remain green. All application modules pass syntax checks and deployment includes workspace.js. Original Mockplus screenshots were inspected as layout references. Browser interaction, phone appearance, viewport overflow and virtual-keyboard behaviour have not been visually tested; the Sites skill prohibits browser QA without an explicit request. Long user content retains internal overflow as a fallback; the programmer document uses a fixed viewport.
+
+## Version 0.3.4: favourites, markets, travel and Crown
+
+On 10 September 2026, 46 Node tests and two Python market-filter tests passed. All top-level JavaScript files passed syntax checks. Tests include the eight calculated planetary positions, Earth-Moon distance, map projection ratios, editable travel goals, preserved trip identity, source filters, icon coverage and Crown's ownership of celestial tools.
+
+Browser checks covered the favourites picker and an angled page-turn animation, accommodation maps with composed category/source/text filters, Travel Plans and a saved local test itinerary, travel QuickStart, the context preview, Crown navigation and the celestial views. The celestial controls and travel QuickStart were visually checked at 320 x 568; other flows were also reviewed at 360 x 640. Solar playback advanced the date and planet positions, and pause stopped it. The solar tab recorded no console errors.
+
+These are browser viewport checks, not tests on physical phones. Physical touch gestures, an actual camera feed, external calendar notifications and external agent execution were not exercised. Public deployment verification is reported separately after publishing. The original 145-page source archive remains unchanged.

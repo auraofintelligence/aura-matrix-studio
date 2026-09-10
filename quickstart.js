@@ -1,7 +1,9 @@
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.3';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.3';
-import {targetLabel} from './spatial.js?v=0.3.3';
-import {TORUS} from './original-routes.js?v=0.3.3';
+import {tripForm,goalForm} from './travel-ui.js?v=0.3.4';
+import {pageIcon} from './page-icons.js?v=0.3.4';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.4';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.4';
+import {targetLabel} from './spatial.js?v=0.3.4';
+import {TORUS} from './original-routes.js?v=0.3.4';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));
@@ -39,7 +41,8 @@ export function mountQuickStart({page,screen,catalogue}){
   const progress=make('div','quick-progress');progress.setAttribute('role','status');screen.append(progress);
   const dialog=make('dialog','quick-dialog'),head=make('header'),title=make('h2'),close=button('Done',()=>dialog.close()),body=make('div','quick-body'),message=make('p','quick-message');message.setAttribute('role','status');head.append(title,close);dialog.append(head,body,message);document.body.append(dialog);
   const selectedTable=()=>project.tables.find(t=>t.id===tableId);
-  function redrawCard(){const step=catalogue.steps[index];card.replaceChildren(make('small','',`${index+1} / ${catalogue.steps.length}`),make('strong','',step.title),make('span','','Tap to open'));prev.disabled=index===0;next.disabled=index===catalogue.steps.length-1;progress.textContent=`Step ${index+1} of 10`;card.setAttribute('aria-label','Open '+step.title);}
+  const stepPages=['DC827E51-FDDD-49EC-BB9D-7FFAE33159BC','3A178076-5EF1-41A0-8229-62636BE4F256','AE87688C-93C9-4AB1-A72D-A447ED56C5E0','951AAB58-F4AE-41E2-A790-4F204A0EC475','2E5320C1-E2FE-4EE5-B62E-3CB9013D4010','82791921-1F9A-4056-A0FE-B4385FD5377A','02B0EE12-8186-4347-BFC7-06657FAC52D8','E933DDB8-9FDE-445A-97A0-686C17B77380','DAFCEEE9-7303-415D-975B-AB7176A59010','1FE14FC9-F981-4E27-B038-BDF3FF404838'];
+  function redrawCard(){const step=catalogue.steps[index],icon=make('img');icon.src='assets/mockplus/'+pageIcon(stepPages[index]);icon.alt='';card.replaceChildren(make('small','',`${index+1} / ${catalogue.steps.length}`),icon,make('strong','',step.title),make('span','','Tap to open'));prev.disabled=index===0;next.disabled=index===catalogue.steps.length-1;progress.textContent=`Step ${index+1} of 10`;card.setAttribute('aria-label','Open '+step.title);}
   function turn(delta){
     if(flipping)return false;let moved=false;
     safely(()=>{const nextIndex=turnPage(index,delta,catalogue.steps.length);if(nextIndex===index)return;
@@ -68,6 +71,7 @@ export function mountQuickStart({page,screen,catalogue}){
   function open(){safely(()=>{read();tableId='';recId=catalogue.steps[index].datasets[0]||'imports';rowPage=colPage=0;welcome=true;render();dialog.showModal();});}
   function render(){
     read();const step=catalogue.steps[index];title.textContent=step.title;body.replaceChildren();message.textContent='';preview=null;
+    if(index===8&&welcome){renderTravel();return;}
     if(index<8&&welcome){renderGuided();return;}
     const top=make('div','quick-actions'),catalogueLink=make('a','','Read full catalogue');catalogueLink.href='DATASET-CATALOGUE.md';catalogueLink.target='_blank';catalogueLink.rel='noopener';
     top.append(button('← Previous',()=>navigate(-1)),button('Next →',()=>navigate(1)),button('Backup',backup),catalogueLink);body.append(top);
@@ -83,6 +87,12 @@ export function mountQuickStart({page,screen,catalogue}){
     file.onchange=async()=>{try{const f=file.files[0];if(!f)return;const csv=parseCSV(await f.text()),id=crypto.randomUUID();mutate(p=>{p.tables.push({id,name:f.name.replace(/\.csv$/i,''),category:rec.category,recommendation:rec.id,columns:csv.headers,rows:csv.rows.map(values=>({id:crypto.randomUUID(),values})),chakraTags:rec.chakraRelevance.map(r=>r.shell)});return p;});tableId=id;pane='table';rowPage=colPage=0;render();message.textContent=`Imported ${csv.rows.length} rows, retaining all columns.`;}catch(e){message.textContent=e.message;}};
     if(rec.note)body.append(make('p','quick-note',rec.note));
     const table=selectedTable();if(table){body.append(button('Edit table rows',()=>{pane='table';render();}));}else body.append(make('p','quick-empty','Start a blank table or import a CSV. You can skip any dataset and return later.'));
+  }
+  function renderTravel(){
+    const choices=make('div','quick-actions'),form=make('div');
+    function choose(mode){form.replaceChildren();if(mode==='goal')goalForm(form);else tripForm(form,{initialStatus:mode,brief:true});}
+    choices.append(button('Already visited',()=>choose('Visited')),button('Want to visit',()=>choose('Want to go')),button('Travel goal',()=>choose('goal')));body.append(choices,form);choose('Visited');
+    const actions=make('div','quick-actions');actions.append(button('← Previous',()=>navigate(-1)),button('Continue →',()=>navigate(1)),button('Tables and other data',()=>{welcome=false;render();}));body.append(actions);
   }
   function renderGuided(){
     const step=catalogue.steps[index],rec=catalogue.datasets.find(d=>d.id===step.datasets[0]);

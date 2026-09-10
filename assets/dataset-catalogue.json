@@ -117,10 +117,11 @@
       ]
     },
     {
-      "id": "more",
-      "title": "More from your app",
-      "description": "Browse the other datasets or import existing tables.",
+      "id": "travel",
+      "title": "Your travels",
+      "description": "Where have you travelled, and where do you want to go?",
       "datasets": [
+        "journeys",
         "preferences",
         "body",
         "boundaries",
@@ -138,7 +139,6 @@
         "work",
         "places",
         "spatial-anchors",
-        "journeys",
         "environment",
         "celestial",
         "community",

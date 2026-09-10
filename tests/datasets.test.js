@@ -64,7 +64,7 @@ test('birthday entry validates real dates and updates one row without losing oth
 });
 
 test('destination finder opens everyday pages directly and removes camera variants from navigation',()=>{
- const all=source.pages,shown=mapPages(all,'all');assert.equal(shown.length,142);assert.ok(shown.every(p=>!p.name.endsWith(' CK')&&p.name!=='Page'));
+ const all=source.pages,shown=mapPages(all,'all');assert.equal(shown.length,141);assert.ok(shown.every(p=>!p.name.endsWith(' CK')&&p.name!=='Page'));
  const daily=mapPages(all);assert.equal(daily.length,12);for(const name of ['Birthdays','Schedules','Reminders','We Are Family','Public Life Goals'])assert.ok(daily.some(p=>p.name===name));
  assert.ok(mapPages(all,'daily','calendar').some(p=>p.name==='Schedules'));assert.ok(mapPages(all,'daily','family').some(p=>p.name==='We Are Family'));assert.equal(mapPages(all,'daily','no such page here').length,0);
  const pages=new Map(all.map(p=>[p.id,p]));for(const [variant,base]of Object.entries(CAMERA_VARIANTS)){assert.equal(canonicalPage(variant),base);assert.equal(canonicalPage(base),base);}

@@ -1,9 +1,13 @@
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.3';
-import {mountMenuCamera} from './menu-camera.js?v=0.3.3';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.3';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.3';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.3';
-import {mountLiveMatrix} from './original-live.js?v=0.3.3';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.4';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.4';
+import {mountCelestial} from './celestial-clock.js?v=0.3.4';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.4';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.4';
+import {mountMenuCamera} from './menu-camera.js?v=0.3.4';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.4';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.4';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.4';
+import {mountLiveMatrix} from './original-live.js?v=0.3.4';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -27,12 +31,12 @@ export async function startOriginal(){
   const catalogue=await catalogueResponse.json(),source=await response.json(),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live,menuCamera;
   const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
   const warn=text=>{$('original-status').textContent=text;};
-  function go(id){
+  function go(id,extra={}){
     if(id==='command:back')id=parentPage(current,pages);
     if(CAMERA_VARIANTS[id]===current.id){menuCamera?.toggle();return;}id=canonicalPage(id);
     if(!pages.has(id)){warn('This control has no destination in the original Mockplus file.');return;}
     if(id===current.id)return;
-    const query=new URLSearchParams({page:id});if(document.body.dataset.inspect)query.set('inspect','1');
+    const query=new URLSearchParams({page:id,...extra});if(document.body.dataset.inspect)query.set('inspect','1');
     history.pushState({auraOriginal:true},'',`?${query}`);show(id);
   }
   function position(node,box){Object.assign(node.style,{left:box[0]+'px',top:box[1]+'px',width:box[2]+'px',height:box[3]+'px'});}
@@ -53,7 +57,7 @@ export async function startOriginal(){
       node.classList.add('original-alarm');const alarm=c.children.find(child=>child.properties.alias==='alarm');
       if(alarm){const badge=make('span','original-count',alarm.properties.text);position(badge,bounds(alarm));badge.style.background=colour(alarm.properties.color);badge.style.color=colour(alarm.properties.textColor||4294967295);badge.style.fontSize=(Number(alarm.properties.textSize)||7)+'px';node.append(badge);}
     }else if(type==='CoverFlow'){
-      node.classList.add('original-coverflow');for(const name of ['far-left','near-left','centre','near-right','far-right'])node.append(make('span',name));
+      node.hidden=true;node.classList.add('original-coverflow');for(const name of ['far-left','near-left','centre','near-right','far-right'])node.append(make('span',name));
     }else if(c.children.length){
       for(const child of c.children)if(!(child.properties.alias==='label'&&child.properties.text==='Label'))draw(child,node);
     }else if(['TextInput','LabelTextInput','Search'].includes(type)){
@@ -95,7 +99,7 @@ export async function startOriginal(){
   }
 
   function show(id){
-    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(CAMERA_VARIANTS[id]){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
+    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(canonicalPage(id)!==id){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(id)||pages.get(source.home);document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
     Object.assign($('original-screen').style,{width:current.width+'px',height:current.height+'px'});
     for(const control of current.controls)draw(control,$('original-screen'));
     $('page-name').textContent=current.name;$('original-page').value=current.id;
@@ -103,6 +107,10 @@ export async function startOriginal(){
     const advanced=/\d+ by \d+ Torus/.test(current.name);
     warn(advanced?'Original screen artwork. The working model stays 12 × 24.':'Original screen layouts and links. Live tools are available in the matrix.');
     const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
+    if(MARKET_PAGES[current.id])live=mountMarket({page:current,screen:$('original-screen')});
+    if(current.id===TRAVEL)live=mountTravel({page:current,screen:$('original-screen'),go});
+    if(current.id===TIMELINES)live=mountTravelTimeline({screen:$('original-screen'),go});
+    if(current.id===CELESTIAL)live=mountCelestial({page:current,screen:$('original-screen'),go});
     if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue});
     if(current.id===FAVOURITES)live=mountFavourites({page:current,screen:$('original-screen'),pages,go});
     if(current.id===SITEMAP)live=mountSiteMap({page:current,screen:$('original-screen'),pages,go,previewMode:new URLSearchParams(location.search).has('preview')});
