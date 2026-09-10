@@ -61,6 +61,8 @@ Trips can hold departure and return dates, seasonal region, preferred season, pu
 
 QuickStart birthdays, key dates, schedules, skills and goals appear in their matching Timing and Signals sections. Ten working pages replace the old placeholders: Birthdays, Milestones and goals, Counters, Schedules, Reminders, Ceremonies, Learning, Work, Weather signals and Community. The original timing menu shows saved-entry counts.
 
+All ten sections open with populated options, even before any personal data is entered. One menu combines 126 general ideas with saved entries. Tap an idea to personalise it in the working editor; matching saved entries take their place in the same menu. Search covers options and saved titles, and Original ideas retains the source design notes. Nothing is added to your tables until you save.
+
 Each entry has compact Details, When, If, Action and Preview tabs. Set daily, weekly, monthly or yearly repeats, intervals, stop dates and advance reminder minutes. Conditions compare a current numeric table value with a threshold. Actions hold instructions, JSON data and an optional matrix sequence. Preview the next three reminders and the current condition result, then save or export an `aura-timing-rule/1` manifest for an agent. Editing preserves the original table and row identity.
 
 Times use the current device's local time. Monthly repeats use the final day of shorter months; 29 February birthdays use 28 February in other years. Rules are stored and previewed locally; background notifications, email/SMS delivery and automatic execution are not connected.

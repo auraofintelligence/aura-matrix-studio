@@ -106,3 +106,12 @@ Pointer capture previously redirected clicks away from Leaflet's canvas markers.
 Direct coordinate clicks at 390 x 664 separated the Brisbane group twice, then opened the Consulate of Colombia - Brisbane card with its detail, category and coordinates. Automated tests cover marker target bounds, empty-map clicks and complete group membership.
 
 The same single-marker selection was verified with a direct coordinate click at 568 x 320 while the portrait frame was rotated. The selected marker remained visible beside its card. Dragging did not open a detail card. All 58 Node tests and two Python tests passed.
+
+
+## Version 0.3.9: general timing options and working editors
+
+All ten Timing and Signals sections now have general options before personal data exists. One paged menu combines 126 suggestions and saved entries, with matched saved titles occupying their original option. Selecting an idea opens the existing editor with a draft and its explanation. Cancel does not create a row. Original source notes remain available in a paged reader.
+
+All 60 Node tests and two Python tests passed. New coverage checks every suggested draft can be saved and edited while preserving existing records and the catalogue, and that all original text remains available. All top-level JavaScript syntax checks and the whitespace check passed.
+
+Browser checks found eight populated first-page options and no panel overflow in all ten sections at a 390 x 664 viewport. The birthday idea opened the editor with its seven-day reminder offset. Search found an idea beyond the first page; previous/next options and original-note pages worked. Community retained its portrait design while rotated within a 568 x 320 viewport, without panel overflow. These are browser viewport checks, not physical-phone tests.

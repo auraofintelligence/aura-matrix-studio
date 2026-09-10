@@ -1,4 +1,4 @@
-import {canonicalPage} from './original-routes.js?v=0.3.8';
+import {canonicalPage} from './original-routes.js?v=0.3.9';
 export const emptyFavourites=()=>({activeId:'favourites',menus:[{id:'favourites',name:'Favourites',slots:Array(25).fill(null)}]});
 export function validateFavourites(raw=emptyFavourites()){
   if(!raw||!Array.isArray(raw.menus)||!raw.menus.length)throw Error('Favourites need at least one menu.');const ids=new Set();

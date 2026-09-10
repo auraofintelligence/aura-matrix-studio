@@ -36,3 +36,10 @@ The ten Timing and Signals pages now edit shared table rows from QuickStart. Mil
 Crown Earth includes all eight layers in the published Horn Torus manifest. The snapshot contains 91,552 source records, with source metadata and hashes in assets/earth/manifest.json. tools/build_earth_data.py refreshes it from the published source without executing its JavaScript. Affinity matching is an optional display filter; all source records remain in the snapshot. Map markers are grouped by screen position for performance, without sampling away records.
 
 Named pins and GeoJSON/CSV point imports use the My Earth places table. Online OpenStreetMap tiles form the base map. Local datasets, layer switches, source notes, search and point lists are independent of Google APIs. Lines, polygons, offline tiles and satellite feeds are future work.
+
+
+## General ideas and personal entries, version 0.3.9
+
+The ten Timing and Signals sections share one menu for general options and saved entries. Its 126 editable starting points include the original birth context, milestones, counter types, reminder choices, ceremony themes, just-in-time learning, weather ideas and community ambitions. Broader options cover everyday routines, meaningful experiences, learning connections, collaboration and shared places. They are suggestions, not generated personal records.
+
+Choosing an idea opens Details, When, If, Action and Preview with an editable draft. Cancel leaves your tables untouched. Save uses the existing shared-table editor, retaining QuickStart records and the original row identity when editing. A saved entry with the same title occupies that option in the menu; custom entries join the same menu. The Original ideas reader retains all source text, including historical examples.

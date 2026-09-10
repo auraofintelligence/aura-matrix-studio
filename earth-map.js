@@ -1,13 +1,13 @@
-import {loadMap} from './market-map.js?v=0.3.8';
-import {EARTH,EARTH_WIDE,earthRows,filterEarth,clusterEarth,pickEarthMarker,personalEarthRows,importEarthPoints,saveEarthPoints} from './earth-data.js?v=0.3.8';
-import {readTravelProject,writeTravelProject,CELESTIAL} from './travel-data.js?v=0.3.8';
-import {CROWN} from './original-routes.js?v=0.3.8';
-import {framePoint} from './frame-display.js?v=0.3.8';
+import {loadMap} from './market-map.js?v=0.3.9';
+import {EARTH,EARTH_WIDE,earthRows,filterEarth,clusterEarth,pickEarthMarker,personalEarthRows,importEarthPoints,saveEarthPoints} from './earth-data.js?v=0.3.9';
+import {readTravelProject,writeTravelProject,CELESTIAL} from './travel-data.js?v=0.3.9';
+import {CROWN} from './original-routes.js?v=0.3.9';
+import {framePoint} from './frame-display.js?v=0.3.9';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
 
 let snapshot,viewState;
-function earthSnapshot(){return snapshot||(snapshot=fetch('assets/earth/manifest.json?v=0.3.8').then(async response=>{if(!response.ok)throw Error('Earth layer list could not load.');const metadata=await response.json();const data=await Promise.all(metadata.layers.map(async layer=>{const r=await fetch(layer.data);if(!r.ok)throw Error(layer.label+' could not load.');return earthRows(layer,await r.json());}));return {metadata,records:data.flat()};}).catch(e=>{snapshot=null;throw e;}));}
+function earthSnapshot(){return snapshot||(snapshot=fetch('assets/earth/manifest.json?v=0.3.9').then(async response=>{if(!response.ok)throw Error('Earth layer list could not load.');const metadata=await response.json();const data=await Promise.all(metadata.layers.map(async layer=>{const r=await fetch(layer.data);if(!r.ok)throw Error(layer.label+' could not load.');return earthRows(layer,await r.json());}));return {metadata,records:data.flat()};}).catch(e=>{snapshot=null;throw e;}));}
 export function mountEarth({page,screen,go}){
  for(const c of page.controls)if(c.controlTypeID!=='StatusBar(Android)')screen.querySelector(`[data-source-control="${c.controlID}"]`)?.setAttribute('hidden','');
  let disposed=false,map,L,markers,metadata,records=[],found=[],hits=[],pinning=false,filterAffinity=viewState?.filterAffinity??true,selected=new Set(),query=viewState?.query||'';

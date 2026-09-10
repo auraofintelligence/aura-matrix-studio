@@ -1,4 +1,4 @@
-import {parseCSV,validateProject} from './core.js?v=0.3.8';
+import {parseCSV,validateProject} from './core.js?v=0.3.9';
 export const EARTH='A54DE2EE-A009-467A-BE13-BA8C3BDF1018',EARTH_WIDE='665135E8-D026-47B2-8F17-01F31A8910C1';
 export const affinityName=name=>/(?<!\w)(aura|chakra|aurora|gajra|yoga|tai[ -]?chi|taichi)(?!\w)/iu.test(name.normalize('NFKD').replace(/\p{M}/gu,''));
 export function earthRows(layer,rows){return rows.map((r,i)=>({id:layer.id+':'+i,layer:layer.id,name:r[0],lat:r[1],lng:r[2],detail:r[3]||'',category:r[4]||'',url:/^https?:\/\//i.test(r[5]||'')?r[5]:'',search:r[6]||'',colour:layer.colour}));}

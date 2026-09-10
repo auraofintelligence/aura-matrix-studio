@@ -1,4 +1,4 @@
-import {canonicalPage,PAGE_PARENTS} from './original-routes.js?v=0.3.8';
+import {canonicalPage,PAGE_PARENTS} from './original-routes.js?v=0.3.9';
 export const FAVOURITE_GROUPS=[
  ['start','Start & shortcuts',['QuickStart Aura','Aura Menu','Quick Navigation','SiteMap']],
  ['people','People & family',['We Are Family','Birthdays','Milestones','Social Proximity','Nearby Friends','Social Web']],
