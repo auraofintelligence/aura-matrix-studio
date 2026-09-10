@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync,writeFileSync,mkdirSync} from 'node:fs';
-import {ROWS,COLS,CELLS,SHELLS,PRESETS,address,neighbours,point,shellPoint,poseAt,blankProject,validateProject,parseCSV,recordsFromCSV,exampleRecords} from '../core.js?v=0.2.3';
+import {ROWS,COLS,CELLS,SHELLS,PRESETS,address,neighbours,point,shellPoint,poseAt,blankProject,validateProject,parseCSV,recordsFromCSV,exampleRecords} from '../core.js?v=0.3.0';
 
 test('fixed lattice has 4032 unique face addresses and cannot accept other dimensions',()=>{
   assert.equal(ROWS,12);assert.equal(COLS,24);assert.equal(CELLS,288);
@@ -46,7 +46,7 @@ test('backup round trip preserves both sides, imported fields and links; invalid
   assert.throws(()=>validateProject({...p,story:[{preset:'__proto__',duration:5,camera:'front',caption:'bad'}]}));
 });
 test('local routes and assets exist; pages have unique IDs and no remote runtime dependencies',()=>{
-  for(const file of ['index.html','inventory.html','explainer.html','guide.html']){
+  for(const file of ['index.html','matrix.html','inventory.html','explainer.html','guide.html']){
     const html=readFileSync(new URL('../'+file,import.meta.url),'utf8');const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);assert.equal(new Set(ids).size,ids.length,`Duplicate IDs in ${file}`);
     for(const m of html.matchAll(/(?:src|href)="([^"#]+)"/g)){if(/^https?:/.test(m[1]))continue;assert.ok(existsSync(new URL('../'+m[1].split('#')[0],import.meta.url)),`${file}: ${m[1]}`);}
     assert.ok(!/<script[^>]+src="https?:/.test(html));

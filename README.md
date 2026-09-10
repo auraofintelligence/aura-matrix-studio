@@ -1,12 +1,14 @@
 # Aura Matrix Studio
 
-A working browser prototype for arranging information on Luke Nathan Hayes' Aura matrix and making animated explanations of its transforms.
+Luke Nathan Hayes' original Aura phone app layouts and navigation, connected to a working fixed 12 by 24 matrix editor and animated explanations.
 
 ## Open it on this laptop
 
 Double-click **Start Aura.cmd** in this folder. It opens the app at <http://127.0.0.1:4318/>. Node.js is installed on this laptop. The launcher starts a small local server in the background and reuses it when already running.
 
-Open **Matrix Programmer** to select a cell, write a record and connect it to another record. **Tool Inventory** imports CSV datasets. **Explainer** edits and plays the animation, downloads a captioned WebM, exports PNG frames and saves the sequence for Blender. **Guide** explains the complete loop and current limits.
+The app opens at the original **Aura Menu**. Its **Enter the Matrix** image opens the original Matrix Programmer. Choose **Finite Map**, then a numbered cell to enter the working editor. The editor's Aura icon returns to the source screen. The editor remains directly available at `matrix.html`; its Inventory, Explainer and Help links open the working tools.
+
+Original pages retain their source orientation and scale uniformly to fit the screen. Most matrix screens were designed at 640 by 360 in landscape; portrait pages retain their 360 by 640 layout. They do not rearrange buttons on smaller screens. `?inspect=1` exposes an optional page selector for reviewing the whole archive.
 
 ## Fixed address contract
 
@@ -25,7 +27,7 @@ Select through the 3D surface or keyboard-accessible numbered map. Change shell 
 
 The explainer supports six fixed-grid poses, camera transitions, editable captions and durations, duplicate/remove/reorder, playback, scrubbing, PNG export, real-time 720p WebM capture and a geometry-only JSON sequence. It does not generate sound. The Blender importer creates an additional scene with animated wire lattices, a camera, and captions retained as timeline markers.
 
-Browser state is localStorage under `aura-matrix-studio:v2:project`. No runtime network requests, account, tracking, model API or cloud storage are used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
+Browser state is localStorage under `aura-matrix-studio:v2:project`. The original layout manifest and artwork load from the same site. No account, tracking, model API or cloud storage is used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
 
 ## Architecture
 
@@ -45,7 +47,7 @@ See `VALIDATION.md` for the checks actually performed and remaining review gaps.
 
 ## Source and design provenance
 
-The original screenshots govern the Matrix Programmer, Finite Map, central stage, coloured shell rail and inside/outside distinction. The present app is a focused functional slice, not a reconstruction of the complete 437-page Mockplus archive. The rejected `aura-of-intelligence-web-app` was not used.
+The supplied `Aura MockPlus Prototype - Alpha.mp` contains 145 page records, 621 link definitions and 153 referenced artwork files. Version 0.3.0 extracts the original coordinates, text, fonts, nested controls, link areas and artwork using `tools/import_mockplus.py`. All artwork matches the archive byte for byte. See `ORIGINAL-LAYOUTS.md` for the screenshot mapping and current limits. The source archive remains untouched and outside this repository. The rejected `aura-of-intelligence-web-app` was not used.
 
 Geometry derives from the roll path in [Aura Horn Torus](https://auraofintelligence.github.io/aura-horn-torus/geometry.html) and the canonical addressing in Aura Spatial Perception. The deeper [personal Aura](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/personal-aura.html), [machinery](https://auraofintelligence.github.io/luke-nathan-hayes-man-and-mind/under-the-aura.html), [modelling harness](https://auraofintelligence.github.io/aura-direct-hardware/harness.html) and [learning](https://auraofintelligence.github.io/aura-direct-hardware/learning.html) pages informed the separation of addresses, relationships and learning. The original supplied documents remain outside this repository.
 

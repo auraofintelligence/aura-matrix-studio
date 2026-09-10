@@ -1,8 +1,8 @@
-import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.2.3';
-import {AuraView} from './renderer.js?v=0.2.3';
-import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.2.3';
-import {mountSpatial} from './spatial-ui.js?v=0.2.3';
-import {mountWorkspace} from './workspace.js?v=0.2.3';
+import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.3.0';
+import {AuraView} from './renderer.js?v=0.3.0';
+import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.3.0';
+import {mountSpatial} from './spatial-ui.js?v=0.3.0';
+import {mountWorkspace} from './workspace.js?v=0.3.0';
 const $=id=>document.getElementById(id),page=document.body.dataset.page;
 const KEY='aura-matrix-studio:v2:project',LEGACY_KEY='aura-matrix-studio:v1:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
 let selection=null,pickKind='facet',spatialUI=null,multipleFacets=false;
@@ -67,7 +67,7 @@ function renderRecords(){
   selectOptions($('link-to'),[['','Choose another record'],...project.records.filter(x=>x.id!==selectedId).map(x=>[x.id,`${x.title} · ${targetLabel(recordTarget(x))}`])]);$('link-label').value='';$('connections').replaceChildren();
   for(const l of project.links.filter(x=>x.from===selectedId||x.to===selectedId)){const a=project.records.find(r=>r.id===l.from),b=project.records.find(r=>r.id===l.to),n=el('div',`${a.title} → ${l.label} → ${b.title}`,'connection'),remove=el('button','Remove');remove.onclick=()=>change(p=>p.links.splice(project.links.indexOf(l),1));n.append(remove);$('connections').append(n);}
 }
-function renderInventory(){const q=$('search').value.toLowerCase(),rows=project.records.filter(r=>`${r.title} ${r.note} ${targetLabel(recordTarget(r))} ${JSON.stringify(r.fields)}`.toLowerCase().includes(q));$('inventory-rows').replaceChildren();for(const r of rows){const tr=el('tr');tr.append(el('td',r.title),el('td',targetLabel(recordTarget(r))),el('td',r.note,'note-cell'));const td=el('td'),b=el('button','Open cell');b.onclick=()=>{const t=recordTarget(r);location.href='index.html?'+new URLSearchParams({...t,index:String(t.index)}).toString();};td.append(b);tr.append(td);$('inventory-rows').append(tr);}$('inventory-empty').hidden=rows.length>0;$('inventory-count').textContent=`${rows.length} of ${project.records.length} records`;}
+function renderInventory(){const q=$('search').value.toLowerCase(),rows=project.records.filter(r=>`${r.title} ${r.note} ${targetLabel(recordTarget(r))} ${JSON.stringify(r.fields)}`.toLowerCase().includes(q));$('inventory-rows').replaceChildren();for(const r of rows){const tr=el('tr');tr.append(el('td',r.title),el('td',targetLabel(recordTarget(r))),el('td',r.note,'note-cell'));const td=el('td'),b=el('button','Open cell');b.onclick=()=>{const t=recordTarget(r);location.href='matrix.html?'+new URLSearchParams({...t,index:String(t.index)}).toString();};td.append(b);tr.append(td);$('inventory-rows').append(tr);}$('inventory-empty').hidden=rows.length>0;$('inventory-count').textContent=`${rows.length} of ${project.records.length} records`;}
 if($('search'))$('search').oninput=renderInventory;
 if($('undo'))$('undo').onclick=()=>{if(!history.length)return;spatialUI?.stop();const previous=history.pop();project=previous;selectedId=null;try{localStorage.setItem(KEY,JSON.stringify(project));saveStatus('Saved on this browser');}catch{saveStatus('Undo is in this tab. Download a backup.');}$('undo').disabled=!history.length;refresh();notify('Last change undone.');};
 document.querySelectorAll('[data-backup]').forEach(b=>b.onclick=()=>jsonDownload('aura-matrix-backup.json',project));
@@ -116,6 +116,6 @@ async function exportVideo(){
 if(page==='matrix')spatialUI=mountSpatial({project:()=>project,selection:()=>selection,owner:()=>({shell,face}),select:choose,pick,facets:pickedFacets,multiple:()=>multipleFacets,selectAllFacets,setMultiple:value=>{multipleFacets=value;if(selection?.kind==='facet'&&(!value||!facetCells().length))choose(selection);else refresh();},change,notify,export:jsonDownload,setKind:(kind,redraw=true)=>{pickKind=kind;if(view){view.kind=kind==='stack'?'facet':kind;if(redraw){view.update();renderGrid();}}},layers:options=>{if(view){if(options.explode!==undefined){view.explodeStacks=options.explode;view.pose={...view.pose,explodeStacks:options.explode};}if(options.rays!==undefined)view.rayMode=options.rays;if(options.volume!==undefined)view.showVolume=options.volume;view.update();}},sequence:program=>{if(view){view.sequence=program;view.drawSpatial();view.render();}}});
 const params=new URLSearchParams(location.search);if(params.has('cell')||params.has('index'))try{const kind=params.get('kind')||'facet',value=params.get('index')||params.get('cell'),t=target(+params.get('shell'),params.get('face'),kind,kind==='volume'?value:+value,params.has('layer')?+params.get('layer'):undefined);const next={...project,selections:remember(project.selections,t)};project=validateProject(next);shell=t.shell;face=t.face;pickKind=t.kind;}catch{shell=0;cell=null;face='O';}
 refresh();
-if(page==='matrix')mountWorkspace();
+if(page==='matrix'){mountWorkspace();const back=document.querySelector('.brand');back.title='Return to the Aura app';const from=new URLSearchParams(location.search).get('from');if(from&&/^[A-F0-9-]{36}$/.test(from))back.href='index.html?page='+from;}
 // Local-only interface: no analytics, upload endpoint, external model or automatic sharing.
 window.addEventListener('storage',e=>{if(e.key===KEY)notify('This project changed in another tab. Download this tab’s backup before reloading if you have unsaved edits.');});

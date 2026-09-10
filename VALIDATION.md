@@ -1,5 +1,13 @@
 # Validation record
 
+## Original layout restoration (0.3.0)
+
+26 Node tests pass. New checks cover all 145 extracted pages, all assigned original destinations, all 153 referenced assets, the original Enter the Matrix route and exact positions of the three Matrix Programmer buttons, source hit areas, portrait/landscape fit and inside/outside editor routes. All extracted artworks were also compared directly with the original archive and match byte for byte.
+
+Browser review covered the ten supplied source screens plus the finite outside page at their native 640 by 360 size. The original home was also checked at 1280 by 720 and 360 by 640. At portrait size the landscape home is uniformly scaled and letterboxed, with no document overflow and no broken images. Browser clicks verified Enter the Matrix, Finite Map, inside/outside navigation, source facet 159 opening Red I159 in the editor, and return to the original inside screen. A discovered editor grid sizing conflict was corrected; at 640 by 360 its model and camera controls now fit inside the workspace.
+
+The remaining archive pages have source structure and link checks, not individual visual acceptance. Native widgets elsewhere in the archive can still be placeholders or approximations. Virtual keyboard handling, browser recording, external agent execution and device performance are not newly validated. Earlier sections below record checks and limitations at the time of those earlier releases.
+
 10 September 2026, Windows laptop, first prototype.
 
 ## Passed
