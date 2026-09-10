@@ -8,7 +8,7 @@ Aura Matrix Studio is the current working web implementation of Luke Nathan Haye
 
 ## Start with your everyday life
 
-The app opens at **Starting Point Aura / QuickStart**. The main Aura menu always uses landscape: on a portrait phone its layout turns sideways to fill the available screen, and returns upright when you turn the phone. This rotates the app content, not the browser or device orientation. Other pages keep their original layouts. The book accepts clicks, touch and horizontal swipes, with animated page turns. Its short questions collect:
+The app opens at **Starting Point Aura / QuickStart**. Each original frame keeps its designed portrait or landscape orientation regardless of how the phone is held. If the available viewport has the opposite orientation, Aura rotates the entire frame, including its controls, instead of rearranging or shrinking it into a strip. This preserves the frame design without requiring full-screen mode. The book accepts clicks, touch and horizontal swipes, with animated page turns. Its short questions collect:
 
 1. Your birthday.
 2. The original avatar questions.
@@ -27,7 +27,7 @@ You can skip questions and return later. Information becomes editable tables rat
 
 The page finder offers everyday icons, search, category filters and page previews. It currently has 141 distinct destinations. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.
 
-**Favourites** retains the original 25-slot layout. Tap an empty square to select a page and its icon. Edit mode replaces, moves or clears a shortcut; moving onto an occupied slot swaps them. The turning book below cycles through page icons and titles. Tap the page to open it, or the star to add it to your favourites. Named shortcut menus can be created and renamed. Old blank or arrow icons are replaced with the destination's artwork.
+**Favourites** retains the original 25-slot layout. Tap an empty square to select a page and its icon. Edit mode replaces, moves or clears a shortcut; moving onto an occupied slot swaps them. The turning book below cycles through page icons and titles. Tap the page to open it, or the star to add it to your favourites. Choices are grouped by their relationships: Start and shortcuts, People and family, Time and routines, Goals and learning, Travel and places, Aura and self, Matrix and tools, Markets and community, and Settings and devices. The picker uses a three-column icon grid with as many rows as fit; search spans every group. The flipbook follows those groups rather than the alphabet. Named shortcut menus can be created and renamed. Old blank or arrow icons are replaced with the destination's artwork.
 
 The main menu and matrix programmer can place their controls over a camera feed. Camera use starts only after you request it and grant browser permission; tracks stop when you switch it off, leave the page or hide the tab. Nothing is recorded or uploaded.
 

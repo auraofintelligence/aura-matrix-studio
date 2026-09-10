@@ -4,6 +4,7 @@ import {readFileSync,existsSync} from 'node:fs';
 import {bounds,linkBounds,fitOriginal,colour,MATRIX_PAGES,openingPage,screenLayout} from '../original.js';
 import {HOME,CAMERA_VARIANTS} from '../original-routes.js';
 import {QUICKSTART} from '../quickstart.js';
+import {framePoint,frameOrientation} from '../frame-display.js';
 
 const source=JSON.parse(readFileSync(new URL('../assets/mockplus/pages.json',import.meta.url),'utf8'));
 const pages=new Map(source.pages.map(p=>[p.id,p]));
@@ -63,10 +64,11 @@ test('the opening route is QuickStart while links and camera menu aliases retain
   assert.equal(openingPage('DAFCEEE9-7303-415D-975B-AB7176A59010',pages),'DAFCEEE9-7303-415D-975B-AB7176A59010');
 });
 
-test('main menu fills landscape even on a portrait phone, without rotating QuickStart or losing hit targets',()=>{
-  const page=pages.get(HOME);
+test('every frame retains its designed orientation and all corners remain accessible when the phone turns',()=>{
+ for(const page of pages.values()){
   for(const [w,h]of [[320,568],[390,664],[568,320],[1280,720]]){
-    const layout=screenLayout(page,w,h);assert.equal(layout.rotated,h>w);
+    const layout=screenLayout(page,w,h);assert.equal(layout.rotated,Math.min(w,h)<=600&&(page.width>page.height)!==(w>h)&&page.width!==page.height);
+    assert.equal(frameOrientation(page),page.width>page.height?'landscape':'portrait');
     assert.ok(layout.width<=w+1e-8&&layout.height<=h+1e-8);
     // Both opposing corners of a menu button stay within the transformed frame.
     for(const c of page.controls)for(const [x,y]of [[+c.x,+c.y],[+c.x + +c.w,+c.y + +c.h]]){
@@ -74,6 +76,15 @@ test('main menu fills landscape even on a portrait phone, without rotating Quick
       const px=(layout.rotated?page.height-y:x)*layout.scale,py=(layout.rotated?x:y)*layout.scale;
       assert.ok(px>=-1e-8&&px<=layout.width+1e-8&&py>=-1e-8&&py<=layout.height+1e-8);
     }
-    assert.equal(screenLayout(pages.get(QUICKSTART),w,h).rotated,false);
   }
+ }
+});
+
+test('rotated matrix picking and book gestures use the original frame coordinates',()=>{
+ const element={clientWidth:640,clientHeight:360,closest:()=>true,getBoundingClientRect:()=>({left:10,top:20,width:180,height:320})};
+ assert.deepEqual(framePoint(element,{clientX:145,clientY:260}),{u:.75,v:.25,x:480,y:90});
+ const start=framePoint(element,{clientX:100,clientY:260}),end=framePoint(element,{clientX:100,clientY:100});
+ assert.equal(end.x-start.x,-320);assert.equal(end.y-start.y,0);
+ element.closest=()=>false;element.getBoundingClientRect=()=>({left:10,top:20,width:320,height:180});
+ assert.deepEqual(framePoint(element,{clientX:250,clientY:65}),{u:.75,v:.25,x:480,y:90});
 });

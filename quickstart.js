@@ -1,9 +1,10 @@
-import {tripForm,goalForm} from './travel-ui.js?v=0.3.5';
-import {pageIcon} from './page-icons.js?v=0.3.5';
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.5';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.5';
-import {targetLabel} from './spatial.js?v=0.3.5';
-import {TORUS} from './original-routes.js?v=0.3.5';
+import {framePoint} from './frame-display.js?v=0.3.6';
+import {tripForm,goalForm} from './travel-ui.js?v=0.3.6';
+import {pageIcon} from './page-icons.js?v=0.3.6';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.6';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.6';
+import {targetLabel} from './spatial.js?v=0.3.6';
+import {TORUS} from './original-routes.js?v=0.3.6';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));
@@ -59,9 +60,9 @@ export function mountQuickStart({page,screen,catalogue}){
   function navigate(delta){if(!turn(delta))return;recId='';tableId='';pane='setup';welcome=true;render();animateBody(delta);}
   function animateBody(delta){if(!matchMedia('(prefers-reduced-motion: reduce)').matches)body.animate([{transform:`perspective(900px) rotateY(${delta>0?30:-30}deg)`,opacity:.25},{transform:'perspective(900px) rotateY(0deg)',opacity:1}],{duration:450,easing:'ease-out'});}
   let start=null,swiped=false;
-  book.addEventListener('pointerdown',e=>{start={x:e.clientX,y:e.clientY,id:e.pointerId};swiped=false;});
-  book.addEventListener('pointermove',e=>{if(start&&Math.abs(e.clientX-start.x)>10)book.setPointerCapture(e.pointerId);});
-  book.addEventListener('pointerup',e=>{if(!start)return;const scale=screen.getBoundingClientRect().width/360,direction=swipeDirection((e.clientX-start.x)/scale,(e.clientY-start.y)/scale);if(direction){swiped=true;turn(direction);}start=null;});
+  book.addEventListener('pointerdown',e=>{start={...framePoint(screen,e),id:e.pointerId};swiped=false;});
+  book.addEventListener('pointermove',e=>{if(start&&Math.abs(framePoint(screen,e).x-start.x)>10)book.setPointerCapture(e.pointerId);});
+  book.addEventListener('pointerup',e=>{if(!start)return;const direction=swipeDirection(framePoint(screen,e).x-start.x,framePoint(screen,e).y-start.y);if(direction){swiped=true;turn(direction);}start=null;});
   book.addEventListener('pointercancel',()=>start=null);
   book.addEventListener('click',e=>{if(swiped){e.preventDefault();e.stopImmediatePropagation();swiped=false;}},true);
   book.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();turn(e.key==='ArrowRight'?1:-1);}});

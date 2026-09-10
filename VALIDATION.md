@@ -81,3 +81,10 @@ These are browser viewport checks, not tests on physical phones. Physical touch 
 The default route now opens Starting Point Aura / QuickStart; explicit page links retain their destination. The main Aura menu rotates its whole layout on a portrait viewport, including its links and camera layer. It returns upright on a landscape viewport. This is a layout rotation, not a browser or operating-system orientation lock. Other screens retain their original layout.
 
 All 48 Node tests passed. Added coverage checks default routes, camera aliases, transformed bounds and button coordinates. Browser review checked the opening page, the menu at 390 x 664 and 664 x 390, and the return link to QuickStart. No physical phone orientation lock is claimed.
+## Version 0.3.6: designed orientation and related favourites
+
+Each frame retains its source orientation in phone-sized viewports (a shortest side of 600 CSS pixels or less). Portrait frames rotate as a whole in a landscape viewport and landscape frames rotate as a whole in a portrait viewport. Wide desktop views retain upright source layouts. No automatic fullscreen request, entry prompt or device orientation lock was added.
+
+Matrix sizing and pointer coordinates, plus QuickStart, favourites and preview swipes, account for the rotated frame. Browser checks verified a sideways favourites-book swipe advances to the next page and a tap on the rotated torus selects a facet. No console errors were recorded in that test tab.
+
+Favourite options and the flipbook use nine relational groups. The picker adapts its row count to the available height; 15 icon choices were visually checked at 390 x 664. Search spans all groups. Tests confirm all 141 destinations occur exactly once, related tasks stay together, and all 145 original frame bounds fit after rotation. All 50 Node tests passed.

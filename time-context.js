@@ -1,6 +1,6 @@
-import {astronomy,clockState} from './celestial-clock.js?v=0.3.5';
-import {solarSystemState} from './solar-system.js?v=0.3.5';
-import {readTravelProject,dateValid} from './travel-data.js?v=0.3.5';
+import {astronomy,clockState} from './celestial-clock.js?v=0.3.6';
+import {solarSystemState} from './solar-system.js?v=0.3.6';
+import {readTravelProject,dateValid} from './travel-data.js?v=0.3.6';
 export const CONTEXT_GROUPS={time:['life-events','schedules','counters','ceremonies'],travel:['journeys'],goals:['goals'],people:['relationships','commitments'],learning:['learning','work'],ideas:['inspiration','values','reflections','observations']};
 export function buildTimeContext(project,{groups=['time','travel','goals'],includeMatrix=false,from='',to='',engine=null}={}){
  if(!dateValid(from)||!dateValid(to)||from&&to&&to<from)throw Error('Choose a valid date window.');

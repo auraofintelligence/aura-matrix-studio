@@ -1,7 +1,7 @@
-import {AuraView} from './renderer.js?v=0.3.5';
-import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.3.5';
-import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.3.5';
-import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.3.5';
+import {AuraView} from './renderer.js?v=0.3.6';
+import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.3.6';
+import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.3.6';
+import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.3.6';
 const KEY='aura-matrix-studio:v4:project',LEGACY='aura-matrix-studio:v3:project';
 export function mountLiveMatrix({page,screen,config,go}){
   let {shell,face,shape}=config,project,selection,view,multi=false,disposed=false,readError=false;

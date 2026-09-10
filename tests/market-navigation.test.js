@@ -4,8 +4,18 @@ import {readFileSync,existsSync} from 'node:fs';
 import {mapPages} from '../original-sitemap.js';
 import {pageIcon,favouriteIcon} from '../page-icons.js';
 import {MARKET_PAGES,filterMarket} from '../market-map.js';
+import {favouriteGroups} from '../favourite-groups.js';
 const pages=JSON.parse(readFileSync(new URL('../assets/mockplus/pages.json',import.meta.url),'utf8')).pages;
 const data=JSON.parse(readFileSync(new URL('../assets/market-data.json',import.meta.url),'utf8'));
+test('related favourite groups retain every destination once and keep key life tasks together',()=>{
+ const groups=favouriteGroups(pages,mapPages(pages,'all')),ids=groups.flatMap(g=>g.pages.map(p=>p.id));
+ assert.equal(ids.length,141);assert.equal(new Set(ids).size,141);
+ for(const [id,names] of [['people',['We Are Family','Birthdays']],['time',['Schedules','Reminders']],['goals',['Public Life Goals','Learning']],['travel',['Travel Plans','Multi-Stop Journey Planner']],['aura',['Crown','Celestial']]]){
+  const group=groups.find(g=>g.id===id);for(const name of names)assert.ok(group.pages.some(p=>p.name===name),name);
+ }
+ assert.equal(groups[0].pages[0].name,'QuickStart Aura');
+ assert.equal(groups.find(g=>g.id==='people').pages[0].name,'We Are Family');
+});
 test('every public destination has explicit artwork and legacy arrow favourites recover their page icon',()=>{
  const destinations=mapPages(pages,'all');assert.equal(destinations.length,141);
  const arrows=['F8B7AE3554E89970A191B251BACE6CD0.svg','D95E480717200F895E41DB6E5B869596.svg','84E43FD667F4EA128EEFBAD7B03B51F5.svg','2293BC4F9F6AFF17F7D8D83951DF0304.svg'];

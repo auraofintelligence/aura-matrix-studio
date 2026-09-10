@@ -1,13 +1,14 @@
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.5';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.5';
-import {mountCelestial} from './celestial-clock.js?v=0.3.5';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.5';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.5';
-import {mountMenuCamera} from './menu-camera.js?v=0.3.5';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.5';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.5';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.5';
-import {mountLiveMatrix} from './original-live.js?v=0.3.5';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.6';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.6';
+import {mountCelestial} from './celestial-clock.js?v=0.3.6';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.6';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.6';
+import {mountMenuCamera} from './menu-camera.js?v=0.3.6';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.6';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.6';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.6';
+import {mountLiveMatrix} from './original-live.js?v=0.3.6';
+import {frameOrientation} from './frame-display.js?v=0.3.6';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -26,7 +27,8 @@ export function linkBounds(area,control){
 export function fitOriginal(width,height,availableWidth,availableHeight){return Math.max(.01,Math.min(availableWidth/width,availableHeight/height));}
 export function openingPage(id,pages){return pages.has(canonicalPage(id))?canonicalPage(id):QUICKSTART;}
 export function screenLayout(page,availableWidth,availableHeight){
-  const rotated=canonicalPage(page.id)===HOME&&availableHeight>availableWidth;
+  const phoneViewport=Math.min(availableWidth,availableHeight)<=600;
+  const rotated=phoneViewport&&(page.width>page.height)!==(availableWidth>availableHeight)&&page.width!==page.height;
   const scale=fitOriginal(page.width,page.height,rotated?availableHeight:availableWidth,rotated?availableWidth:availableHeight);
   return {rotated,scale,width:(rotated?page.height:page.width)*scale,height:(rotated?page.width:page.height)*scale,
     transform:rotated?`translateX(${page.height*scale}px) rotate(90deg) scale(${scale})`:`scale(${scale})`};
@@ -124,7 +126,7 @@ export async function startOriginal(){
     if([HOME,PROGRAMMER].includes(current.id))menuCamera=mountMenuCamera($('original-screen'));
     fit();
   }
-  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=layout.rotated||!(current.width>current.height&&rect.height>rect.width);}
+  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}
   for(const page of source.pages){const option=make('option',null,(page.parent?'  ':'')+page.name);option.value=page.id;$('original-page').append(option);}
   $('original-page').onchange=()=>go($('original-page').value);$('original-back').onclick=()=>go('command:back');$('original-home').onclick=()=>go(source.home);
   $('original-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{warn('Fullscreen is unavailable in this browser.');}};

@@ -1,5 +1,6 @@
-import {pageIcon} from './page-icons.js?v=0.3.5';
-import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.3.5';
+import {framePoint} from './frame-display.js?v=0.3.6';
+import {pageIcon} from './page-icons.js?v=0.3.6';
+import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.3.6';
 export const SITEMAP='E3222692-1B76-4EAF-9517-C5E94323947C';
 const LABELS={'Aura Menu':'Main menu','QuickStart Aura':'QuickStart','We Are Family':'Family','Schedules':'Calendar','Public Life Goals':'Goals','Favorites Lists':'Favourites','Learning':'Skills & learning','Timelines':'Timing & signals','Private Wish Lists':'Hopes & wishes','Matrix Programmer':'Enter the matrix','System Preferences':'Settings','SiteMap':'Find your way'};
 export const SECTIONS=[['daily','Everyday'],['people','People'],['aura','Aura'],['places','Places'],['tools','Tools'],['all','All']];
@@ -32,7 +33,7 @@ export function mountSiteMap({page,screen,pages,go,previewMode=false}){
     if(direction&&!matchMedia('(prefers-reduced-motion: reduce)').matches)frame.animate([{transform:`perspective(600px) rotateY(${direction*60}deg)`,opacity:.4},{transform:'perspective(600px) rotateY(0deg)',opacity:1}],{duration:450});
   }
   function cycle(delta){const found=mapPages(all,section,query);if(!found.length)return;const i=found.findIndex(p=>p.id===selected.id);selected=found[i<0?(delta>0?0:found.length-1):(i+delta+found.length)%found.length];offset=Math.floor(found.indexOf(selected)/12)*12;draw();showPreview(delta);}
-  let start=null;frame.addEventListener('pointerdown',e=>{start={x:e.clientX,y:e.clientY};frame.setPointerCapture(e.pointerId);});frame.addEventListener('pointerup',e=>{if(start&&Math.abs(e.clientX-start.x)>35&&Math.abs(e.clientX-start.x)>Math.abs(e.clientY-start.y))cycle(e.clientX<start.x?1:-1);start=null;});frame.addEventListener('pointercancel',()=>start=null);
+  let start=null;frame.addEventListener('pointerdown',e=>{start={...framePoint(screen,e)};frame.setPointerCapture(e.pointerId);});frame.addEventListener('pointerup',e=>{if(start&&Math.abs(framePoint(screen,e).x-start.x)>35&&Math.abs(framePoint(screen,e).x-start.x)>Math.abs(framePoint(screen,e).y-start.y))cycle(framePoint(screen,e).x<start.x?1:-1);start=null;});frame.addEventListener('pointercancel',()=>start=null);
   function draw(){
     const found=mapPages(all,section,query);offset=Math.max(0,Math.min(offset,Math.max(0,Math.floor((found.length-1)/12)*12)));
     tabs.replaceChildren();for(const [id,label]of SECTIONS){const tab=button(label,()=>{section=id;query='';search.value='';offset=0;draw();});tab.setAttribute('aria-pressed',String(!query&&section===id));tabs.append(tab);}

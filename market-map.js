@@ -55,7 +55,7 @@ export function mountMarket({page,screen}){
  }
  async function open(mode='Map'){
   const token=++opening;category.value=MARKET_PAGES[page.id];source.value='all';search.value='';dialog.showModal();
-  try{const [L,loaded]=await Promise.all([loadMap(),data||fetch('assets/market-data.json?v=0.3.5').then(r=>{if(!r.ok)throw Error('Places could not load. Close and try again.');return r.json();})]);if(disposed||!dialog.open||token!==opening)return;data=loaded;
+  try{const [L,loaded]=await Promise.all([loadMap(),data||fetch('assets/market-data.json?v=0.3.6').then(r=>{if(!r.ok)throw Error('Places could not load. Close and try again.');return r.json();})]);if(disposed||!dialog.open||token!==opening)return;data=loaded;
    if(!map){map=L.map(canvas,{preferCanvas:true,minZoom:0,maxZoom:19}).setView([-15,135],2);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);layer=L.layerGroup().addTo(map);}
    map.invalidateSize();sourcesInfo();refresh();if(mode!=='Map')search.focus();
   }catch(e){if(!disposed)status.textContent=e.message;}

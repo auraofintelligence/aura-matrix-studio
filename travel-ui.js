@@ -1,10 +1,10 @@
-import {mountTimeContext} from './time-context.js?v=0.3.5';
-import {TRAVEL,TIMELINES,CELESTIAL,readTravelProject,writeTravelProject,travelEntries,travelProgress,travelGoal,saveTrip,saveTravelGoal,normaliseDestination,travelTimeline} from './travel-data.js?v=0.3.5';
+import {mountTimeContext} from './time-context.js?v=0.3.6';
+import {TRAVEL,TIMELINES,CELESTIAL,readTravelProject,writeTravelProject,travelEntries,travelProgress,travelGoal,saveTrip,saveTravelGoal,normaliseDestination,travelTimeline} from './travel-data.js?v=0.3.6';
 const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn)=>{const n=make('button','',text);n.type='button';n.onclick=fn;return n;};
 const field=(form,label,type,value='')=>{const n=make('input');n.type=type;n.value=value;n.setAttribute('aria-label',label);const l=make('label');l.append(make('span','',label),n);form.append(l);return n;};
 let seed;
-export function travelSeed(){return seed||(seed=fetch('assets/travel-destinations.json?v=0.3.5').then(r=>{if(!r.ok)throw Error('The destination list could not load. You can still type a place.');return r.json();}).catch(e=>{seed=null;throw e;}));}
+export function travelSeed(){return seed||(seed=fetch('assets/travel-destinations.json?v=0.3.6').then(r=>{if(!r.ok)throw Error('The destination list could not load. You can still type a place.');return r.json();}).catch(e=>{seed=null;throw e;}));}
 export function tripForm(container,{entry=null,onSave=()=>{},initialStatus='Want to go',brief=false}={}){
  const form=make('form','travel-form'),message=make('p','travel-message');message.setAttribute('role','status');const tabs=make('nav','travel-form-tabs');let pane='place';const groups={};
  const values=entry||{},place=make('div');groups.place=place;

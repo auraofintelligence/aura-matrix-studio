@@ -1,5 +1,6 @@
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.3.5';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.3.5';
+import {framePoint,frameRotated} from './frame-display.js?v=0.3.6';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.3.6';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.3.6';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
@@ -28,8 +29,8 @@ export class AuraView {
     this.spatialGroup=new T.Group();this.scene.add(this.spatialGroup);this.picking=[];
     this.raycaster=new T.Raycaster();this.drag=null;this.events=new AbortController();
     const listen=(name,handler,options={})=>canvas.addEventListener(name,handler,{...options,signal:this.events.signal});
-    listen('pointerdown',e=>{if(e.button!==0)return;this.drag={x:e.clientX,y:e.clientY,theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
-    listen('pointermove',e=>{if(!this.drag||this.locked)return;const dx=e.clientX-this.drag.x,dy=e.clientY-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
+    listen('pointerdown',e=>{if(e.button!==0)return;this.drag={...framePoint(canvas,e),theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
+    listen('pointermove',e=>{if(!this.drag||this.locked)return;const point=framePoint(canvas,e),dx=point.x-this.drag.x,dy=point.y-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
     listen('pointerup',e=>{if(this.drag&&!this.drag.moved&&!this.locked)this.pick(e);this.drag=null;});
     listen('pointercancel',()=>this.drag=null);
     listen('wheel',e=>{if(this.locked)return;e.preventDefault();this.zoom=Math.max(.5,Math.min(3,this.zoom*Math.exp(-e.deltaY*.001)));this.render();},{passive:false});
@@ -42,7 +43,7 @@ export class AuraView {
     for(const t of textures)t.dispose();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();
     this.renderer?.dispose();this.renderer?.forceContextLoss();this.renderer=null;
   }
-  resize(){const {width,height}=this.canvas.getBoundingClientRect();if(width&&height){this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.render();}}
+  resize(){const bounds=this.canvas.getBoundingClientRect(),rotated=frameRotated(this.canvas),width=rotated?bounds.height:bounds.width,height=rotated?bounds.width:bounds.height;if(width&&height){this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.render();}}
   set(pose,shell=this.shell,cell=this.cell,face=this.face){this.pose={...pose,explodeStacks:this.explodeStacks||0};this.shell=shell;this.cell=cell;if(face!==this.face){this.cameraViews[this.face]={theta:this.theta,phi:this.phi,zoom:this.zoom};Object.assign(this,this.cameraViews[face]);}this.face=face;if(pose.camera&&face==='O'){[this.theta,this.phi]=pose.camera;this.zoom=1;}this.update();}
   centre(record){return targetPoint(recordTarget(record),this.pose,this.vectors);}
   update(){
@@ -107,7 +108,7 @@ export class AuraView {
     const frame=this.face==='O'?fitStackFrame(initial,this.stackRadius,aspect,this.zoom):initial;
     this.camera.position.fromArray(frame.eye);this.camera.lookAt(...frame.look);this.camera.near=frame.near;this.camera.fov=frame.fov;this.camera.updateProjectionMatrix();this.renderer.render(this.scene,this.camera);
   }
-  pick(e){const b=this.canvas.getBoundingClientRect();this.raycaster.setFromCamera(new T.Vector2((e.clientX-b.left)/b.width*2-1,1-(e.clientY-b.top)/b.height*2),this.camera);this.raycaster.params.Points.threshold=.12;
+  pick(e){const point=framePoint(this.canvas,e);this.raycaster.setFromCamera(new T.Vector2(point.u*2-1,1-point.v*2),this.camera);this.raycaster.params.Points.threshold=.12;
     const stacked=this.raycaster.intersectObjects(this.stackPicking||[])[0];if(stacked){this.onSelect(stacked.object.userData.target,e);return;}
     const pointHit=this.raycaster.intersectObjects(this.picking)[0];if(pointHit){this.onSelect(pointHit.object.userData.targets[pointHit.index],e);return;}
     const hit=this.raycaster.intersectObjects(this.meshes.filter(m=>m.visible))[0];if(!hit||this.kind==='volume')return;

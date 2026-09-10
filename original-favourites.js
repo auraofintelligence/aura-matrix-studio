@@ -1,14 +1,16 @@
-import {pageIcon,favouriteIcon} from './page-icons.js?v=0.3.5';
-import {blankProject,validateProject} from './core.js?v=0.3.5';
-import {updateFavourite} from './favourites-data.js?v=0.3.5';
-import {mapPages,pageTitle} from './original-sitemap.js?v=0.3.5';
+import {framePoint} from './frame-display.js?v=0.3.6';
+import {favouriteGroups} from './favourite-groups.js?v=0.3.6';
+import {pageIcon,favouriteIcon} from './page-icons.js?v=0.3.6';
+import {blankProject,validateProject} from './core.js?v=0.3.6';
+import {updateFavourite} from './favourites-data.js?v=0.3.6';
+import {mapPages,pageTitle} from './original-sitemap.js?v=0.3.6';
 export const FAVOURITES='B47A9839-38E6-49D8-B255-0D9E428E521C';
 const KEY='aura-matrix-studio:v4:project';
 export function mountFavourites({page,screen,pages,go}){
  const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
  const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
  const all=[...pages.values()],icons=new Map(all.map(p=>[pageIcon(p.id),pageTitle(p)]).filter(([file])=>file)),pageIcons=new Map(all.map(p=>[p.id,pageIcon(p.id)]));
- const browse=mapPages(all,'all');let bookIndex=0,turning=false,turnAnimation=null;
+ const groups=favouriteGroups(all,mapPages(all,'all')),browse=groups.flatMap(g=>g.pages);let bookIndex=0,turning=false,turnAnimation=null,groupId='people';
  let project,editing=false,slotIndex=0,menuId='',chosenPage='',chosenIcon='',stage='pages',query='',resultPage=0,disposed=false;
  function read(){const raw=[KEY,'aura-matrix-studio:v3:project','aura-matrix-studio:v2:project','aura-matrix-studio:v1:project'].map(k=>localStorage.getItem(k)).find(Boolean);project=raw?validateProject(JSON.parse(raw)):blankProject();}
  function change(fn){read();const next=validateProject(fn(structuredClone(project)));localStorage.setItem(KEY,JSON.stringify(next));project=next;draw();}
@@ -24,11 +26,12 @@ export function mountFavourites({page,screen,pages,go}){
  const prev=button('‹',()=>cycle(-1)),next=button('›',()=>cycle(1));prev.className='favourite-menu-prev';next.className='favourite-menu-next';prev.setAttribute('aria-label','Previous page');next.setAttribute('aria-label','Next page');
  const add=button('☆',()=>{const free=active().slots.findIndex(s=>!s);if(free<0){editing=true;draw();return;}openSlot(free);chosenPage=browse[bookIndex].id;chosenIcon=pageIcon(chosenPage);stage='details';renderPicker();});add.className='favourite-book-add';add.title='Add this page to favourites';add.setAttribute('aria-label',add.title);screen.append(menuBook,prev,next,add);
  let start=null,swiped=false;
- menuBook.addEventListener('pointerdown',e=>{start={x:e.clientX,y:e.clientY};swiped=false;});
- menuBook.addEventListener('pointermove',e=>{if(start&&Math.abs(e.clientX-start.x)>10)menuBook.setPointerCapture(e.pointerId);});
- menuBook.addEventListener('pointerup',e=>{if(start&&Math.abs(e.clientX-start.x)>30&&Math.abs(e.clientX-start.x)>Math.abs(e.clientY-start.y)){swiped=true;cycle(e.clientX<start.x?1:-1);}start=null;});menuBook.addEventListener('pointercancel',()=>start=null);
+ menuBook.addEventListener('pointerdown',e=>{start={...framePoint(screen,e)};swiped=false;});
+ menuBook.addEventListener('pointermove',e=>{if(start&&Math.abs(framePoint(screen,e).x-start.x)>10)menuBook.setPointerCapture(e.pointerId);});
+ menuBook.addEventListener('pointerup',e=>{if(start&&Math.abs(framePoint(screen,e).x-start.x)>30&&Math.abs(framePoint(screen,e).x-start.x)>Math.abs(framePoint(screen,e).y-start.y)){swiped=true;cycle(framePoint(screen,e).x<start.x?1:-1);}start=null;});menuBook.addEventListener('pointercancel',()=>start=null);
  menuBook.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();cycle(e.key==='ArrowRight'?1:-1);}});
  const dialog=make('dialog','favourite-dialog'),head=make('header'),heading=make('h2'),close=button('Done',()=>dialog.close()),body=make('div','favourite-dialog-body'),status=make('p','favourite-status');status.setAttribute('role','status');head.append(heading,close);dialog.append(head,body,status);document.body.append(dialog);
+ let refreshChoices=null;const resizePicker=()=>{if(dialog.open)refreshChoices?.();};window.addEventListener('resize',resizePicker);
  const safe=fn=>{try{fn();}catch(e){status.textContent=e.message;}};
  const image=(file,alt='')=>{const img=make('img');img.src='assets/mockplus/'+file;img.alt=alt;return img;};
  function draw(){
@@ -36,12 +39,12 @@ export function mountFavourites({page,screen,pages,go}){
   slotButtons.forEach((b,i)=>{const slot=menu.slots[i],target=slot&&pages.get(slot.pageId);b.replaceChildren();b.classList.toggle('is-filled',!!target);b.classList.toggle('is-editing',editing);b.title=target?pageTitle(target):'Add favourite '+(i+1);b.setAttribute('aria-label',(target?(editing?'Edit ':'Open ')+pageTitle(target):'Add favourite')+' · slot '+(i+1));if(target){const file=favouriteIcon(slot);if(file)b.append(image(file));else b.append(make('span','',pageTitle(target).slice(0,1)));b.append(make('small','',pageTitle(target)));}else b.append(make('span','empty-favourite'));});
   drawBook();title.title='Switch or rename shortcut menus';title.setAttribute('aria-label','Manage shortcut menus');
  }
- function drawBook(){const p=browse[bookIndex];menuBook.replaceChildren(image(pageIcon(p.id)),make('strong','',pageTitle(p)),make('small','',`${bookIndex+1} / ${browse.length} · Tap to open`));menuBook.setAttribute('aria-label','Open '+pageTitle(p));}
+ function drawBook(){const p=browse[bookIndex],group=groups.find(g=>g.pages.includes(p));menuBook.replaceChildren(image(pageIcon(p.id)),make('strong','',pageTitle(p)),make('small','',group.label),make('small','',`${bookIndex+1} / ${browse.length} · Tap to open`));menuBook.setAttribute('aria-label','Open '+pageTitle(p));}
  function cycle(delta){if(turning)return;const old=menuBook.cloneNode(true);old.setAttribute('aria-hidden','true');old.removeAttribute('aria-label');old.tabIndex=-1;old.style.pointerEvents='none';bookIndex=(bookIndex+delta+browse.length)%browse.length;drawBook();if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;turning=true;screen.append(old);old.style.zIndex=delta>0?'43':'40';menuBook.style.zIndex='42';const sheet=delta>0?old:menuBook;turnAnimation=sheet.animate(delta>0?[{transform:'perspective(700px) rotateY(0deg)'},{transform:'perspective(700px) rotateY(-180deg)'}]:[{transform:'perspective(700px) rotateY(-180deg)'},{transform:'perspective(700px) rotateY(0deg)'}],{duration:650,easing:'ease-in-out'});turnAnimation.finished.catch(()=>{}).finally(()=>{old.remove();turning=false;});}
  function openSlot(i){safe(()=>{read();slotIndex=i;menuId=active().id;const slot=active().slots[i];chosenPage=slot?.pageId||'';chosenIcon=slot?favouriteIcon(slot):'';stage=chosenPage?'details':'pages';query='';resultPage=0;renderPicker();dialog.showModal();});}
  function field(label,n){const l=make('label');l.append(make('span','',label),n);return l;}
  function renderPicker(){
-  heading.textContent='Favourite '+(slotIndex+1);body.replaceChildren();status.textContent='';
+  refreshChoices=null;heading.textContent='Favourite '+(slotIndex+1);body.replaceChildren();status.textContent='';body.classList.toggle('is-browsing',stage!=='details');
   if(stage==='details'){
    const target=pages.get(chosenPage);if(!target){stage='pages';renderPicker();return;}
    const summary=make('div','favourite-choice');if(chosenIcon)summary.append(image(chosenIcon));summary.append(make('strong','',pageTitle(target)));body.append(summary);
@@ -50,12 +53,13 @@ export function mountFavourites({page,screen,pages,go}){
    body.append(button('Save favourite',()=>safe(()=>{if(chosenIcon&&!icons.has(chosenIcon))throw Error('Choose an icon from the app.');change(p=>{p.favourites=updateFavourite(p.favourites,menuId,slotIndex,{pageId:chosenPage,icon:chosenIcon},+destination.value);return p;});dialog.close();})),button('Clear this slot',()=>safe(()=>{change(p=>{p.favourites=updateFavourite(p.favourites,menuId,slotIndex,null);return p;});dialog.close();})));return;
   }
   const search=make('input');search.type='search';search.placeholder=stage==='icons'?'Find an icon':'Find a page';search.setAttribute('aria-label',search.placeholder);search.value=query;body.append(search);
+  const groupSelect=make('select');groupSelect.setAttribute('aria-label','Related favourite pages');for(const group of groups){const o=make('option','',`${group.label} (${group.pages.length})`);o.value=group.id;groupSelect.append(o);}groupSelect.value=groupId;if(stage==='pages')body.append(groupSelect);
   const grid=make('div',stage==='icons'?'favourite-icon-picker':'favourite-page-picker'),pager=make('div','favourite-actions');body.append(grid,pager);
-  function results(){grid.replaceChildren();pager.replaceChildren();const items=stage==='icons'?[...icons].filter(([file,label])=>label.toLowerCase().includes(query.toLowerCase())):mapPages(all,'all',query).map(p=>[p.id,pageTitle(p)]),size=stage==='icons'?12:6;resultPage=Math.min(resultPage,Math.max(0,Math.ceil(items.length/size)-1));
+  function results(){grid.replaceChildren();pager.replaceChildren();const source=query?browse.filter(p=>(pageTitle(p)+' '+p.name).toLowerCase().includes(query.toLowerCase())):groups.find(g=>g.id===groupId).pages;const items=stage==='icons'?[...icons].filter(([file,label])=>label.toLowerCase().includes(query.toLowerCase())):source.map(p=>[p.id,pageTitle(p)]),rows=Math.max(1,Math.floor((Math.min(740,window.innerHeight-12)-190)/78)),size=rows*(stage==='icons'?4:3);grid.style.gridTemplateRows=`repeat(${Math.min(rows,Math.max(1,Math.ceil(Math.min(size,items.length)/ (stage==='icons'?4:3))))},minmax(0,1fr))`;resultPage=Math.min(resultPage,Math.max(0,Math.ceil(items.length/size)-1));groupSelect.disabled=Boolean(query);
    for(const [id,label]of items.slice(resultPage*size,resultPage*size+size)){const b=button('',()=>{if(stage==='icons')chosenIcon=id;else{chosenPage=id;chosenIcon=pageIcons.get(id)||'';}stage='details';renderPicker();});b.setAttribute('aria-label',(stage==='icons'?'Use icon ':'Choose ')+label);const file=stage==='icons'?id:pageIcons.get(id);if(file)b.append(image(file));b.append(make('span','',label));grid.append(b);}
    if(!items.length)grid.append(make('p','','No matches.'));const back=button('←',()=>{resultPage--;results();}),forward=button('→',()=>{resultPage++;results();});back.disabled=resultPage===0;forward.disabled=(resultPage+1)*size>=items.length;back.setAttribute('aria-label','Previous choices');forward.setAttribute('aria-label','More choices');pager.append(back,make('span','',`${resultPage+1} / ${Math.max(1,Math.ceil(items.length/size))}`),forward);}
-  search.oninput=()=>{query=search.value;resultPage=0;results();};results();if(chosenPage)body.append(button('Back to favourite',()=>{stage='details';renderPicker();}));
+  refreshChoices=results;groupSelect.onchange=()=>{groupId=groupSelect.value;resultPage=0;results();};search.oninput=()=>{query=search.value;resultPage=0;results();};results();if(chosenPage)body.append(button('Back to favourite',()=>{stage='details';renderPicker();}));
  }
- function openMenu(isNew){safe(()=>{read();menuId=active().id;heading.textContent=isNew?'New shortcut menu':'Your shortcut menus';body.replaceChildren();status.textContent='';const name=make('input');name.value=isNew?'':active().name;name.maxLength=80;name.setAttribute('aria-label','Menu name');body.append(field('Menu name',name),button(isNew?'Create menu':'Save name',()=>safe(()=>{if(!name.value.trim())throw Error('Enter a menu name.');change(p=>{if(isNew){const id=crypto.randomUUID();p.favourites.menus.push({id,name:name.value.trim(),slots:Array(25).fill(null)});p.favourites.activeId=id;}else p.favourites.menus.find(m=>m.id===menuId).name=name.value.trim();return p;});dialog.close();})));if(!isNew){const menus=make('select');menus.setAttribute('aria-label','Choose shortcut menu');for(const m of project.favourites.menus){const o=make('option','',m.name);o.value=m.id;menus.append(o);}menus.value=project.favourites.activeId;menus.onchange=()=>safe(()=>{change(p=>{p.favourites.activeId=menus.value;return p;});dialog.close();});body.prepend(field('Choose shortcut menu',menus));body.append(button('New menu',()=>openMenu(true)));}if(!dialog.open)dialog.showModal();});}
- dialog.addEventListener('close',()=>{if(!disposed)safe(()=>{read();draw();});});draw();return {resize(){},dispose(){disposed=true;turnAnimation?.cancel();dialog.remove();}};
+ function openMenu(isNew){safe(()=>{refreshChoices=null;body.classList.remove('is-browsing');read();menuId=active().id;heading.textContent=isNew?'New shortcut menu':'Your shortcut menus';body.replaceChildren();status.textContent='';const name=make('input');name.value=isNew?'':active().name;name.maxLength=80;name.setAttribute('aria-label','Menu name');body.append(field('Menu name',name),button(isNew?'Create menu':'Save name',()=>safe(()=>{if(!name.value.trim())throw Error('Enter a menu name.');change(p=>{if(isNew){const id=crypto.randomUUID();p.favourites.menus.push({id,name:name.value.trim(),slots:Array(25).fill(null)});p.favourites.activeId=id;}else p.favourites.menus.find(m=>m.id===menuId).name=name.value.trim();return p;});dialog.close();})));if(!isNew){const menus=make('select');menus.setAttribute('aria-label','Choose shortcut menu');for(const m of project.favourites.menus){const o=make('option','',m.name);o.value=m.id;menus.append(o);}menus.value=project.favourites.activeId;menus.onchange=()=>safe(()=>{change(p=>{p.favourites.activeId=menus.value;return p;});dialog.close();});body.prepend(field('Choose shortcut menu',menus));body.append(button('New menu',()=>openMenu(true)));}if(!dialog.open)dialog.showModal();});}
+ dialog.addEventListener('close',()=>{if(!disposed)safe(()=>{read();draw();});});draw();return {resize(){},dispose(){disposed=true;window.removeEventListener('resize',resizePicker);turnAnimation?.cancel();dialog.remove();}};
 }
