@@ -1,3 +1,4 @@
+import {validateSpatial,validateTarget} from './spatial.js?v=0.2.0';
 // Based on Luke Nathan Hayes' aura-horn-torus roll path and aura-spatial-perception addressing.
 // The drawing can change shape. These dimensions and semantic addresses cannot.
 export const ROWS = 12, COLS = 24, CELLS = 288, LATTICE = 'aura-lattice/1.0.0';
@@ -63,7 +64,7 @@ export function poseAt(story,time) {
   p.camera=CAMERAS[shot.camera].map((n,j)=>lerp(CAMERAS[previous.camera][j],n,e));
   return {pose:p,index:i,caption:shot.caption,total,time};
 }
-export function blankProject(){return {format:FORMAT,lattice:LATTICE,rows:ROWS,columns:COLS,records:[],links:[],story:makeStory()};}
+export function blankProject(){return {format:FORMAT,lattice:LATTICE,rows:ROWS,columns:COLS,records:[],links:[],story:makeStory(),selections:{},vectors:[],programs:[],stacks:[]};}
 const cleanText=(v,label,max=100000)=>{if(typeof v!=='string'||v.length>max)throw Error(`Invalid ${label}.`);return v;};
 export function validateProject(raw) {
   if(!raw||raw.format!==FORMAT||raw.lattice!==LATTICE||raw.rows!==ROWS||raw.columns!==COLS)throw Error('This file must use Aura Matrix Studio and the fixed 12 × 24 lattice.');
@@ -75,11 +76,13 @@ export function validateProject(raw) {
     address(r.shell,r.cell,r.face);
     const title=cleanText(r.title,'title',500).trim();if(!title)throw Error('A record needs a title.');
     const fields={};for(const [k,v] of Object.entries(r.fields||{})){if(['__proto__','prototype','constructor'].includes(k))continue;Object.defineProperty(fields,cleanText(k,'column',500),{value:cleanText(v,'field'),enumerable:true});}
-    return {id,title,note:cleanText(r.note||'','note'),shell:r.shell,cell:r.cell,face:r.face,fields};
+    let asset;if(r.asset){const url=cleanText(r.asset.url,'asset URL',4000);let parsed;try{parsed=new URL(url);}catch{throw Error('Use a full https:// or http:// asset link.');}if(!['https:','http:'].includes(parsed.protocol))throw Error('Asset links must use https:// or http://.');asset={url:parsed.href};}
+    let data;if(r.data!==undefined){const encoded=JSON.stringify(r.data,(_,v)=>{if(typeof v==='number'&&!Number.isFinite(v))throw Error('Attached data contains a non-finite number.');return v;});if(encoded===undefined)throw Error('Attached data must be valid JSON.');data=JSON.parse(encoded);}
+    return {id,title,note:cleanText(r.note||'','note'),shell:r.shell,cell:r.cell,face:r.face,fields,...(r.anchor?{anchor:validateTarget(r.anchor)}:{}),...(asset?{asset}:{}),...(r.instructions!==undefined?{instructions:cleanText(r.instructions,'instructions')}:{}) ,...(data!==undefined?{data}:{})};
   });
   const links=raw.links.map(l=>{if(!l||!ids.has(l.from)||!ids.has(l.to)||l.from===l.to)throw Error('A connection needs two different existing records.');return{from:l.from,to:l.to,label:cleanText(l.label,'connection label',300)};});
   const story=raw.story.map(s=>{if(!s||!Object.hasOwn(PRESETS,s.preset)||!Object.hasOwn(CAMERAS,s.camera)||!Number.isFinite(s.duration)||s.duration<1||s.duration>120)throw Error('An explainer shot needs a recognised shape and camera, and 1 to 120 seconds.');return{preset:s.preset,camera:s.camera,duration:s.duration,caption:cleanText(s.caption,'caption',700)};});
-  return {...blankProject(),records,links,story};
+  return {...blankProject(),records,links,story,...validateSpatial(raw,records)};
 }
 // Quoted commas, newlines, BOMs and escaped double quotes are supported.
 export function parseCSV(text) {

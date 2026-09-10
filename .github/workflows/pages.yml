@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '22'
       - name: Check fixed lattice, import and backup contracts
-        run: node --test tests/core.test.js
+        run: node --test tests/*.test.js
       - name: Check scripts
         run: |
           node --check app.js
@@ -31,7 +31,7 @@ jobs:
       - name: Prepare public files only
         run: |
           mkdir -p _site/tools
-          cp index.html inventory.html explainer.html guide.html styles.css core.js renderer.js app.js LICENCE.md .nojekyll _site/
+          cp index.html inventory.html explainer.html guide.html styles.css core.js renderer.js app.js spatial.js spatial-ui.js LICENCE.md .nojekyll _site/
           cp -r assets vendor _site/
           cp tools/blender_import.py _site/tools/
       - uses: actions/upload-pages-artifact@v3

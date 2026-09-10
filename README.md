@@ -25,7 +25,7 @@ Select through the 3D surface or keyboard-accessible numbered map. Change shell 
 
 The explainer supports six fixed-grid poses, camera transitions, editable captions and durations, duplicate/remove/reorder, playback, scrubbing, PNG export, real-time 720p WebM capture and a geometry-only JSON sequence. It does not generate sound. The Blender importer creates an additional scene with animated wire lattices, a camera, and captions retained as timeline markers.
 
-Browser state is localStorage under `aura-matrix-studio:v1:project`. No runtime network requests, account, tracking, model API or cloud storage are used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
+Browser state is localStorage under `aura-matrix-studio:v2:project`. No runtime network requests, account, tracking, model API or cloud storage are used. Inside/outside are address spaces, not encryption. Browser data can be cleared or evicted. Keep a downloaded backup. A GitHub Pages version shares an origin with other projects on the same account and must not be described as a secure personal vault.
 
 ## Architecture
 
@@ -35,7 +35,7 @@ The application uses relative paths and plain static assets, suitable for a GitH
 
 ## Validation
 
-Run `node --test tests/core.test.js`.
+Run `node --test tests/*.test.js`.
 
 The suite checks the fixed dimensions, 4,032 distinct addresses, analytic closed horn geometry, wrapped neighbours, continuous/reversible seeking, 600-row CSV placement, backup round trips, malformed imports, source links and duplicate HTML IDs. It writes a cross-runtime fixture under ignored `test-results/`.
 
@@ -53,10 +53,28 @@ Browser capture uses [canvas captureStream](https://developer.mozilla.org/en-US/
 
 ## Next implementation steps
 
-Review this focused interaction against the original phone and landscape layouts. Improve the agreed slice, then add explicit record movement and dataset group operations. Add a desktop Tauri wrapper with a dedicated data store and backup/migration tests. Learned associations and executable rules should consume the stable records and links, with repeatable comparisons that demonstrate any improvement. A new matrix size is not required for any of these steps.
+Review the selection, camera, stacking and sequence interactions on phone and laptop. Then add explicit record movement and dataset group operations. Add a desktop Tauri wrapper with a dedicated data store and backup/migration tests. Learned associations and executable rules should consume the stable records and links, with repeatable comparisons that demonstrate any improvement. A new matrix size is not required for any of these steps.
 
 No AI learning, authentication, encryption, synchronisation, hardware control, avatar or VR system is claimed by this prototype.
 
 ## Licence
 
 Original code, design and content: Luke Nathan Hayes / Strange But True / Aura of Intelligence, under `LICENCE.md`. This is the Strange But True Public Source Licence, not a standard open-source licence. The included Three.js library remains MIT licensed; see `vendor/THREE-LICENSE.txt`.
+
+## Spatial programming update
+
+Selections are persisted independently for each shell and side. A new shell has no active selection. Inside moves the camera into the selected closed torus; Outside restores the exterior orbit. Open geometry uses a reverse-side view.
+
+`spatial.js` defines typed facet, edge-U, edge-V, vertex, volume and stack targets. Vertex labels retain the canonical R/L registers. Edge labels are this application's explicit E-U/E-V extension. Stack addresses combine shell, face, base facet and layer, with a computed 24-bit RGB colour code. 24-bit colour is an additional code, not a replacement for the full address.
+
+The cubic volume stores explicit 3D display positions separately from arbitrary-length numeric vectors. Its normalised display cube maps [-1,1] to [-4.4,4.4] in the scene. Vector entries may bind to geometry and accompany directly attached records in an agent export. No embedding model is called.
+
+Outward stack counts exclude the base facet. A corner +N badge reports added layers. Depth is linear through 24 layers, then compressed logarithmically. The drawing samples the first 12 layers, the last and the selected layer; the complete stack is addressed lazily up to 16,777,215 added layers. Explode changes only display spacing. Layer cards page through all steps.
+
+Records may additionally hold `anchor`, `instructions`, `data` (JSON) and `asset.url`. Old records and backups remain accepted. HTTP/HTTPS asset URLs are references, not uploaded files. The original public facet-to-asset pattern was reviewed in the personal story site's `index.html` and linked horn-torus interface.
+
+Programs support ordered Visit, Recall and Pause steps, optional repetition and compact stack spans. The browser executes these operations locally. Recall emits the entire attached record, including instructions, data, fields and asset reference. Programs and all spatial data are included in backups. `aura-agent-program/1` exports the chosen program and directly attached inputs. The generated SKILL.md embeds that same manifest; no skill is installed and no scheduled automation is created automatically. External agent tool execution requires a runner and the current user's authorisation.
+
+The Blender bridge still exports the original geometric explainer sequence only. The newer records, volume entries, stack programs and explosion controls remain in the browser and JSON/skill exports.
+
+The v2 browser storage key reads the earlier v1 project on first use and writes future changes separately. This preserves existing records while preventing an older open tab from overwriting the new spatial data. The old key is not deleted.

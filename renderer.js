@@ -1,8 +1,9 @@
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.0';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples} from './spatial.js?v=0.2.0';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
-    this.canvas=canvas;this.onSelect=onSelect;this.pose={...PRESETS.horn};this.shell=0;this.cell=97;this.face='I';this.records=[];this.links=[];this.showLabels=false;
+    this.canvas=canvas;this.onSelect=onSelect;this.pose={...PRESETS.horn};this.shell=0;this.cell=null;this.face='O';this.records=[];this.links=[];this.showLabels=false;this.selection=null;this.kind='facet';this.vectors=[];this.rayMode='off';this.showVolume=false;this.sequence=null;this.cameraViews={I:{theta:0,phi:0,zoom:1},O:{theta:.55,phi:.4,zoom:1}};
     this.theta=.55;this.phi=.4;this.zoom=1;this.scene=new T.Scene();this.scene.background=new T.Color('#fafaf7');
     this.camera=new T.PerspectiveCamera(36,1,.1,300);
     this.renderer=new T.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true,alpha:false});this.renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -24,6 +25,7 @@ export class AuraView {
     }
     this.connect=new T.LineSegments(new T.BufferGeometry(),new T.LineBasicMaterial({color:'#11232d',transparent:true,opacity:.9,depthTest:false}));this.connect.renderOrder=3;this.scene.add(this.connect);
     this.marker=new T.Mesh(new T.SphereGeometry(.1,12,8),new T.MeshBasicMaterial({color:0x101b24,depthTest:false}));this.marker.renderOrder=4;this.scene.add(this.marker);
+    this.spatialGroup=new T.Group();this.scene.add(this.spatialGroup);this.picking=[];
     this.raycaster=new T.Raycaster();this.drag=null;
     canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;this.drag={x:e.clientX,y:e.clientY,theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
     canvas.addEventListener('pointermove',e=>{if(!this.drag||this.locked)return;const dx=e.clientX-this.drag.x,dy=e.clientY-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
@@ -33,43 +35,84 @@ export class AuraView {
     this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(canvas.parentElement);this.update();
   }
   resize(){const {width,height}=this.canvas.getBoundingClientRect();if(width&&height){this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.render();}}
-  set(pose,shell=this.shell,cell=this.cell,face=this.face){this.pose=pose;this.shell=shell;this.cell=cell;this.face=face;if(pose.camera){[this.theta,this.phi]=pose.camera;this.zoom=1;}this.update();}
-  centre(record){return shellPoint(((record.cell-1)%24+.5)/24,(Math.floor((record.cell-1)/24)+.5)/12,this.pose,record.shell,this.shell);}
+  set(pose,shell=this.shell,cell=this.cell,face=this.face){this.pose={...pose,explodeStacks:this.explodeStacks||0};this.shell=shell;this.cell=cell;if(face!==this.face){this.cameraViews[this.face]={theta:this.theta,phi:this.phi,zoom:this.zoom};Object.assign(this,this.cameraViews[face]);}this.face=face;if(pose.camera&&face==='O'){[this.theta,this.phi]=pose.camera;this.zoom=1;}this.update();}
+  centre(record){return targetPoint(recordTarget(record),this.pose,this.vectors);}
   update(){
-    const p=this.pose,occupied=new Set(this.records.filter(r=>r.face===this.face).map(r=>`${r.shell}/${r.cell}`));
+    const p=this.pose,occupied=new Set(this.records.filter(r=>r.face===this.face&&recordTarget(r).kind==='facet').map(r=>`${r.shell}/${r.cell}`));
     for(let s=0;s<7;s++){
-      const mesh=this.meshes[s],wire=this.wires[s];mesh.visible=wire.visible=(p.nest>.001||s===this.shell);if(!mesh.visible)continue;
-      mesh.material.opacity=p.nest>.001?(s===this.shell?.56:.13):.83;mesh.material.depthWrite=p.nest<.001;wire.material.opacity=p.nest>.001?.23:.38;
+      const mesh=this.meshes[s],wire=this.wires[s];mesh.visible=wire.visible=((p.nest>.001&&this.face==='O')||s===this.shell);if(!mesh.visible)continue;
+      mesh.material.opacity=this.face==='I'?1:p.nest>.001?(s===this.shell?.56:.13):.83;mesh.material.depthWrite=this.face==='I'||p.nest<.001;wire.material.opacity=p.nest>.001?.23:.38;
       const positions=mesh.geometry.attributes.position.array,colors=mesh.geometry.attributes.color.array;
       const base=new T.Color(SHELLS[s][1]),active=new T.Color('#ffe59a'),filled=new T.Color('#214f5a');
       for(let i=0;i<this.parameters.length;i++){
         const [u,v,c]=this.parameters[i],xyz=shellPoint(u,v,p,s,this.shell);positions.set(xyz,i*3);
-        const colour=s===this.shell&&c===this.cell?active:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
+        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
       }
       mesh.geometry.attributes.position.needsUpdate=mesh.geometry.attributes.color.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingSphere();
       const lines=wire.geometry.attributes.position.array;this.lineParameters.forEach(([u,v],i)=>lines.set(shellPoint(u,v,p,s,this.shell),i*3));wire.geometry.attributes.position.needsUpdate=true;wire.geometry.computeBoundingSphere();
     }
-    this.marker.position.fromArray(this.centre({shell:this.shell,cell:this.cell}));
+    this.marker.visible=Boolean(this.selection);if(this.selection)this.marker.position.fromArray(targetPoint(this.selection,p,this.vectors));
     const points=[],byId=new Map(this.records.filter(r=>r.face===this.face).map(r=>[r.id,r]));
     for(const l of this.links){const a=byId.get(l.from),b=byId.get(l.to);if(a&&b&&(p.nest>.001||(a.shell===this.shell&&b.shell===this.shell)))points.push(...this.centre(a),...this.centre(b));}
     this.connect.geometry.dispose();this.connect.geometry=new T.BufferGeometry();this.connect.geometry.setAttribute('position',new T.Float32BufferAttribute(points,3));
-    this.render();
+    this.drawSpatial();this.render();
+  }
+  drawSpatial(){
+    while(this.spatialGroup.children.length){const o=this.spatialGroup.children[0];this.spatialGroup.remove(o);o.geometry?.dispose();o.material?.map?.dispose();o.material?.dispose();}this.picking=[];this.stackPicking=[];this.stackRadius=0;
+    const addLines=(points,colour,opacity=1)=>{const g=new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p)));const line=new T.LineSegments(g,new T.LineBasicMaterial({color:colour,transparent:true,opacity,depthTest:false}));line.renderOrder=5;this.spatialGroup.add(line);return line;};
+    const addPoints=(targets,colour,size)=>{if(!targets.length)return;const g=new T.BufferGeometry().setFromPoints(targets.map(t=>new T.Vector3(...targetPoint(t,this.pose,this.vectors))));const o=new T.Points(g,new T.PointsMaterial({color:colour,size,sizeAttenuation:false,depthTest:false}));o.userData.targets=targets;o.renderOrder=6;this.spatialGroup.add(o);this.picking.push(o);};
+    const s=this.shell,f=this.face,p=this.pose;
+    for(const stack of (this.stacks||[]).filter(s=>s.shell===this.shell&&s.face===f)){
+      const row=Math.floor((stack.cell-1)/24),col=(stack.cell-1)%24,chosen=this.selection?.kind==='stack'&&this.selection.index===stack.cell?this.selection.layer:null;
+      for(const layer of stackSamples(stack.count,chosen)){
+        const t=target(s,f,'stack',stack.cell,layer),points=[];
+        for(let y=0;y<3;y++)for(let x=0;x<3;x++){const u=(col+x/3)/24,v=(row+y/3)/12,du=1/72,dv=1/36;for(const [a,b]of [[u,v],[u+du,v],[u+du,v+dv],[u,v],[u+du,v+dv],[u,v+dv]])points.push(...stackPoint(t,a,b,p));}
+        const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(points,3));g.computeVertexNormals();const mesh=new T.Mesh(g,new T.MeshPhongMaterial({color:chosen===layer?'#fff1a2':stackColour(s,layer),side:T.DoubleSide,transparent:true,opacity:.82}));mesh.userData.target=t;this.spatialGroup.add(mesh);this.stackPicking.push(mesh);
+        const centre=targetPoint(t,p,this.vectors);this.stackRadius=Math.max(this.stackRadius,Math.hypot(...centre));
+        if(p.explodeStacks>.05){const canvas=document.createElement('canvas');canvas.width=256;canvas.height=60;const cx=canvas.getContext('2d');cx.fillStyle='#fffdf3';cx.fillRect(0,0,256,60);cx.fillStyle='#243b42';cx.font='bold 22px Arial';cx.fillText(`Step ${layer} · ${stackColour(s,layer)}`,10,25,235);const rec=this.records.find(r=>recordTarget(r).kind==='stack'&&r.shell===s&&r.face===f&&r.cell===stack.cell&&r.anchor.layer===layer);cx.font='17px Arial';cx.fillText(rec?.title||'Click to attach instructions and data',10,48,235);const label=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(canvas),depthTest:false}));label.position.fromArray(centre);label.position.x+=.6;label.scale.set(1.8,.42,1);label.renderOrder=9;label.userData.target=t;this.spatialGroup.add(label);this.stackPicking.push(label);}
+      }
+      const label=document.createElement('canvas');label.width=160;label.height=52;const ctx=label.getContext('2d');ctx.fillStyle='#fffdf2';ctx.fillRect(0,0,160,52);ctx.fillStyle='#1c3035';ctx.font='bold 26px Arial';ctx.textAlign='center';ctx.fillText('+'+stack.count,80,35,150);const sprite=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(label),depthTest:false}));sprite.position.fromArray(shellPoint((col+.84)/24,(row+.12)/12,p,s));sprite.scale.set(.65,.22,1);sprite.renderOrder=8;this.spatialGroup.add(sprite);
+    }
+    if(this.kind==='vertex')addPoints(Array.from({length:288},(_,i)=>target(s,f,'vertex',i+1)),'#173d54',6);
+    if(this.kind.startsWith('edge-')){
+      const targets=Array.from({length:288},(_,i)=>target(s,f,this.kind,i+1));addPoints(targets,'#29546a',5);
+      const lines=[];for(const t of targets){const ps=edgePoints(t,p);for(let i=1;i<ps.length;i++)lines.push(ps[i-1],ps[i]);}addLines(lines,'#267c94',.65);
+    }
+    if(this.selection?.kind.startsWith('edge-')){const ps=edgePoints(this.selection,p),lines=[];for(let i=1;i<ps.length;i++)lines.push(ps[i-1],ps[i]);addLines(lines,'#fff1a2');}
+    const rays=[];let targets=[];
+    if(this.rayMode==='selected'&&this.selection)targets=[this.selection];
+    if(['vertices','centres'].includes(this.rayMode))targets=Array.from({length:288},(_,i)=>target(s,f,this.rayMode==='vertices'?'vertex':'facet',i+1));
+    for(const t of targets)rays.push([0,0,0],rayEnd(t,p,this.vectors));if(rays.length)addLines(rays,'#ae8630',this.rayMode==='selected'?1:.18);
+    if(this.showVolume){
+      const box=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(8.8,8.8,8.8)),new T.LineBasicMaterial({color:'#568688',transparent:true,opacity:.4,depthTest:false}));this.spatialGroup.add(box);
+      addLines([[-4.4,0,0],[4.4,0,0],[0,-4.4,0],[0,4.4,0],[0,0,-4.4],[0,0,4.4]],'#568688',.3);
+      for(let sh=0;sh<7;sh++)addPoints(this.vectors.filter(v=>v.shell===sh&&v.face===f).map(v=>target(v.shell,v.face,'volume',v.id)),SHELLS[sh][1],11);
+      const links=[];for(const v of this.vectors.filter(v=>v.face===f&&v.anchor))links.push(v.position.map(x=>x*4.4),targetPoint(v.anchor,p,this.vectors));if(links.length)addLines(links,'#568688',.5);
+    }
+    const seq=this.sequence;if(seq?.steps.length){const path=[];for(const step of seq.steps){path.push(targetPoint(step.target,p,this.vectors));if(step.span>1)path.push(targetPoint({...step.target,layer:step.target.layer+step.span-1},p,this.vectors));}const lines=[];for(let i=1;i<path.length;i++)lines.push(path[i-1],path[i]);if(seq.loop&&path.length>1)lines.push(path.at(-1),path[0]);if(lines.length)addLines(lines,'#7b367e',.85);}
   }
   render(){
     if(!this.renderer)return;const p=this.pose;
-    const size=Math.max(9,24*(1-p.ring)+13*p.ring,20*p.arrange);const aspect=this.camera.aspect||1;
-    const distance=Math.max(size/Math.min(aspect,1.65)*1.85,31*p.arrange)/this.zoom;
-    this.camera.position.set(Math.sin(this.theta)*Math.cos(this.phi)*distance,Math.sin(this.phi)*distance,Math.cos(this.theta)*Math.cos(this.phi)*distance);this.camera.lookAt(0,0,0);this.camera.updateProjectionMatrix();this.renderer.render(this.scene,this.camera);
+    const frame=cameraFrame(p,this.shell,this.face,this.theta,this.phi,this.camera.aspect||1,this.zoom);
+    if(this.face==='O'&&p.explodeStacks>.05&&this.stackRadius){const required=this.stackRadius*1.3/Math.sin(Math.PI/10)/this.zoom,current=Math.hypot(...frame.eye);if(required>current)frame.eye=frame.eye.map(n=>n*required/current);}
+    this.camera.position.fromArray(frame.eye);this.camera.lookAt(...frame.look);this.camera.near=frame.near;this.camera.fov=frame.fov;this.camera.updateProjectionMatrix();this.renderer.render(this.scene,this.camera);
   }
-  pick(e){const b=this.canvas.getBoundingClientRect();this.raycaster.setFromCamera(new T.Vector2((e.clientX-b.left)/b.width*2-1,1-(e.clientY-b.top)/b.height*2),this.camera);const hit=this.raycaster.intersectObjects(this.meshes.filter(m=>m.visible))[0];if(hit)this.onSelect(hit.object.userData.shell,Math.floor(hit.faceIndex/18)+1);}
-  reset(){this.theta=this.pose.ring>.1?.55:0;this.phi=this.pose.ring>.1?.4:0;this.zoom=1;this.render();}
+  pick(e){const b=this.canvas.getBoundingClientRect();this.raycaster.setFromCamera(new T.Vector2((e.clientX-b.left)/b.width*2-1,1-(e.clientY-b.top)/b.height*2),this.camera);this.raycaster.params.Points.threshold=.12;
+    const stacked=this.raycaster.intersectObjects(this.stackPicking||[])[0];if(stacked){this.onSelect(stacked.object.userData.target);return;}
+    const pointHit=this.raycaster.intersectObjects(this.picking)[0];if(pointHit){this.onSelect(pointHit.object.userData.targets[pointHit.index]);return;}
+    const hit=this.raycaster.intersectObjects(this.meshes.filter(m=>m.visible))[0];if(!hit||this.kind==='volume')return;
+    const s=hit.object.userData.shell;
+    if(this.kind==='facet'){this.onSelect(target(s,this.face,'facet',Math.floor(hit.faceIndex/18)+1));return;}
+    let nearest=null,best=Infinity;for(let i=1;i<=288;i++){const t=target(s,this.face,this.kind,i),p=new T.Vector3(...targetPoint(t,this.pose,this.vectors)),d=p.distanceToSquared(hit.point);if(d<best){best=d;nearest=t;}}if(nearest)this.onSelect(nearest);
+  }
+  reset(){this.theta=this.face==='I'?0:this.pose.ring>.1?.55:0;this.phi=this.face==='I'?0:this.pose.ring>.1?.4:0;this.zoom=1;this.render();}
   project(record){return new T.Vector3(...this.centre(record)).project(this.camera);}
   paintExport(ctx,width,height,caption,labels=false){
     const savedSize=this.renderer.getSize(new T.Vector2()),pixelRatio=this.renderer.getPixelRatio(),aspect=this.camera.aspect;
     try{this.renderer.setPixelRatio(1);this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.render();ctx.drawImage(this.canvas,0,0,width,height);
       if(labels){ctx.font='16px Arial';ctx.textAlign='left';for(const r of this.records.filter(r=>r.face===this.face&&(this.pose.nest>.001||r.shell===this.shell))){const p=this.project(r);if(Math.abs(p.x)>1||Math.abs(p.y)>1)continue;const x=(p.x+1)*width/2,y=(1-p.y)*height/2;ctx.fillStyle='#fff';ctx.fillRect(x-4,y-19,Math.min(ctx.measureText(r.title).width+10,380),25);ctx.fillStyle='#132127';ctx.fillText(r.title,x,y,370);}}
       ctx.fillStyle='rgba(250,250,247,.96)';ctx.fillRect(0,0,width,68);ctx.fillRect(0,height-130,width,130);ctx.fillStyle='#18292d';ctx.font='bold 25px Arial';ctx.fillText('AURA  /  Matrix Studio',36,43);ctx.font='17px Arial';ctx.textAlign='right';ctx.fillText('12 × 24  ·  288 cells per shell',width-36,42);ctx.textAlign='left';ctx.font='24px Arial';
-      const words=caption.split(/\s+/);let line='',y=height-88;for(const w of words){if(ctx.measureText(line+w).width>width-72){ctx.fillText(line,36,y);line='';y+=31;}line+=w+' ';}ctx.fillText(line,36,y);ctx.font='15px Arial';ctx.fillStyle='#526368';ctx.fillText(`Luke Nathan Hayes / Aura of Intelligence     |     ${address(this.shell,this.cell,this.face)}`,36,height-19);
+      const words=caption.split(/\s+/);let line='',y=height-88;for(const w of words){if(ctx.measureText(line+w).width>width-72){ctx.fillText(line,36,y);line='';y+=31;}line+=w+' ';}ctx.fillText(line,36,y);ctx.font='15px Arial';ctx.fillStyle='#526368';ctx.fillText(`Luke Nathan Hayes / Aura of Intelligence     |     ${targetLabel(this.selection)}`,36,height-19);
     }finally{this.renderer.setPixelRatio(pixelRatio);this.renderer.setSize(savedSize.x,savedSize.y,false);this.camera.aspect=aspect;this.render();}
   }
 }
