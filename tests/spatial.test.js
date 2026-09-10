@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {blankProject,validateProject,PRESETS,SHELLS} from '../core.js?v=0.2.1';
-import {target,targetKey,targetLabel,remembered,remember,parameters,targetPoint,rayEnd,stackColour,stackSamples,sequenceLength,sequenceStep,agentPackage,cameraFrame,parseValues} from '../spatial.js?v=0.2.1';
+import {blankProject,validateProject,PRESETS,SHELLS} from '../core.js?v=0.2.2';
+import {target,targetKey,targetLabel,remembered,remember,parameters,targetPoint,rayEnd,stackColour,stackSamples,stackDepth,STACK_DRAW_LIMIT,fitStackFrame,sequenceLength,sequenceStep,agentPackage,cameraFrame,parseValues} from '../spatial.js?v=0.2.2';
 
 test('each torus and side starts unselected, remembers its own choice, and clears independently',()=>{
   let selections={};const red=target(0,'O','facet',17),green=target(3,'O','facet',42),inner=target(0,'I','vertex',25);
@@ -19,7 +19,7 @@ test('vertex and both edge directions have distinct stable addresses independent
   assert.deepEqual(parameters(target(0,'O','vertex',25)),[0,1/12]);
   assert.deepEqual(parameters(target(0,'O','edge-u',1)),[.5/24,0]);
   assert.deepEqual(parameters(target(0,'O','edge-v',1)),[0,.5/12]);
-  for(let i=1;i<=24;i++){assert.ok(Math.hypot(...targetPoint(target(0,'O','vertex',i),PRESETS.horn))<1e-10);assert.deepEqual(rayEnd(target(0,'O','vertex',i),PRESETS.horn),[0,4.4,0]);}
+  for(let i=1;i<=24;i++){assert.ok(Math.hypot(...targetPoint(target(0,'O','vertex',i),PRESETS.horn))<1e-10);assert.equal(rayEnd(target(0,'O','vertex',i),PRESETS.horn),null);}
 });
 test('inside camera is inside the selected tube at every shell scale and body position',()=>{
   for(const p of [PRESETS.ring,PRESETS.horn,PRESETS.nested,PRESETS.body])for(let s=0;s<7;s++){
@@ -40,7 +40,7 @@ test('a cubic point retains the full embedding separately from its 3D display co
 test('stack colour advances by precisely one 24-bit value, including wrap, without allocating all layers',()=>{
   for(let s=0;s<7;s++)for(const layer of [1,2,100,16777215])assert.equal(parseInt(stackColour(s,layer).slice(1),16),(parseInt(SHELLS[s][1].slice(1),16)+layer)%16777216);
   assert.equal(stackColour(0,1),'#e23a2f');assert.notEqual(targetKey(target(0,'O','stack',97,1)),targetKey(target(0,'O','stack',97,2)));
-  assert.ok(stackSamples(16777215,50000).length<=14);assert.ok(stackSamples(16777215,50000).includes(50000));
+  assert.ok(stackSamples(16777215,50000).length<=STACK_DRAW_LIMIT+1);assert.ok(stackSamples(16777215,50000).includes(50000));
   const base=targetPoint(target(0,'O','facet',97),PRESETS.horn),a=targetPoint(target(0,'O','stack',97,1),PRESETS.horn),b=targetPoint(target(0,'O','stack',97,2),PRESETS.horn);
   const distance=p=>Math.hypot(...p.map((n,i)=>n-base[i]));assert.ok(distance(b)>distance(a));
 });
@@ -66,4 +66,53 @@ test('exploding and collapsing changes display positions while retaining address
   assert.notDeepEqual(expanded,compact);assert.deepEqual(targetPoint(t,{...PRESETS.horn,explodeStacks:0}),compact);assert.equal(targetKey(t),key);
   const p=blankProject();p.stacks=[{shell:3,face:'O',cell:100,count:10}];p.programs=[{id:'p',name:'Order',loop:false,steps:[{target:{...t,layer:1},span:10,action:'visit',seconds:1}]}];
   for(let i=0;i<10;i++)assert.equal(sequenceStep(p.programs[0],i,p).target.layer,i+1);
+});
+
+
+test('100-layer regression: every layer is drawn, evenly spaced and compact, with exact RGB addresses',()=>{
+  assert.deepEqual(stackSamples(100),Array.from({length:100},(_,i)=>i+1));
+  assert.equal(stackColour(0,100),'#e23a92');
+  for(const count of [1,12,24,100,256,257,1000000,16777215]){
+    const ids=stackSamples(count,Math.min(count,50000));
+    assert.equal(ids[0],1);assert.equal(ids.at(-1),count);
+    assert.equal(new Set(ids).size,ids.length);assert.ok(ids.length<=STACK_DRAW_LIMIT+1);
+    assert.ok(stackDepth(count,count)<=1.2);
+    const regular=stackSamples(count),gaps=regular.slice(1).map((n,i)=>n-regular[i]);
+    if(gaps.length)assert.ok(Math.max(...gaps)-Math.min(...gaps)<=1);
+  }
+  for(const pose of Object.values(PRESETS))for(const explodeStacks of [0,1]){
+    const p={...pose,explodeStacks,stackCounts:{'0/O/159':100}},base=targetPoint(target(0,'O','facet',159),p);
+    let previous=0;
+    for(let layer=1;layer<=100;layer++){
+      const t=target(0,'O','stack',159,layer),point=targetPoint(t,p),distance=Math.hypot(...point.map((n,i)=>n-base[i]));
+      assert.ok(Math.abs(distance-previous-.012*(1+3*explodeStacks))<1e-8);
+      assert.deepEqual(rayEnd(t,p),point);previous=distance;
+    }
+    assert.ok(previous<=4.8+1e-8);
+  }
+});
+
+test('outside camera fits the whole stack in landscape and portrait; inside camera and deliberate zoom survive',()=>{
+  for(const aspect of [.35,.6,1,16/9,3])for(const radius of [2,6,10]){
+    const frame=cameraFrame(PRESETS.horn,0,'O',.55,.4,aspect),fitted=fitStackFrame(frame,radius,aspect);
+    const halfHeight=fitted.fov*Math.PI/360,halfWidth=Math.atan(Math.tan(halfHeight)*aspect);
+    assert.ok(Math.hypot(...fitted.eye)*Math.sin(Math.min(halfWidth,halfHeight))>=radius);
+    assert.deepEqual(fitted.look,frame.look);
+  }
+  const inner=cameraFrame(PRESETS.horn,0,'I',0,0,1);
+  assert.deepEqual(fitStackFrame(inner,10,1),inner);
+  const outside=cameraFrame(PRESETS.horn,0,'O',0,0,1);
+  assert.deepEqual(fitStackFrame(outside,0,1),outside);
+  assert.ok(Math.hypot(...fitStackFrame(outside,20,1,2).eye)<Math.hypot(...fitStackFrame(outside,20,1,1).eye));
+});
+
+
+test('vertex rays stop at actual vertices and omit the coincident horn without deleting registers',()=>{
+  for(let shell=0;shell<7;shell++)for(const pose of [PRESETS.horn,PRESETS.nested]){
+    const targets=Array.from({length:288},(_,i)=>target(shell,'O','vertex',i+1));
+    assert.equal(new Set(targets.map(targetKey)).size,288);
+    assert.equal(targets.map(t=>rayEnd(t,pose)).filter(Boolean).length,264);
+    for(const t of targets){const end=rayEnd(t,pose);if(end)assert.deepEqual(end,targetPoint(t,pose));}
+  }
+  for(let i=1;i<=288;i++)assert.deepEqual(rayEnd(target(0,'O','vertex',i),PRESETS.ring),targetPoint(target(0,'O','vertex',i),PRESETS.ring));
 });

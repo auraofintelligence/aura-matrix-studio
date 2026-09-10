@@ -69,7 +69,7 @@ Selections are persisted independently for each shell and side. A new shell has 
 
 The cubic volume stores explicit 3D display positions separately from arbitrary-length numeric vectors. Its normalised display cube maps [-1,1] to [-4.4,4.4] in the scene. Vector entries may bind to geometry and accompany directly attached records in an agent export. No embedding model is called.
 
-Outward stack counts exclude the base facet. A corner +N badge reports added layers. Depth is linear through 24 layers, then compressed logarithmically. The drawing samples the first 12 layers, the last and the selected layer; the complete stack is addressed lazily up to 16,777,215 added layers. Explode changes only display spacing. Layer cards page through all steps.
+Outward stack counts exclude the base facet. A corner +N badge reports added layers. Display height grows to a compact maximum of 1.2 scene units, with uniform spacing for every layer. Explode expands that height by up to four times; the outside camera fits the stack bounds at the reset zoom, including portrait viewports. User zoom remains available. Stacks through 256 layers draw every layer. Larger stacks draw 256 evenly spaced samples plus the selected layer, with an explicit sampled badge; the complete stack is addressed lazily up to 16,777,215 added layers. Explode changes only display spacing. Layer cards page through all steps.
 
 Records may additionally hold `anchor`, `instructions`, `data` (JSON) and `asset.url`. Old records and backups remain accepted. HTTP/HTTPS asset URLs are references, not uploaded files. The original public facet-to-asset pattern was reviewed in the personal story site's `index.html` and linked horn-torus interface.
 
@@ -78,3 +78,5 @@ Programs support ordered Visit, Recall and Pause steps, optional repetition and 
 The Blender bridge still exports the original geometric explainer sequence only. The newer records, volume entries, stack programs and explosion controls remain in the browser and JSON/skill exports.
 
 The v2 browser storage key reads the earlier v1 project on first use and writes future changes separately. This preserves existing records while preventing an older open tab from overwriting the new spatial data. The old key is not deleted.
+
+Vertex rays terminate at the actual geometry position. Zero-length rays at the horn seam are omitted from the display; the 24 seam register identities remain intact. No artificial positive-Y ray is drawn.

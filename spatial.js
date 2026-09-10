@@ -1,4 +1,4 @@
-import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.2.1';
+import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.2.2';
 
 export const KINDS=['facet','edge-u','edge-v','vertex','volume','stack'];
 export const KIND_NAMES={'facet':'Facet','edge-u':'Edge along row','edge-v':'Edge along column','vertex':'Vertex','volume':'Volume point','stack':'Stack layer'};
@@ -42,8 +42,8 @@ export function edgePoints(t,pose){
 }
 export function rayEnd(t,pose,vectors=[]){
   const p=targetPoint(t,pose,vectors);
-  // The 24 horn seam registers remain distinct, with the canonical +Y fallback.
-  return Math.hypot(...p)<1e-9?[0,4.4,0]:p;
+  // Coincident horn registers retain their IDs but have no visible ray length.
+  return Math.hypot(...p)<1e-9?null:p;
 }
 export function parseValues(text){
   if(!text.trim())return [];
@@ -52,16 +52,30 @@ export function parseValues(text){
   return values;
 }
 export const stackColour=(shell,layer)=>'#'+((parseInt(SHELLS[shell][1].slice(1),16)+layer)%16777216).toString(16).padStart(6,'0');
-export const stackDepth=layer=>layer<=24?layer*.13:24*.13+Math.log2(layer-23)*.18;
+// Display height is independent of the number of stored program steps.
+export const stackDepth=(layer,count=Math.max(24,layer))=>Math.min(1.2,count*.04)*layer/count;
 export function stackPoint(t,u,v,pose){
   const base=shellPoint(u,v,pose,t.shell),[uc,vc]=parameters(t),delta=.00001;
   const a=shellPoint(uc+delta,vc,pose,t.shell),b=shellPoint(uc-delta,vc,pose,t.shell),c=shellPoint(uc,vc+delta,pose,t.shell),d=shellPoint(uc,vc-delta,pose,t.shell),du=a.map((n,i)=>n-b[i]),dv=c.map((n,i)=>n-d[i]);
   let n=[du[1]*dv[2]-du[2]*dv[1],du[2]*dv[0]-du[0]*dv[2],du[0]*dv[1]-du[1]*dv[0]];
   if(pose.curl<.001&&pose.ring<.001)n=[0,0,1];
-  const len=Math.hypot(...n)||1,depth=stackDepth(t.layer)*(1+3*(pose.explodeStacks||0));
+  const count=pose.stackCounts?.[`${t.shell}/${t.face}/${t.index}`];
+  const len=Math.hypot(...n)||1,depth=stackDepth(t.layer,count)*(1+3*(pose.explodeStacks||0));
   return base.map((x,i)=>x+n[i]/len*depth);
 }
-export function stackSamples(count,selected=null){const ids=Array.from({length:Math.min(count,12)},(_,i)=>i+1);if(count>12)ids.push(count);if(selected&&selected<=count&&!ids.includes(selected))ids.push(selected);return ids.sort((a,b)=>a-b);}
+export const STACK_DRAW_LIMIT=256;
+export function stackSamples(count,selected=null){
+  const size=Math.min(count,STACK_DRAW_LIMIT);
+  const ids=Array.from({length:size},(_,i)=>count<=STACK_DRAW_LIMIT?i+1:1+Math.round(i*(count-1)/(size-1)));
+  if(Number.isInteger(selected)&&selected>=1&&selected<=count&&!ids.includes(selected))ids.push(selected);
+  return ids.sort((a,b)=>a-b);
+}
+export function fitStackFrame(frame,radius,aspect,zoom=1){
+  if(frame.inside||!radius)return frame;
+  const vertical=frame.fov*Math.PI/360,horizontal=Math.atan(Math.tan(vertical)*aspect);
+  const required=radius*1.12/Math.sin(Math.min(vertical,horizontal))/zoom,current=Math.hypot(...frame.eye);
+  return required>current?{...frame,eye:frame.eye.map(n=>n*required/current)}:frame;
+}
 export function validateSpatial(raw,records){
   const selections={},vectors=[],programs=[],stacks=[];
   if(raw.stacks!==undefined&&!Array.isArray(raw.stacks))throw Error('Invalid facet stacks.');

@@ -1,5 +1,5 @@
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.1';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples} from './spatial.js?v=0.2.1';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.2';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.2.2';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
@@ -38,6 +38,7 @@ export class AuraView {
   set(pose,shell=this.shell,cell=this.cell,face=this.face){this.pose={...pose,explodeStacks:this.explodeStacks||0};this.shell=shell;this.cell=cell;if(face!==this.face){this.cameraViews[this.face]={theta:this.theta,phi:this.phi,zoom:this.zoom};Object.assign(this,this.cameraViews[face]);}this.face=face;if(pose.camera&&face==='O'){[this.theta,this.phi]=pose.camera;this.zoom=1;}this.update();}
   centre(record){return targetPoint(recordTarget(record),this.pose,this.vectors);}
   update(){
+    this.pose.stackCounts=Object.fromEntries((this.stacks||[]).map(s=>[`${s.shell}/${s.face}/${s.cell}`,s.count]));
     const p=this.pose,occupied=new Set(this.records.filter(r=>r.face===this.face&&recordTarget(r).kind==='facet').map(r=>`${r.shell}/${r.cell}`));
     for(let s=0;s<7;s++){
       const mesh=this.meshes[s],wire=this.wires[s];mesh.visible=wire.visible=((p.nest>.001&&this.face==='O')||s===this.shell);if(!mesh.visible)continue;
@@ -68,10 +69,10 @@ export class AuraView {
         const t=target(s,f,'stack',stack.cell,layer),points=[];
         for(let y=0;y<3;y++)for(let x=0;x<3;x++){const u=(col+x/3)/24,v=(row+y/3)/12,du=1/72,dv=1/36;for(const [a,b]of [[u,v],[u+du,v],[u+du,v+dv],[u,v],[u+du,v+dv],[u,v+dv]])points.push(...stackPoint(t,a,b,p));}
         const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(points,3));g.computeVertexNormals();const mesh=new T.Mesh(g,new T.MeshPhongMaterial({color:chosen===layer?'#fff1a2':stackColour(s,layer),side:T.DoubleSide,transparent:true,opacity:.82}));mesh.userData.target=t;this.spatialGroup.add(mesh);this.stackPicking.push(mesh);
-        const centre=targetPoint(t,p,this.vectors);this.stackRadius=Math.max(this.stackRadius,Math.hypot(...centre));
-        if(p.explodeStacks>.05){const canvas=document.createElement('canvas');canvas.width=256;canvas.height=60;const cx=canvas.getContext('2d');cx.fillStyle='#fffdf3';cx.fillRect(0,0,256,60);cx.fillStyle='#243b42';cx.font='bold 22px Arial';cx.fillText(`Step ${layer} · ${stackColour(s,layer)}`,10,25,235);const rec=this.records.find(r=>recordTarget(r).kind==='stack'&&r.shell===s&&r.face===f&&r.cell===stack.cell&&r.anchor.layer===layer);cx.font='17px Arial';cx.fillText(rec?.title||'Click to attach instructions and data',10,48,235);const label=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(canvas),depthTest:false}));label.position.fromArray(centre);label.position.x+=.6;label.scale.set(1.8,.42,1);label.renderOrder=9;label.userData.target=t;this.spatialGroup.add(label);this.stackPicking.push(label);}
+        const centre=targetPoint(t,p,this.vectors);for(let i=0;i<points.length;i+=3)this.stackRadius=Math.max(this.stackRadius,Math.hypot(points[i],points[i+1],points[i+2]));
+        if(p.explodeStacks>.05&&(stack.count<=12||layer===1||layer===stack.count||layer===chosen)){this.stackRadius=Math.max(this.stackRadius,Math.hypot(...centre)+1.6);const canvas=document.createElement('canvas');canvas.width=256;canvas.height=60;const cx=canvas.getContext('2d');cx.fillStyle='#fffdf3';cx.fillRect(0,0,256,60);cx.fillStyle='#243b42';cx.font='bold 22px Arial';cx.fillText(`Step ${layer} · ${stackColour(s,layer)}`,10,25,235);const rec=this.records.find(r=>recordTarget(r).kind==='stack'&&r.shell===s&&r.face===f&&r.cell===stack.cell&&r.anchor.layer===layer);cx.font='17px Arial';cx.fillText(rec?.title||'Click to attach instructions and data',10,48,235);const label=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(canvas),depthTest:false}));label.position.fromArray(centre);label.position.x+=.6;label.scale.set(1.8,.42,1);label.renderOrder=9;label.userData.target=t;this.spatialGroup.add(label);this.stackPicking.push(label);}
       }
-      const label=document.createElement('canvas');label.width=160;label.height=52;const ctx=label.getContext('2d');ctx.fillStyle='#fffdf2';ctx.fillRect(0,0,160,52);ctx.fillStyle='#1c3035';ctx.font='bold 26px Arial';ctx.textAlign='center';ctx.fillText('+'+stack.count,80,35,150);const sprite=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(label),depthTest:false}));sprite.position.fromArray(shellPoint((col+.84)/24,(row+.12)/12,p,s));sprite.scale.set(.65,.22,1);sprite.renderOrder=8;this.spatialGroup.add(sprite);
+      const label=document.createElement('canvas');label.width=320;label.height=52;const ctx=label.getContext('2d');ctx.fillStyle='#fffdf2';ctx.fillRect(0,0,320,52);ctx.fillStyle='#1c3035';ctx.font='bold 26px Arial';ctx.textAlign='center';ctx.fillText('+'+stack.count+(stack.count>STACK_DRAW_LIMIT?' (sampled)':''),160,35,310);const sprite=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(label),depthTest:false}));sprite.position.fromArray(shellPoint((col+.84)/24,(row+.12)/12,p,s));sprite.scale.set(stack.count>STACK_DRAW_LIMIT?1.65:.85,.22,1);sprite.renderOrder=8;this.spatialGroup.add(sprite);
     }
     if(this.kind==='vertex')addPoints(Array.from({length:288},(_,i)=>target(s,f,'vertex',i+1)),'#173d54',6);
     if(this.kind.startsWith('edge-')){
@@ -82,7 +83,7 @@ export class AuraView {
     const rays=[];let targets=[];
     if(this.rayMode==='selected'&&this.selection)targets=[this.selection];
     if(['vertices','centres'].includes(this.rayMode))targets=Array.from({length:288},(_,i)=>target(s,f,this.rayMode==='vertices'?'vertex':'facet',i+1));
-    for(const t of targets)rays.push([0,0,0],rayEnd(t,p,this.vectors));if(rays.length)addLines(rays,'#ae8630',this.rayMode==='selected'?1:.18);
+    for(const t of targets){const end=rayEnd(t,p,this.vectors);if(end)rays.push([0,0,0],end);}if(rays.length)addLines(rays,'#ae8630',this.rayMode==='selected'?1:.18);
     if(this.showVolume){
       const box=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(8.8,8.8,8.8)),new T.LineBasicMaterial({color:'#568688',transparent:true,opacity:.4,depthTest:false}));this.spatialGroup.add(box);
       addLines([[-4.4,0,0],[4.4,0,0],[0,-4.4,0],[0,4.4,0],[0,0,-4.4],[0,0,4.4]],'#568688',.3);
@@ -93,8 +94,8 @@ export class AuraView {
   }
   render(){
     if(!this.renderer)return;const p=this.pose;
-    const frame=cameraFrame(p,this.shell,this.face,this.theta,this.phi,this.camera.aspect||1,this.zoom);
-    if(this.face==='O'&&p.explodeStacks>.05&&this.stackRadius){const required=this.stackRadius*1.3/Math.sin(Math.PI/10)/this.zoom,current=Math.hypot(...frame.eye);if(required>current)frame.eye=frame.eye.map(n=>n*required/current);}
+    const aspect=this.camera.aspect||1,initial=cameraFrame(p,this.shell,this.face,this.theta,this.phi,aspect,this.zoom);
+    const frame=this.face==='O'?fitStackFrame(initial,this.stackRadius,aspect,this.zoom):initial;
     this.camera.position.fromArray(frame.eye);this.camera.lookAt(...frame.look);this.camera.near=frame.near;this.camera.fov=frame.fov;this.camera.updateProjectionMatrix();this.renderer.render(this.scene,this.camera);
   }
   pick(e){const b=this.canvas.getBoundingClientRect();this.raycaster.setFromCamera(new T.Vector2((e.clientX-b.left)/b.width*2-1,1-(e.clientY-b.top)/b.height*2),this.camera);this.raycaster.params.Points.threshold=.12;
