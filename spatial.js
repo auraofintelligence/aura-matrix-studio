@@ -1,4 +1,4 @@
-import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.2.2';
+import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.2.3';
 
 export const KINDS=['facet','edge-u','edge-v','vertex','volume','stack'];
 export const KIND_NAMES={'facet':'Facet','edge-u':'Edge along row','edge-v':'Edge along column','vertex':'Vertex','volume':'Volume point','stack':'Stack layer'};
@@ -22,6 +22,20 @@ export function targetLabel(t){
 export function remembered(selections,shell,face){return selections[`${shell}/${face}`]??null;}
 export function remember(selections,t,shell=t?.shell,face=t?.face){
   address(shell,1,face);return {...selections,[`${shell}/${face}`]:t?validateTarget(t):null};
+}
+export function selectFacetGroup(groups,t,toggle=false){
+  t=validateTarget(t);if(t.kind!=='facet')throw Error('Choose a facet for group selection.');
+  const key=`${t.shell}/${t.face}`,previous=groups[key]||[];
+  const cells=toggle?(previous.includes(t.index)?previous.filter(n=>n!==t.index):[...previous,t.index]):[t.index];
+  const focused=cells.includes(t.index)?t:cells.length?target(t.shell,t.face,'facet',cells.at(-1)):null;
+  return {groups:{...groups,[key]:cells},focused};
+}
+export function setFacetStacks(stacks,facets,count){
+  if(!Number.isInteger(count)||count<0||count>16777215)throw Error('Use a stack count from 0 to 16,777,215.');
+  const keys=new Set();for(const t of facets){validateTarget(t);if(t.kind!=='facet')throw Error('Select base facets to set stack counts.');keys.add(`${t.shell}/${t.face}/${t.index}`);}
+  const next=stacks.filter(s=>!keys.has(`${s.shell}/${s.face}/${s.cell}`));
+  if(count)for(const key of keys){const [shell,face,cell]=key.split('/');next.push({shell:+shell,face,cell:+cell,count});}
+  return next;
 }
 export function recordTarget(r){return r.anchor||target(r.shell,r.face,'facet',r.cell);}
 export function recordsAt(records,t){return t?records.filter(r=>targetKey(recordTarget(r))===targetKey(t)):[];}
@@ -77,7 +91,13 @@ export function fitStackFrame(frame,radius,aspect,zoom=1){
   return required>current?{...frame,eye:frame.eye.map(n=>n*required/current)}:frame;
 }
 export function validateSpatial(raw,records){
-  const selections={},vectors=[],programs=[],stacks=[];
+  const selections={},facetSelections={},vectors=[],programs=[],stacks=[];
+  if(raw.facetSelections!==undefined&&(!raw.facetSelections||Array.isArray(raw.facetSelections)||typeof raw.facetSelections!=='object'))throw Error('Invalid facet group selections.');
+  for(const [key,cells] of Object.entries(raw.facetSelections||{})){
+    if(!/^[0-6]\/[IO]$/.test(key)||!Array.isArray(cells)||new Set(cells).size!==cells.length)throw Error('Each facet group needs distinct cells on its own torus and side.');
+    for(const cell of cells)address(+key[0],cell,key[2]);
+    facetSelections[key]=[...cells];
+  }
   if(raw.stacks!==undefined&&!Array.isArray(raw.stacks))throw Error('Invalid facet stacks.');
   const stackIds=new Set();for(const s of raw.stacks||[]){address(s.shell,s.cell,s.face);const key=`${s.shell}/${s.face}/${s.cell}`;if(stackIds.has(key)||!Number.isInteger(s.count)||s.count<1||s.count>16777215)throw Error('Use one stack per facet, with 1 to 16,777,215 added layers.');stackIds.add(key);stacks.push({shell:s.shell,cell:s.cell,face:s.face,count:s.count});}
   if(raw.selections!==undefined&&(!raw.selections||Array.isArray(raw.selections)||typeof raw.selections!=='object'))throw Error('Invalid remembered selections.');
@@ -113,7 +133,7 @@ export function validateSpatial(raw,records){
       return {target:t,action:s.action,seconds:s.seconds,...(s.span!==undefined?{span}:{})};
     });programs.push({id:p.id,name:p.name.trim(),loop:p.loop,steps});
   }
-  return {selections,vectors,programs,stacks};
+  return {selections,facetSelections,vectors,programs,stacks};
 }
 export const sequenceLength=p=>p.steps.reduce((n,s)=>n+(s.span||1),0);
 export function sequenceStep(program,index,project){

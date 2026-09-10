@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {blankProject,validateProject,PRESETS,SHELLS} from '../core.js?v=0.2.2';
-import {target,targetKey,targetLabel,remembered,remember,parameters,targetPoint,rayEnd,stackColour,stackSamples,stackDepth,STACK_DRAW_LIMIT,fitStackFrame,sequenceLength,sequenceStep,agentPackage,cameraFrame,parseValues} from '../spatial.js?v=0.2.2';
+import {blankProject,validateProject,PRESETS,SHELLS} from '../core.js?v=0.2.3';
+import {target,targetKey,targetLabel,selectFacetGroup,setFacetStacks,remembered,remember,parameters,targetPoint,rayEnd,stackColour,stackSamples,stackDepth,STACK_DRAW_LIMIT,fitStackFrame,sequenceLength,sequenceStep,agentPackage,cameraFrame,parseValues} from '../spatial.js?v=0.2.3';
 
 test('each torus and side starts unselected, remembers its own choice, and clears independently',()=>{
   let selections={};const red=target(0,'O','facet',17),green=target(3,'O','facet',42),inner=target(0,'I','vertex',25);
@@ -115,4 +115,33 @@ test('vertex rays stop at actual vertices and omit the coincident horn without d
     for(const t of targets){const end=rayEnd(t,pose);if(end)assert.deepEqual(end,targetPoint(t,pose));}
   }
   for(let i=1;i<=288;i++)assert.deepEqual(rayEnd(target(0,'O','vertex',i),PRESETS.ring),targetPoint(target(0,'O','vertex',i),PRESETS.ring));
+});
+
+
+test('facet groups toggle independently by shell and side, retain selection order and survive backup',()=>{
+  let groups={};const a=target(0,'O','facet',159),b=target(0,'O','facet',160),green=target(3,'O','facet',159);
+  let result=selectFacetGroup(groups,a,true);groups=result.groups;
+  result=selectFacetGroup(groups,b,true);groups=result.groups;assert.deepEqual(groups['0/O'],[159,160]);assert.deepEqual(result.focused,b);
+  groups=selectFacetGroup(groups,green,true).groups;assert.deepEqual(groups['3/O'],[159]);assert.deepEqual(groups['0/O'],[159,160]);assert.equal(groups['0/I'],undefined);
+  result=selectFacetGroup(groups,b,true);assert.deepEqual(result.groups['0/O'],[159]);assert.deepEqual(result.focused,a);
+  result=selectFacetGroup(result.groups,a,true);assert.deepEqual(result.groups['0/O'],[]);assert.equal(result.focused,null);
+  assert.deepEqual(selectFacetGroup(groups,a).groups['0/O'],[159]);
+  const p={...blankProject(),facetSelections:groups};assert.deepEqual(validateProject(JSON.parse(JSON.stringify(p))).facetSelections,groups);
+  const legacy=blankProject();delete legacy.facetSelections;assert.deepEqual(validateProject(legacy).facetSelections,{});
+  for(const invalid of [{'0/O':[1,1]},{'0/O':[289]},{'7/O':[1]},{'0/O':'1'},[]])assert.throws(()=>validateProject({...p,facetSelections:invalid}));
+  const all=Array.from({length:288},(_,i)=>i+1);assert.deepEqual(validateProject({...p,facetSelections:{'0/O':all}}).facetSelections['0/O'],all);
+});
+
+test('group stack counts preserve other owners and reject changes that would orphan attached steps',()=>{
+  const p=blankProject(),facets=[target(0,'O','facet',159),target(0,'O','facet',160)];
+  p.stacks=[{shell:0,face:'O',cell:159,count:5},{shell:3,face:'O',cell:159,count:8},{shell:0,face:'I',cell:159,count:9}];
+  p.stacks=setFacetStacks(p.stacks,facets,100);const saved=validateProject(p);
+  assert.equal(saved.stacks.length,4);assert.equal(saved.stacks.find(s=>s.shell===3).count,8);assert.equal(saved.stacks.find(s=>s.face==='I').count,9);
+  assert.equal(saved.stacks.filter(s=>s.shell===0&&s.face==='O'&&s.count===100).length,2);
+  p.records=[{id:'r',title:'Keep step data',shell:0,face:'O',cell:159,anchor:target(0,'O','stack',159,100),instructions:'Keep this',fields:{}}];
+  assert.throws(()=>validateProject({...p,stacks:setFacetStacks(p.stacks,facets,10)}));assert.equal(p.stacks.find(s=>s.shell===0&&s.face==='O').count,100);
+  assert.throws(()=>setFacetStacks(p.stacks,facets,-1));assert.throws(()=>setFacetStacks(p.stacks,facets,1.5));
+  assert.equal(setFacetStacks(p.stacks,facets,0).length,2);
+  const program={id:'g',name:'Selection order',loop:false,steps:facets.map(t=>({target:t,action:'visit',seconds:1}))};
+  assert.deepEqual([0,1].map(i=>sequenceStep(program,i,p).target.index),[159,160]);
 });

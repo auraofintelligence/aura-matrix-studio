@@ -31,3 +31,8 @@ The expanded Node suite passes selection isolation and persistence; distinct edg
 ## Compact stack and horn ray correction (0.2.2)
 
 20 Node tests pass. Regression checks cover all 100 layers of the reported Red facet 159 stack, uniform bounded height in each transform, exact RGB codes, bounded evenly spaced sampling through 16,777,215 layers, and outside camera framing in landscape and portrait. A scene-level check using the bundled Three.js verifies actual layer meshes, updated marker and record-connection positions, large-stack badges, and omission of zero-length horn rays. This scene check uses a canvas text stub, without WebGL or browser interaction. All 288 vertex registers remain available; the horn view draws 264 nonzero vertex rays per shell. Syntax checks and whitespace checks pass. Browser visual and interaction review remains outstanding.
+
+
+## Facet groups and compact workspace (0.2.3)
+
+22 Node tests pass, including independent group toggling, selection order, empty groups, full 288-facet groups, backup round trips and legacy import. Batch stack checks retain unrelated shells/sides and reject shrinking stacks with attached records. The existing geometry, scene, camera and ray regressions remain green. All application modules pass syntax checks and deployment includes workspace.js. Original Mockplus screenshots were inspected as layout references. Browser interaction, phone appearance, viewport overflow and virtual-keyboard behaviour have not been visually tested; the Sites skill prohibits browser QA without an explicit request. Long user content retains internal overflow as a fallback; the programmer document uses a fixed viewport.

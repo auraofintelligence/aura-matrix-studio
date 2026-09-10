@@ -80,3 +80,12 @@ The Blender bridge still exports the original geometric explainer sequence only.
 The v2 browser storage key reads the earlier v1 project on first use and writes future changes separately. This preserves existing records while preventing an older open tab from overwriting the new spatial data. The old key is not deleted.
 
 Vertex rays terminate at the actual geometry position. Zero-length rays at the horn seam are omitted from the display; the 24 seam register identities remain intact. No artificial positive-Y ray is drawn.
+
+
+## Compact workspace and facet groups (0.2.3)
+
+The programmer uses a fixed viewport, an icon-and-label tool rail and a collapsible editor. Shape and inside/outside controls remain beside the model. Record fields and sequence controls use short pages; stack cards show four steps per page. The phone map pages through 6-row by 8-column windows without changing any of the 12 by 24 addresses. Larger displays retain the complete map. Long user data can still scroll inside its editor. `workspace.js` reparents existing editors, preserving their handlers and field contents.
+
+Multi-selection works in the model and numbered map, with a visible mode switch, modifier clicks and Select all. `facetSelections` stores ordered groups independently for each shell/side, separately from the active record address. Groups survive backups and reloads. Stack counts can be applied to a group atomically and undone; orphaned stack records are rejected. Sequence append follows selection order.
+
+The phone-first reference is Luke's original Mockplus screens: Quick Navigation and Matrix Programmer, plus Finite Map / Interior / Exterior screenshots dated 6 July 2026 (135648, 135710, 135730, 135734 and 135749). These guide the central working area, edge shell controls and short tool pages. This update does not claim pixel-identical reconstruction.

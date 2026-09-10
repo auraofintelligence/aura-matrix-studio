@@ -1,4 +1,4 @@
-import {validateSpatial,validateTarget} from './spatial.js?v=0.2.2';
+import {validateSpatial,validateTarget} from './spatial.js?v=0.2.3';
 // Based on Luke Nathan Hayes' aura-horn-torus roll path and aura-spatial-perception addressing.
 // The drawing can change shape. These dimensions and semantic addresses cannot.
 export const ROWS = 12, COLS = 24, CELLS = 288, LATTICE = 'aura-lattice/1.0.0';
@@ -64,7 +64,7 @@ export function poseAt(story,time) {
   p.camera=CAMERAS[shot.camera].map((n,j)=>lerp(CAMERAS[previous.camera][j],n,e));
   return {pose:p,index:i,caption:shot.caption,total,time};
 }
-export function blankProject(){return {format:FORMAT,lattice:LATTICE,rows:ROWS,columns:COLS,records:[],links:[],story:makeStory(),selections:{},vectors:[],programs:[],stacks:[]};}
+export function blankProject(){return {format:FORMAT,lattice:LATTICE,rows:ROWS,columns:COLS,records:[],links:[],story:makeStory(),selections:{},facetSelections:{},vectors:[],programs:[],stacks:[]};}
 const cleanText=(v,label,max=100000)=>{if(typeof v!=='string'||v.length>max)throw Error(`Invalid ${label}.`);return v;};
 export function validateProject(raw) {
   if(!raw||raw.format!==FORMAT||raw.lattice!==LATTICE||raw.rows!==ROWS||raw.columns!==COLS)throw Error('This file must use Aura Matrix Studio and the fixed 12 × 24 lattice.');

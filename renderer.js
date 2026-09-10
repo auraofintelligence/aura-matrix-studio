@@ -1,5 +1,5 @@
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.2';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.2.2';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.3';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.2.3';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
@@ -44,10 +44,11 @@ export class AuraView {
       const mesh=this.meshes[s],wire=this.wires[s];mesh.visible=wire.visible=((p.nest>.001&&this.face==='O')||s===this.shell);if(!mesh.visible)continue;
       mesh.material.opacity=this.face==='I'?1:p.nest>.001?(s===this.shell?.56:.13):.83;mesh.material.depthWrite=this.face==='I'||p.nest<.001;wire.material.opacity=p.nest>.001?.23:.38;
       const positions=mesh.geometry.attributes.position.array,colors=mesh.geometry.attributes.color.array;
+      const groupCells=new Set(this.selectedFacets||[]),groupColour=new T.Color('#ffd267');
       const base=new T.Color(SHELLS[s][1]),active=new T.Color('#ffe59a'),filled=new T.Color('#214f5a');
       for(let i=0;i<this.parameters.length;i++){
         const [u,v,c]=this.parameters[i],xyz=shellPoint(u,v,p,s,this.shell);positions.set(xyz,i*3);
-        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
+        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:s===this.shell&&groupCells.has(c)?groupColour:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
       }
       mesh.geometry.attributes.position.needsUpdate=mesh.geometry.attributes.color.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingSphere();
       const lines=wire.geometry.attributes.position.array;this.lineParameters.forEach(([u,v],i)=>lines.set(shellPoint(u,v,p,s,this.shell),i*3));wire.geometry.attributes.position.needsUpdate=true;wire.geometry.computeBoundingSphere();
@@ -99,12 +100,12 @@ export class AuraView {
     this.camera.position.fromArray(frame.eye);this.camera.lookAt(...frame.look);this.camera.near=frame.near;this.camera.fov=frame.fov;this.camera.updateProjectionMatrix();this.renderer.render(this.scene,this.camera);
   }
   pick(e){const b=this.canvas.getBoundingClientRect();this.raycaster.setFromCamera(new T.Vector2((e.clientX-b.left)/b.width*2-1,1-(e.clientY-b.top)/b.height*2),this.camera);this.raycaster.params.Points.threshold=.12;
-    const stacked=this.raycaster.intersectObjects(this.stackPicking||[])[0];if(stacked){this.onSelect(stacked.object.userData.target);return;}
-    const pointHit=this.raycaster.intersectObjects(this.picking)[0];if(pointHit){this.onSelect(pointHit.object.userData.targets[pointHit.index]);return;}
+    const stacked=this.raycaster.intersectObjects(this.stackPicking||[])[0];if(stacked){this.onSelect(stacked.object.userData.target,e);return;}
+    const pointHit=this.raycaster.intersectObjects(this.picking)[0];if(pointHit){this.onSelect(pointHit.object.userData.targets[pointHit.index],e);return;}
     const hit=this.raycaster.intersectObjects(this.meshes.filter(m=>m.visible))[0];if(!hit||this.kind==='volume')return;
     const s=hit.object.userData.shell;
-    if(this.kind==='facet'){this.onSelect(target(s,this.face,'facet',Math.floor(hit.faceIndex/18)+1));return;}
-    let nearest=null,best=Infinity;for(let i=1;i<=288;i++){const t=target(s,this.face,this.kind,i),p=new T.Vector3(...targetPoint(t,this.pose,this.vectors)),d=p.distanceToSquared(hit.point);if(d<best){best=d;nearest=t;}}if(nearest)this.onSelect(nearest);
+    if(this.kind==='facet'){this.onSelect(target(s,this.face,'facet',Math.floor(hit.faceIndex/18)+1),e);return;}
+    let nearest=null,best=Infinity;for(let i=1;i<=288;i++){const t=target(s,this.face,this.kind,i),p=new T.Vector3(...targetPoint(t,this.pose,this.vectors)),d=p.distanceToSquared(hit.point);if(d<best){best=d;nearest=t;}}if(nearest)this.onSelect(nearest,e);
   }
   reset(){this.theta=this.face==='I'?0:this.pose.ring>.1?.55:0;this.phi=this.face==='I'?0:this.pose.ring>.1?.4:0;this.zoom=1;this.render();}
   project(record){return new T.Vector3(...this.centre(record)).project(this.camera);}

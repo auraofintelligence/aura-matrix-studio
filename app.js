@@ -1,10 +1,13 @@
-import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.2.2';
-import {AuraView} from './renderer.js?v=0.2.2';
-import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour} from './spatial.js?v=0.2.2';
-import {mountSpatial} from './spatial-ui.js?v=0.2.2';
+import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.2.3';
+import {AuraView} from './renderer.js?v=0.2.3';
+import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.2.3';
+import {mountSpatial} from './spatial-ui.js?v=0.2.3';
+import {mountWorkspace} from './workspace.js?v=0.2.3';
 const $=id=>document.getElementById(id),page=document.body.dataset.page;
 const KEY='aura-matrix-studio:v2:project',LEGACY_KEY='aura-matrix-studio:v1:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
-let selection=null,pickKind='facet',spatialUI=null;
+let selection=null,pickKind='facet',spatialUI=null,multipleFacets=false;
+const facetCells=()=>project.facetSelections[`${shell}/${face}`]||[];
+const pickedFacets=()=>selection?.kind==='facet'?(facetCells().length?facetCells():[selection.index]).map(n=>target(shell,face,'facet',n)):[];
 const id=()=>crypto.randomUUID();
 function notify(message){$('toast').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').textContent='',7000);}
 function el(tag,text,className){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;}
@@ -15,27 +18,30 @@ function change(fn){const next=structuredClone(project);fn(next);commit(next);}
 function download(name,blob){const url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}
 function jsonDownload(name,data){download(name,new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));}
 function persistSelection(){project={...project,selections:remember(project.selections,selection,shell,face)};try{localStorage.setItem(KEY,JSON.stringify(project));}catch{saveStatus('Selection is remembered in this tab only. Download a backup.');}}
-function choose(t){if(t){t=validateTarget(t);shell=t.shell;face=t.face;pickKind=t.kind;}selection=t;cell=t&&t.kind!=='volume'?t.index:null;selectedId=null;persistSelection();refresh();}
-function select(s,c,f=face){choose(target(s,f,['stack','volume'].includes(pickKind)?'facet':pickKind,c));}
-function switchOwner(s,f=face){shell=s;face=f;selection=remembered(project.selections,shell,face);if(selection)pickKind=selection.kind;cell=selection&&selection.kind!=='volume'?selection.index:null;selectedId=null;refresh();}
+function choose(t,{toggle=false}={}){if(t){t=validateTarget(t);shell=t.shell;face=t.face;pickKind=t.kind;if(t.kind==='facet'){const result=selectFacetGroup(project.facetSelections,t,toggle);project={...project,facetSelections:result.groups};t=result.focused;}}else project={...project,facetSelections:{...project.facetSelections,[`${shell}/${face}`]:[]}};selection=t;cell=t&&t.kind!=='volume'?t.index:null;selectedId=null;persistSelection();refresh();}
+function pick(t,event={}){choose(t,{toggle:t.kind==='facet'&&(multipleFacets||event.shiftKey||event.ctrlKey||event.metaKey)});}
+function select(s,c,f=face,event={}){pick(target(s,f,['stack','volume'].includes(pickKind)?'facet':pickKind,c),event);}
+function selectAllFacets(){multipleFacets=true;const cells=Array.from({length:288},(_,i)=>i+1);project={...project,facetSelections:{...project.facetSelections,[`${shell}/${face}`]:cells}};selection=target(shell,face,'facet',selection?.kind==='facet'?selection.index:1);pickKind='facet';selectedId=null;persistSelection();refresh();}
+function switchOwner(s,f=face){shell=s;face=f;if(facetCells().length>1)multipleFacets=true;selection=remembered(project.selections,shell,face);if(selection)pickKind=selection.kind;cell=selection&&selection.kind!=='volume'?selection.index:null;selectedId=null;refresh();}
 function selectOptions(node,items,value){node.replaceChildren();for(const [v,name]of items){const o=el('option',name);o.value=v;node.append(o);}if(value!==undefined)node.value=value;}
 function refresh(){
   document.documentElement.style.setProperty('--shell',SHELLS[shell][1]);
   selection=remembered(project.selections,shell,face);if(selection)pickKind=selection.kind;cell=selection&&selection.kind!=='volume'?selection.index:null;
+  if(pickedFacets().length>1)multipleFacets=true;
   const selectedLabel=selection?targetLabel(selection):`${SHELLS[shell][0]} ${face} · Nothing selected`;
   if($('selected-address'))$('selected-address').textContent=selectedLabel;
-  if($('stage-address'))$('stage-address').textContent=selectedLabel;
+  if($('stage-address'))$('stage-address').textContent=selectedLabel+(pickedFacets().length>1?` · ${pickedFacets().length} facets selected`:'');
   if($('address-detail'))$('address-detail').textContent=selection?`${KIND_NAMES[selection.kind]} · ${cell?`Row ${Math.floor((cell-1)/24)+1} · Column ${(cell-1)%24+1}`:'Shared cubic volume'}`:'Select a facet, edge, vertex or volume point to attach information.';
   document.querySelectorAll('[data-shell]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.shell===shell)));
   document.querySelectorAll('[data-face]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.face===face)));
-  if(view){view.selection=selection;view.kind=pickKind==='stack'?'facet':pickKind;view.vectors=project.vectors;view.stacks=project.stacks;view.records=project.records;view.links=project.links;view.set(page==='story'?poseAt(project.story,time).pose:{...PRESETS[shape]},shell,cell,face);}
-  if(page==='matrix'){renderGrid();renderRecords();spatialUI?.refresh();}
+  if(view){view.selection=selection;view.selectedFacets=pickedFacets().map(t=>t.index);view.kind=pickKind==='stack'?'facet':pickKind;view.vectors=project.vectors;view.stacks=project.stacks;view.records=project.records;view.links=project.links;view.set(page==='story'?poseAt(project.story,time).pose:{...PRESETS[shape]},shell,cell,face);}
+  if(page==='matrix'){renderGrid();renderRecords();spatialUI?.refresh();document.dispatchEvent(new CustomEvent('aura-selection-change',{detail:selection}));}
   if(page==='inventory')renderInventory();
   if(page==='story'){renderShots();updateTimeline();}
   if($('record-count'))$('record-count').textContent=`${project.records.length} records · ${project.links.length} connections`;
 }
 if($('aura-canvas')){
-  try{view=new AuraView($('aura-canvas'),choose);}catch(e){$('stage-error').textContent='The 3D view needs WebGL. You can still use the numbered matrix, records and backups below.';}
+  try{view=new AuraView($('aura-canvas'),pick);}catch(e){$('stage-error').textContent='The 3D view needs WebGL. You can still use the numbered matrix, records and backups below.';}
   for(let s=6;s>=0;s--){const b=el('button');b.dataset.shell=s;b.style.setProperty('--colour',SHELLS[s][1]);b.title=SHELLS[s][0];b.setAttribute('aria-label',`Select ${SHELLS[s][0]} shell`);b.setAttribute('aria-pressed',String(s===shell));b.onclick=()=>{if(!recording)switchOwner(s);};$('shell-rail').append(b);}
   $('reset-view').onclick=()=>view?.reset();
   $('save-png').onclick=()=>{if(!view)return notify('PNG export needs the 3D view.');const c=document.createElement('canvas');c.width=1280;c.height=720;view.paintExport(c.getContext('2d'),1280,720,page==='story'?poseAt(project.story,time).caption:`${PRESETS[shape].name}. Twelve rows, twenty-four columns.`,page==='story'&&$('include-labels').checked);c.toBlob(b=>b&&download('aura-matrix-frame.png',b),'image/png');};
@@ -43,18 +49,18 @@ if($('aura-canvas')){
 document.querySelectorAll('[data-face]').forEach(b=>b.onclick=()=>switchOwner(shell,b.dataset.face));
 if(page==='matrix'){
   for(const [key,p]of Object.entries(PRESETS)){const b=el('button',p.name);b.dataset.shape=key;b.setAttribute('aria-pressed',String(key===shape));b.onclick=()=>{shape=key;document.querySelectorAll('[data-shape]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));refresh();view?.reset();};$('shapes').append(b);}
-  for(let i=1;i<=288;i++){const b=el('button',String(i));b.dataset.cell=i;b.onclick=()=>select(shell,i);b.addEventListener('keydown',e=>{const key={ArrowUp:'north',ArrowRight:'east',ArrowDown:'south',ArrowLeft:'west'}[e.key];if(key){e.preventDefault();const next=neighbours(i)[key];select(shell,next);$('matrix-grid').children[next-1].focus();}});$('matrix-grid').append(b);}
+  for(let i=1;i<=288;i++){const b=el('button',String(i));b.dataset.cell=i;b.onclick=e=>select(shell,i,face,e);b.addEventListener('keydown',e=>{const key={ArrowUp:'north',ArrowRight:'east',ArrowDown:'south',ArrowLeft:'west'}[e.key];if(key){e.preventDefault();const next=neighbours(i)[key];select(shell,next);$('matrix-grid').children[next-1].focus();}});$('matrix-grid').append(b);}
   $('record-form').onsubmit=e=>{e.preventDefault();try{if(!selection)throw Error('Select an address first.');const title=$('record-title').value.trim();if(!title)return;const old=project.records.find(r=>r.id===selectedId),assetUrl=$('record-asset').value.trim(),instructions=$('record-instructions').value,rawData=$('record-data').value.trim();let data;if(rawData){try{data=JSON.parse(rawData);}catch{throw Error('Attached data must be valid JSON.');}}const record={id:old?.id||id(),title,note:$('record-note').value,shell,cell:cell||1,face,fields:old?.fields||{},...(selection.kind!=='facet'?{anchor:selection}:{}),...(assetUrl?{asset:{url:assetUrl}}:{}),...(instructions?{instructions}:{}),...(data!==undefined?{data}:{})};change(p=>{const i=p.records.findIndex(r=>r.id===record.id);if(i<0)p.records.push(record);else p.records[i]=record;});selectedId=record.id;renderRecords();notify('Saved at '+targetLabel(selection)+'.');}catch(error){notify(error.message);}};
   $('new-record').onclick=()=>{selectedId=null;renderRecords();$('record-title').focus();};
   $('delete-record').onclick=()=>{const rid=selectedId;selectedId=null;change(p=>{p.records=p.records.filter(r=>r.id!==rid);p.links=p.links.filter(l=>l.from!==rid&&l.to!==rid);});notify('Record removed. Undo will restore it.');};
   $('connection-form').onsubmit=e=>{e.preventDefault();const to=$('link-to').value,label=$('link-label').value.trim();if(!selectedId||!to||!label)return;change(p=>p.links.push({from:selectedId,to,label}));notify('Connection saved.');};
 }
-function renderGrid(){const occupied=new Set(project.records.filter(r=>r.shell===shell&&r.face===face&&recordTarget(r).kind===pickKind).map(r=>r.cell));for(const b of $('matrix-grid').children){const n=+b.dataset.cell;const selected=selection&&selection.kind===pickKind&&selection.kind!=='volume'&&selection.index===n;b.classList.toggle('occupied',occupied.has(n));b.setAttribute('aria-pressed',String(Boolean(selected)));b.setAttribute('aria-label',`${SHELLS[shell][0]} ${face} ${KIND_NAMES[pickKind]||'Facet'} ${n}${occupied.has(n)?', contains records':''}`);b.tabIndex=selected||((!selection||selection.kind!==pickKind)&&n===1)?0:-1;b.replaceChildren(document.createTextNode(String(n)));const stack=project.stacks.find(s=>s.shell===shell&&s.face===face&&s.cell===n);if(stack){const badge=el('sup','+'+stack.count,'stack-badge');b.append(badge);}}}
+function renderGrid(){const occupied=new Set(project.records.filter(r=>r.shell===shell&&r.face===face&&recordTarget(r).kind===pickKind).map(r=>r.cell));for(const b of $('matrix-grid').children){const n=+b.dataset.cell;const selected=pickKind==='facet'&&pickedFacets().some(t=>t.index===n)||selection&&selection.kind===pickKind&&selection.kind!=='volume'&&selection.index===n;b.classList.toggle('occupied',occupied.has(n));b.setAttribute('aria-pressed',String(Boolean(selected)));b.setAttribute('aria-label',`${SHELLS[shell][0]} ${face} ${KIND_NAMES[pickKind]||'Facet'} ${n}${occupied.has(n)?', contains records':''}`);b.tabIndex=(selection?.index===n)||((!selection||selection.kind!==pickKind)&&n===1)?0:-1;b.replaceChildren(document.createTextNode(String(n)));const stack=project.stacks.find(s=>s.shell===shell&&s.face===face&&s.cell===n);if(stack){const badge=el('sup','+'+stack.count,'stack-badge');b.append(badge);}}}
 function renderRecords(){
   const list=$('cell-records');list.replaceChildren();const records=recordsAt(project.records,selection);
   if(!records.length)list.append(el('p',selection?'No records at this address. Add data, instructions or an asset below.':'This torus has no active selection. Choose an address to begin.','empty'));
   $('record-form').querySelectorAll('input,textarea,button').forEach(n=>n.disabled=!selection);
-  for(const r of records){const b=el('button',r.title,'record-item');b.setAttribute('aria-pressed',String(r.id===selectedId));b.onclick=()=>{selectedId=r.id;renderRecords();};list.append(b);if(r.asset){const a=el('a','Open attached asset','asset-link');a.href=r.asset.url;a.target='_blank';a.rel='noopener noreferrer';list.append(a);}}
+  if(records.length){const choices=el('select');choices.setAttribute('aria-label','Records at this address');selectOptions(choices,[['',`New record (${records.length} saved here)`],...records.map(r=>[r.id,r.title])],selectedId||'');choices.onchange=()=>{selectedId=choices.value||null;renderRecords();};list.append(choices);const active=records.find(r=>r.id===selectedId);if(active?.asset){const a=el('a','Open attached asset','asset-link');a.href=active.asset.url;a.target='_blank';a.rel='noopener noreferrer';list.append(a);}}
   const r=project.records.find(r=>r.id===selectedId);$('form-state').textContent=r?'Editing selected record':'New record at this address';$('record-title').value=r?.title||'';$('record-note').value=r?.note||'';$('record-asset').value=r?.asset?.url||'';$('record-instructions').value=r?.instructions||'';$('record-data').value=r?.data!==undefined?JSON.stringify(r.data,null,2):'';$('delete-record').hidden=!r;$('new-record').hidden=!r;
   $('connections-editor').hidden=!r;$('record-fields').replaceChildren();
   if(r){for(const [k,v] of Object.entries(r.fields||{})){$('record-fields').append(el('dt',k),el('dd',v));}}
@@ -107,8 +113,9 @@ async function exportVideo(){
   time=0;updateTimeline();view.paintExport(ctx,1280,720,poseAt(project.story,0).caption,$('include-labels').checked);recorder.start(1000);const start=performance.now(),total=poseAt(project.story,0).total;
   const frame=now=>{if(session.cancelled)return;try{time=Math.min(total,(now-start)/1000);updateTimeline();view.paintExport(ctx,1280,720,poseAt(project.story,time).caption,$('include-labels').checked);if(time>=total){recorder.stop();return;}session.frame=requestAnimationFrame(frame);}catch(e){session.cancelled=true;recorder.stop();notify('Recording stopped. Your project is unchanged.');}};session.frame=requestAnimationFrame(frame);
 }
-if(page==='matrix')spatialUI=mountSpatial({project:()=>project,selection:()=>selection,owner:()=>({shell,face}),select:choose,change,notify,export:jsonDownload,setKind:(kind,redraw=true)=>{pickKind=kind;if(view){view.kind=kind==='stack'?'facet':kind;if(redraw){view.update();renderGrid();}}},layers:options=>{if(view){if(options.explode!==undefined){view.explodeStacks=options.explode;view.pose={...view.pose,explodeStacks:options.explode};}if(options.rays!==undefined)view.rayMode=options.rays;if(options.volume!==undefined)view.showVolume=options.volume;view.update();}},sequence:program=>{if(view){view.sequence=program;view.drawSpatial();view.render();}}});
+if(page==='matrix')spatialUI=mountSpatial({project:()=>project,selection:()=>selection,owner:()=>({shell,face}),select:choose,pick,facets:pickedFacets,multiple:()=>multipleFacets,selectAllFacets,setMultiple:value=>{multipleFacets=value;if(selection?.kind==='facet'&&(!value||!facetCells().length))choose(selection);else refresh();},change,notify,export:jsonDownload,setKind:(kind,redraw=true)=>{pickKind=kind;if(view){view.kind=kind==='stack'?'facet':kind;if(redraw){view.update();renderGrid();}}},layers:options=>{if(view){if(options.explode!==undefined){view.explodeStacks=options.explode;view.pose={...view.pose,explodeStacks:options.explode};}if(options.rays!==undefined)view.rayMode=options.rays;if(options.volume!==undefined)view.showVolume=options.volume;view.update();}},sequence:program=>{if(view){view.sequence=program;view.drawSpatial();view.render();}}});
 const params=new URLSearchParams(location.search);if(params.has('cell')||params.has('index'))try{const kind=params.get('kind')||'facet',value=params.get('index')||params.get('cell'),t=target(+params.get('shell'),params.get('face'),kind,kind==='volume'?value:+value,params.has('layer')?+params.get('layer'):undefined);const next={...project,selections:remember(project.selections,t)};project=validateProject(next);shell=t.shell;face=t.face;pickKind=t.kind;}catch{shell=0;cell=null;face='O';}
 refresh();
+if(page==='matrix')mountWorkspace();
 // Local-only interface: no analytics, upload endpoint, external model or automatic sharing.
 window.addEventListener('storage',e=>{if(e.key===KEY)notify('This project changed in another tab. Download this tab’s backup before reloading if you have unsaved edits.');});
