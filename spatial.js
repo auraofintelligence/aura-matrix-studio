@@ -1,4 +1,4 @@
-import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.2.0';
+import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.2.1';
 
 export const KINDS=['facet','edge-u','edge-v','vertex','volume','stack'];
 export const KIND_NAMES={'facet':'Facet','edge-u':'Edge along row','edge-v':'Edge along column','vertex':'Vertex','volume':'Volume point','stack':'Stack layer'};

@@ -1,7 +1,7 @@
-import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.2.0';
-import {AuraView} from './renderer.js?v=0.2.0';
-import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour} from './spatial.js?v=0.2.0';
-import {mountSpatial} from './spatial-ui.js?v=0.2.0';
+import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.2.1';
+import {AuraView} from './renderer.js?v=0.2.1';
+import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour} from './spatial.js?v=0.2.1';
+import {mountSpatial} from './spatial-ui.js?v=0.2.1';
 const $=id=>document.getElementById(id),page=document.body.dataset.page;
 const KEY='aura-matrix-studio:v2:project',LEGACY_KEY='aura-matrix-studio:v1:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
 let selection=null,pickKind='facet',spatialUI=null;
@@ -10,7 +10,7 @@ function notify(message){$('toast').textContent=message;clearTimeout(toastTimer)
 function el(tag,text,className){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;}
 function saveStatus(text){if($('save-status'))$('save-status').textContent=text;}
 try{const saved=localStorage.getItem(KEY)??localStorage.getItem(LEGACY_KEY);if(saved)project=validateProject(JSON.parse(saved));saveStatus('Saved on this browser');}catch(e){saveStatus('Stored project could not be read. A blank session is open.');notify('The stored copy was left untouched. Import a backup to recover it.');}
-function commit(next){next=validateProject(next);history.push(project);project=next;try{localStorage.setItem(KEY,JSON.stringify(project));saveStatus('Saved on this browser');}catch(e){saveStatus('Browser storage is unavailable or full. Download a backup now.');notify('Your changes are in this tab. Download a backup to keep them.');}if($('undo'))$('undo').disabled=!history.length;refresh();}
+function commit(next){spatialUI?.stop();next=validateProject(next);history.push(project);project=next;try{localStorage.setItem(KEY,JSON.stringify(project));saveStatus('Saved on this browser');}catch(e){saveStatus('Browser storage is unavailable or full. Download a backup now.');notify('Your changes are in this tab. Download a backup to keep them.');}if($('undo'))$('undo').disabled=!history.length;refresh();}
 function change(fn){const next=structuredClone(project);fn(next);commit(next);}
 function download(name,blob){const url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}
 function jsonDownload(name,data){download(name,new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));}
@@ -63,7 +63,7 @@ function renderRecords(){
 }
 function renderInventory(){const q=$('search').value.toLowerCase(),rows=project.records.filter(r=>`${r.title} ${r.note} ${targetLabel(recordTarget(r))} ${JSON.stringify(r.fields)}`.toLowerCase().includes(q));$('inventory-rows').replaceChildren();for(const r of rows){const tr=el('tr');tr.append(el('td',r.title),el('td',targetLabel(recordTarget(r))),el('td',r.note,'note-cell'));const td=el('td'),b=el('button','Open cell');b.onclick=()=>{const t=recordTarget(r);location.href='index.html?'+new URLSearchParams({...t,index:String(t.index)}).toString();};td.append(b);tr.append(td);$('inventory-rows').append(tr);}$('inventory-empty').hidden=rows.length>0;$('inventory-count').textContent=`${rows.length} of ${project.records.length} records`;}
 if($('search'))$('search').oninput=renderInventory;
-if($('undo'))$('undo').onclick=()=>{if(!history.length)return;const previous=history.pop();project=previous;selectedId=null;try{localStorage.setItem(KEY,JSON.stringify(project));saveStatus('Saved on this browser');}catch{saveStatus('Undo is in this tab. Download a backup.');}$('undo').disabled=!history.length;refresh();notify('Last change undone.');};
+if($('undo'))$('undo').onclick=()=>{if(!history.length)return;spatialUI?.stop();const previous=history.pop();project=previous;selectedId=null;try{localStorage.setItem(KEY,JSON.stringify(project));saveStatus('Saved on this browser');}catch{saveStatus('Undo is in this tab. Download a backup.');}$('undo').disabled=!history.length;refresh();notify('Last change undone.');};
 document.querySelectorAll('[data-backup]').forEach(b=>b.onclick=()=>jsonDownload('aura-matrix-backup.json',project));
 document.querySelectorAll('[data-restore]').forEach(b=>b.onclick=()=>$('backup-file').click());
 $('backup-file').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const next=validateProject(JSON.parse(await file.text()));$('restore-summary').textContent=`This backup contains ${next.records.length} records, ${next.links.length} connections and ${next.story.length} explainer shots. Restore will replace this browser's project. You can download your current backup first.`;$('restore-confirm').onclick=()=>{stopPlayback();spatialUI?.stop();selectedId=null;time=0;shotIndex=0;commit(next);$('restore-dialog').close();notify('Backup restored.');};$('restore-dialog').showModal();}catch(error){notify(error.message);}};

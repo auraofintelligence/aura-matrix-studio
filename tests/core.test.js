@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync,writeFileSync,mkdirSync} from 'node:fs';
-import {ROWS,COLS,CELLS,SHELLS,PRESETS,address,neighbours,point,shellPoint,poseAt,blankProject,validateProject,parseCSV,recordsFromCSV,exampleRecords} from '../core.js?v=0.2.0';
+import {ROWS,COLS,CELLS,SHELLS,PRESETS,address,neighbours,point,shellPoint,poseAt,blankProject,validateProject,parseCSV,recordsFromCSV,exampleRecords} from '../core.js?v=0.2.1';
 
 test('fixed lattice has 4032 unique face addresses and cannot accept other dimensions',()=>{
   assert.equal(ROWS,12);assert.equal(COLS,24);assert.equal(CELLS,288);

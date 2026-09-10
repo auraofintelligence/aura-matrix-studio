@@ -1,5 +1,5 @@
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.0';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples} from './spatial.js?v=0.2.0';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.2.1';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples} from './spatial.js?v=0.2.1';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
