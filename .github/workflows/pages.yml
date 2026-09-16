@@ -45,6 +45,9 @@ jobs:
           node --check local-tools.js
           node --check preferences-ui.js
           node --check palace-ui.js
+          node --check dating-data.js
+          node --check friendship-data.js
+          node --check dating-ui.js
           node --check social-ui.js
           node --check affinity-ui.js
           node --check avatar-ui.js
@@ -61,7 +64,7 @@ jobs:
       - name: Prepare public files only
         run: |
           mkdir -p _site/tools
-          cp local-tools.js preferences-ui.js palace-ui.js social-ui.js affinity-ui.js life-data.js life-ui.js measurement-ui.js eye-photos.js personal-space-data.js personal-space-ui.js avatar-data.js avatar-ui.js earth-map.js earth-data.js timing-data.js timing-ui.js timing-ideas.js solar-system.js frame-display.js favourite-groups.js _site/
+          cp dating-data.js friendship-data.js dating-ui.js local-tools.js preferences-ui.js palace-ui.js social-ui.js affinity-ui.js life-data.js life-ui.js measurement-ui.js eye-photos.js personal-space-data.js personal-space-ui.js avatar-data.js avatar-ui.js earth-map.js earth-data.js timing-data.js timing-ui.js timing-ideas.js solar-system.js frame-display.js favourite-groups.js _site/
           cp page-icons.js market-map.js travel-data.js travel-ui.js celestial-clock.js time-context.js MARKET-DATA.md TRAVEL-AND-TIMING.md index.html matrix.html original.js original.css original-live.js original-routes.js original-sitemap.js menu-camera.js original-favourites.js favourites-data.js quickstart.js dataset-schema.js dataset-allocation.js DATASET-CATALOGUE.md inventory.html explainer.html guide.html styles.css core.js renderer.js app.js spatial.js spatial-ui.js workspace.js LICENCE.md .nojekyll _site/
           cp -r assets vendor _site/
           cp tools/blender_import.py _site/tools/

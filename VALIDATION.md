@@ -1,5 +1,12 @@
 # Validation record
 
+## Visual Dating and Friendships profiles (0.4.10)
+
+96 Node tests pass. Added coverage for legacy profile and connection preservation, separate giving/receiving preferences, explicit zero versus unanswered sliders, invalid scores/choices/age ranges/time windows, separate friendship/dating profiles and backup round trips. All 12 Dating and nine Friendship areas retain optional answers.
+
+Browser QA used fictional entries on localhost. All 69 Dating question cards fit at 360 x 640; all 45 Friendship cards fit at 320 x 568 without internal clipping or document overflow. Checked giving/receiving slider saves, multi-choice selections, free-text drafts, weekly availability selection and reload persistence. Existing people editors and calendar planning remain separate from profile questions. Mobile dimensions were emulated; physical-phone gestures and on-screen keyboard behaviour were not tested.
+
+
 ## Life collections, preferences, palaces and social tools (0.4.9)
 
 92 Node tests and two Python filtering tests pass. New tests cover unlimited family generations and multiple reciprocal/custom links; legacy bucket rows in the combined wish collection; achievements with optional dates; anchored solar zoom; table-preserving settings edits; algorithm dataset/device references; palace dimensions, pin positions, asset/address validation, cascading room removal and backup round trips; idempotent sample creation; social CSV completeness, invalid dates and distinct Dating/Friendships records; valid new favourite icons; and local Affinity draft updates.

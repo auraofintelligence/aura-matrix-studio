@@ -29,7 +29,13 @@ You can skip questions and return later. Information becomes editable tables rat
 
 Wishes and bucket-list experiences now share one collection while retaining their original categories and saved rows. The former bucket-list destination opens **Achievements & memories**, with accomplishments, places lived, places visited, lessons, experiences and contributions. Dates may be exact, approximate or left blank. Life goals remain separate.
 
-Friendships and Dating each have people or group records, shared interests, communication preferences, notes and plans. Catch-up planning creates a record in Timing & signals. These are personal organising tools, not a matching service or messaging network.
+[Dating](https://auraofintelligence.github.io/aura-matrix-studio/?page=1FA4EBEC-3D1A-482A-B3B2-35A1172BECB6) has a visual connection map with 12 areas: identity and sexuality, intentions, five love languages, appearance and attraction, personality, emotional availability, intimacy and kinks, trust and boundaries, time, location, shared life and relationship signals. Giving and receiving affection have separate optional sliders. A weekly grid records preferred time windows. Labels are optional and your own words can add context.
+
+[Friendships](https://auraofintelligence.github.io/aura-matrix-studio/?page=76172966-3F90-4DB8-A914-4E63AE19A501) has nine visual areas for making new friends, desired qualities, open mindedness, hard no's, time and social energy, shared activities, meeting places, communication and care, and next steps. Choose how you would like to meet people, what you could invite someone to do, and which differences you welcome.
+
+Both maps use optional question cards, selectable suggestions, saved summaries and visible progress. Existing hopes, values, activities, boundaries, pace and availability are preserved. People and catch-up records remain available; catch-up planning creates a record in Timing & signals. These are personal organising tools, not a matching service or messaging network. Profile answers stay in this browser and are included in full Aura backups. Sharing and AI-use notes record intentions; they do not grant or enforce access permissions.
+
+[Grey Area Commons](https://auraofintelligence.github.io/grey-area-commons/) informed the prompts about pace, differences, green/amber/red signals, personal boundaries and choosing what to share. No data is sent there.
 
 Existing QuickStart answers retain their row identities. Family birthdays update the shared timing records. CSV imports preserve extra fields. Entries can be backed up and allocated to facets and stacks through the matrix.
 

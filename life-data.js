@@ -1,5 +1,5 @@
-import {validateProject,parseCSV} from './core.js?v=0.4.9';
-import {dateValid} from './travel-data.js?v=0.4.9';
+import {validateProject,parseCSV} from './core.js?v=0.4.10';
+import {dateValid} from './travel-data.js?v=0.4.10';
 export const SOCIAL_HOME='0CEE0A43-6ED5-4A00-A522-6C18F90ECD2B';
 const group=(name,icon,prompts)=>({name,icon,prompts:prompts.split('|')});
 export const KINSHIP_TERMS=['Parent','Child','Sibling','Partner','Grandparent','Grandchild','Great-grandparent','Great-grandchild','Ancestor','Descendant','Cousin','Aunt','Uncle','Niece','Nephew','Step-parent','Step-child','Step-sibling','Parent-in-law','Sibling-in-law','Adoptive parent','Foster parent','Guardian','Chosen family','Kin','Friend','Mentor','Neighbour'];
