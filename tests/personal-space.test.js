@@ -2,7 +2,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {blankProject,validateProject} from '../core.js';
 import {AVATAR_SECTIONS,saveAvatar,avatarValues} from '../avatar-data.js';
-import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceShells,savePersonalSpace} from '../personal-space-data.js';
+import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceShells,spaceDiagram,savePersonalSpace} from '../personal-space-data.js';
+test('person height and every shell use the same physical scale at all fitted sizes',()=>{
+ for(const height of [100,170,220,1200])for(const outer of [480,1000,10000]){
+  const radii=[105,150,200,240,320,400,outer],d=spaceDiagram(height,radii);
+  for(const [i,shell] of d.shells.entries()){
+   assert.ok(Math.abs(shell.radiusPx/d.personHeight-radii[i]/height)<1e-10);
+   assert.ok(Math.abs(shell.diameterPx/d.personHeight-2*radii[i]/height)<1e-10);
+   assert.ok(shell.radiusPx<=78);
+  }
+  assert.ok(d.personHeight<=156);
+ }
+ const d=spaceDiagram(170,[105,150,200,240,320,400,480]);
+ assert.ok(d.shells[2].radiusPx>d.personHeight,'a 2 m radius must be longer than a 1.7 m person');
+ assert.ok(d.shells[0].diameterPx>d.personHeight,'a 210 cm diameter must exceed a 170 cm height');
+});
 test('seven social shells start as a preview and preserve original saved distances and height',()=>{
  const p=blankProject();assert.equal(readPersonalSpace(p).radii.length,7);assert.equal(p.tables.length,0);assert.equal(readPersonalSpace(p).example,true);
  const space=AVATAR_SECTIONS.find(s=>s.key==='space'),body=AVATAR_SECTIONS.find(s=>s.key==='reach');let next=saveAvatar(p,body,{'body-height':'183'});next=saveAvatar(next,space,{'space-close':'50','space-context':'Old note'});

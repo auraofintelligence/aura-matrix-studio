@@ -133,3 +133,10 @@ Personal space now opens a 2D person with seven nested coloured shells, selectab
 The additional shells save in a separate project table alongside shared height and boundary inputs. Existing notes and extra table fields are preserved, and the fixed matrix remains unchanged. Tests cover seven-layer defaults, radius/diameter arithmetic, every layer moving inward and outward, backup round trips and separation from matrix data. All 67 Node tests and two Python tests passed; script syntax and whitespace checks passed.
 
 Browser checks verified an arrow-key slider change altered the rendered radius and diameter, exact Blue distance 450 cm produced a 900 cm diameter and moved the adjoining Indigo layer, and height changes altered the person reference. A custom layer meaning and dimensions survived save/reload. At 320 x 568 the page showed seven shells with no panel overflow. At 568 x 320 a direct drag on the rotated distance slider changed Blue from 450 to 334 cm. No browser errors were recorded. Physical-phone touch hardware was not tested.
+
+
+## Version 0.4.2: measured personal-space proportions
+
+Replaced the independently fitted axes with one centimetre-to-screen scale shared by the person and all seven circular shells. The drawing fits the largest radius or person height without stretching. Radius from centre is labelled at the input; the dimension line shows radius and the caption also states full diameter. Saved dimensions and meanings are unchanged.
+
+All 68 Node tests and both Python tests passed. The new geometry regression checks person-to-radius and person-to-diameter ratios over multiple heights and outer radii, including a 200 cm radius against a 170 cm person. In the browser at 320 x 568, the rendered radius was 32.5 units on both axes and person height was 27.625 units, giving the exact 200/170 ratio. No document overflow occurred. Physical device testing was not performed.

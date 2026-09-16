@@ -1,6 +1,6 @@
-import {framePoint,frameRotated} from './frame-display.js?v=0.4.1';
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.4.1';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.4.1';
+import {framePoint,frameRotated} from './frame-display.js?v=0.4.2';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.4.2';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.4.2';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){

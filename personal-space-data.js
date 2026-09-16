@@ -1,5 +1,5 @@
-import {AVATAR_SECTIONS,avatarValues,saveAvatar} from './avatar-data.js?v=0.4.1';
-import {validateProject} from './core.js?v=0.4.1';
+import {AVATAR_SECTIONS,avatarValues,saveAvatar} from './avatar-data.js?v=0.4.2';
+import {validateProject} from './core.js?v=0.4.2';
 export const SPACE_LAYERS=[
  {id:'space-close',name:'Red',colour:'#e84b49',colourName:'Red',example:45},
  {id:'space-conversation',name:'Orange',colour:'#ed902e',colourName:'Orange',example:100},
@@ -27,6 +27,11 @@ export function changeSpaceRadius(radii,index,value){
 export function spaceShells(height,radii){
  if(!Number.isFinite(height)||height<=0||radii.length!==SPACE_LAYERS.length||radii.some((r,i)=>!Number.isFinite(r)||r<=0||(i>0&&r<=radii[i-1])))throw Error('Use a positive height and seven increasing distances.');
  return SPACE_LAYERS.map((layer,i)=>({...layer,radius:radii[i],diameter:radii[i]*2}));
+}
+// One centimetre has the same screen length on both axes and on the person.
+export function spaceDiagram(height,radii){
+ const shells=spaceShells(height,radii),scale=78/Math.max(radii[6],height/2);
+ return {scale,personHeight:height*scale,shells:shells.map(s=>({...s,radiusPx:s.radius*scale,diameterPx:s.diameter*scale}))};
 }
 export function savePersonalSpace(project,height,radii,meanings=[],notes={}){
  const shells=spaceShells(height,radii);
