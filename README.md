@@ -23,6 +23,14 @@ The app opens at **Starting Point Aura / QuickStart**. Each original frame keeps
 
 You can skip questions and return later. Information becomes editable tables rather than a discarded onboarding questionnaire. The catalogue contains 37 recommended datasets covering the 145 original source pages. Suggested chakra associations are philosophical, editable and may include more than one chakra.
 
+## Family, favourites, wishes, bucket list and life goals
+
+The five original Social Web collections now have working mobile pages. All original list headings are retained across 32 categories, with 192 editable starter ideas. Saved entries and ideas share the same visual cards. Nothing is added until you save.
+
+Family records support relationships, a browsable connection view, birthdays, contact rhythms, memories and family occasions. Favourites retain values, virtues, emotions, sensations, experiences, media and places. Wishes, bucket-list experiences and goals include purpose, next steps, milestones, dates, budgets, resources and measurable progress. The three collections stay distinct within the shared goals dataset.
+
+Existing QuickStart answers appear in these pages and keep their row identities. Family birthdays update the shared Timing records. CSV import previews validate the whole list before adding entries and retain extra columns. Each collection supports CSV export, whole-project backup and a shortcut to the existing facet/stack allocation workflow. Data stays in this browser; stored reminders do not create background notifications or publish a public profile.
+
 ## Find things and build your own shortcuts
 
 The page finder offers everyday icons, search, category filters and page previews. It currently has 141 distinct destinations. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.

@@ -176,3 +176,11 @@ Browser review at 390 x 664 checked the blue side field and red overhead field w
 - Avatar creation uses five illustrated cards with the original destinations, Back and QuickStart preserved. Verified at 390 x 664 without page scrolling or grid overflow.
 - The forehead ruler has 300 one-millimetre intervals, longer five-millimetre ticks, centimetre labels 0-30, and all ticks aligned to its bottom edge. Browser inspection confirmed 301 boundaries including 0 and 300 mm.
 - Shoulder width uses matching male/female references with arms relaxed by the sides, separate from the arm-span T pose. Measurement endpoints and instructions updated together.
+
+## Visual everyday-life collections (0.4.8)
+
+All five marked Social Web destinations now mount working mobile collections rather than legacy scroll-view placeholders. The original category text is checked against the Mockplus archive. Eight new tests cover source-list coverage, QuickStart row identity, birthday updates without duplicates, distinct goal collections, family references, CSV atomicity, custom columns and backup preservation.
+
+Phone browser QA at 390 by 664 checked original favourite and bucket-list categories, populated starter cards, saved family dates, a goal with 3 of 12 sessions showing 25 percent progress, and a reviewed two-row CSV import into separate wish categories. Test records were created only on an isolated localhost origin. Published user data was not changed. Touch swipe paging is implemented; physical-device keyboard and gesture behaviour still needs user-device review.
+
+Release checks: 80 Node tests and 2 Python checks passed; all top-level JavaScript syntax checks passed. The five-field goal editor also fits at 320 by 568 with every input above the save controls. Family graph navigation and relationship direction were checked in the browser.
