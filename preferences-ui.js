@@ -1,6 +1,6 @@
-import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.11';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.11';
-import {pageIcon} from './page-icons.js?v=0.4.11';
+import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.12';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.12';
+import {pageIcon} from './page-icons.js?v=0.4.12';
 export const PREFERENCES='3F0068AA-FE6A-4C6F-B9ED-F7B62B407790';
 const ADS='BE2F4956-CAE7-4CF3-9088-A62B7EA190C8',MEMORY='2C355653-BAA4-4BC3-A9B8-7567A12F3962',DEVICES='EC64984C-1A60-42E1-BEFF-E849B2778AB9',ALGORITHMS='7059638E-B7C3-4EC9-85CE-21FDD8A5E87A',DRONES='4970BEC1-052E-432E-B7F0-45E42C762623';
 export function underPage(page,pages,root){const seen=new Set();while(page&&!seen.has(page.id)){if(page.id===root)return true;seen.add(page.id);page=pages.get(page.parent);}return false;}

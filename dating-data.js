@@ -1,4 +1,15 @@
-import {rows,saveRow} from './local-tools.js?v=0.4.11';
+import {rows,saveRow} from './local-tools.js?v=0.4.12';
+import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.12';
+
+export const RHYTHM_FIELDS=[
+ {key:'Planning style',label:'How planned or spontaneous?',type:'scale',options:['Fully planned','Mostly planned','A mix','Mostly spontaneous','In the moment'],hint:'Choose how much advance planning feels right. You can add exceptions in your own words.'},
+ {key:'Novelty and randomness',label:'Predictability or random discovery?',type:'scale',options:['Familiar and predictable','Mostly familiar','A mix','Usually something new','Random discovery'],hint:'How much variety and surprise do you enjoy? This is independent of how far ahead you plan.'}
+];
+export const SIMILARITY_FIELD={key:'Similarity and contrast',label:'Like minds or complementary opposites?',type:'scale',options:['Very like-minded','Mostly similar','Shared core, different interests','Enjoy contrasting qualities','Complementary opposites'],hint:'Think about interests, temperament and perspectives. Add which values you want to share and which differences you enjoy.'};
+export const CULTURE_FIELDS=[
+ {key:'Cultural connection',label:'Shared culture or intercultural connection?',type:'single',options:['Shared culture only','Prefer shared culture','Open to either','Prefer intercultural connection','Decide person by person'],hint:'Choose your preference, then add any traditions, languages or customs that matter to you.'},
+ {key:'Faith connection',label:'Shared faith or interfaith connection?',type:'single',options:['Shared faith or worldview only','Prefer a shared faith or worldview','Open to interfaith connection','Faith is not a deciding factor','Decide person by person'],hint:'Faith or worldview can include a religion, spiritual outlook or no religion. Add what you would like to share or keep independent.'}
+];
 
 const choice=(key,label,options,hint='')=>({key,label,type:'choices',options:options.split('|'),hint});
 const words=(key,label,hint='')=>({key,label,type:'text',hint});
@@ -34,16 +45,21 @@ export const DATING_CHAPTERS=[
  {id:'signals',title:'Green, amber & red',short:'Signals',colour:'#b66f52',icon:'signals',intro:'Borrowing from Grey Area Commons: recognise warmth, uncertainty and clear stopping points.',fields:[
   words('Green signals','What helps you relax and open up?','Reliability, mutual curiosity, humour, clear intentions or shared values.'),words('Amber signals','What means slow down and ask more?','Mixed signals, differences, uncertainty, distance or a busy season of life.'),words('Red signals','What means stop for you?'),words('First step','What makes a first approach feel welcome?'),words('Deeper questions','What would you like to learn about each other?')]}
 ];
+DATING_CHAPTERS.find(c=>c.id==='time').fields.push(...RHYTHM_FIELDS);
+DATING_CHAPTERS.find(c=>c.id==='personality').fields.push(SIMILARITY_FIELD);
+DATING_CHAPTERS.find(c=>c.id==='personality').fields.push(...CULTURE_FIELDS);
 export const profileFields=DATING_CHAPTERS.flatMap(c=>c.fields);
 export function datingProfile(project){return rows(project,'aura-preferences').find(r=>r.id==='social-dating')||{};}
 export function listValue(value){if(!value)return [];try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[];}catch{return [];}}
 export function loveValue(value){if(!value)return {};try{const parsed=JSON.parse(value);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{};}catch{return {};}}
 export function fieldAnswered(field,value){if(!value)return false;if(['choices','week'].includes(field.type))return listValue(value).length>0;if(field.type==='love')return Object.keys(loveValue(value)).length>0;return String(value).trim().length>0;}
-export function chapterProgress(chapter,profile){return chapter.fields.filter(f=>fieldAnswered(f,profile[f.key])).length;}
+export function chapterProgress(chapter,profile){return chapter.fields.filter(f=>fieldAnswered(f,profile[f.key])||ownNote(profile,f.key).trim()).length;}
 export function savePreferenceProfile(project,fields,chapters,id,title){
  const values={...fields};delete values.id;
  const combined={...rows(project,'aura-preferences').find(r=>r.id===id),...values};
+ validateGuidance(combined,chapters);
  for(const f of chapters.flatMap(c=>c.fields)){const v=combined[f.key];if(v===undefined||v==='')continue;
+  if(['scale','single'].includes(f.type)&&!f.options.includes(v))throw Error('Choose a valid option for '+f.label);
   if(f.type==='number'&&(!Number.isFinite(Number(v))||Number(v)<f.min||(f.max!=null&&Number(v)>f.max)||(f.unit==='years'&&!Number.isSafeInteger(Number(v)))))throw Error(`${f.label}: use ${numericRange(f)}, or leave blank.`);
   if(['choices','week'].includes(f.type)){let a;try{a=JSON.parse(v);}catch{throw Error('Choose valid options for '+f.label);}const allowed=f.type==='week'?DAYS.flatMap(d=>DAY_PARTS.map(t=>d+' '+t)):f.options;if(!Array.isArray(a)||a.some(x=>!allowed.includes(x))||new Set(a).size!==a.length)throw Error('Choose valid options for '+f.label);}
   if(f.type==='love'){let obj;try{obj=JSON.parse(v);}catch{throw Error('Use valid love language preferences.');}if(!obj||Array.isArray(obj)||typeof obj!=='object'||Object.entries(obj).some(([k,n])=>!LOVE_LANGUAGES.some(l=>l[0]===k)||!Number.isInteger(n)||n<0||n>5))throw Error('Love language preferences use 0 to 5.');}

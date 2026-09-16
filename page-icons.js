@@ -1,4 +1,4 @@
-import {canonicalPage} from './original-routes.js?v=0.4.11';
+import {canonicalPage} from './original-routes.js?v=0.4.12';
 // Explicit destination artwork. Navigation arrows are never destination icons.
 export const PAGE_ICONS={
   "76172966-3F90-4DB8-A914-4E63AE19A501": "761729663F904DB8A9144E63AE19A501.svg",

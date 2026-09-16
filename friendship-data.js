@@ -1,5 +1,5 @@
-import {rows} from './local-tools.js?v=0.4.11';
-import {savePreferenceProfile} from './dating-data.js?v=0.4.11';
+import {rows} from './local-tools.js?v=0.4.12';
+import {savePreferenceProfile,RHYTHM_FIELDS,SIMILARITY_FIELD,CULTURE_FIELDS} from './dating-data.js?v=0.4.12';
 const choices=(key,label,options,hint='')=>({key,label,type:'choices',options:options.split('|'),hint});
 const words=(key,label,hint='')=>({key,label,type:'text',hint});
 export const FRIENDSHIP_CHAPTERS=[
@@ -22,5 +22,8 @@ export const FRIENDSHIP_CHAPTERS=[
  {id:'signals',title:'Signals & next steps',short:'Signals',colour:'#b37a55',icon:'signals',intro:'Recognise a promising friendship and choose a small next step.',fields:[
   words('Green signals','What makes a new friendship feel promising?'),words('Amber signals','What makes you slow down and learn more?'),words('Private details','What needs trust before you share it?'),words('Next step','What is one thing you would like to do to meet new people?'),words('Stay connected','What would help turn a good meeting into an ongoing friendship?')]}
 ];
+FRIENDSHIP_CHAPTERS.find(c=>c.id==='time').fields.push(...RHYTHM_FIELDS);
+FRIENDSHIP_CHAPTERS.find(c=>c.id==='qualities').fields.push(SIMILARITY_FIELD);
+FRIENDSHIP_CHAPTERS.find(c=>c.id==='openness').fields.push(...CULTURE_FIELDS);
 export const friendshipProfile=project=>rows(project,'aura-preferences').find(r=>r.id==='social-friends')||{};
 export const saveFriendshipProfile=(project,fields)=>savePreferenceProfile(project,fields,FRIENDSHIP_CHAPTERS,'social-friends','friends');

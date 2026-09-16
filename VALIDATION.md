@@ -1,5 +1,13 @@
 # Validation record
 
+## Guided visual connection preferences (0.4.12, local release candidate)
+
+103 Node tests pass. New cases cover reversible suggestion selections, preserved legacy and typed notes, explicit source-labelled suggestions, custom notes alongside multiple choice, independent importance and urgency, unique reordered priorities, optional scales and culture/faith choices in both profiles, malformed imports and full backup round trips. The chronological adult-age checks from 0.4.11 remain in place.
+
+Browser QA at 320 x 568 visited all 79 Dating and 50 Friendship question cards with no vertical or horizontal content overflow. Checked a complete 12-area priority ranking, independent Essential/Later choices, saving and reloading a combined selected/typed answer, deselection without loss of typed words, and suggestions drawn from an explicitly selected shared interest. Tests used fictional localhost data only. Physical phone keyboards and gestures remain untested.
+
+0.4.11 and 0.4.12 are local changes pending explicit publication approval following automatic approval review of the earlier push. No new generated image is included in this release.
+
 ## Longevity-focused Dating (0.4.11)
 
 Removed the pronoun question and replaced it with optional chronological age. Reframed relationship intentions, appearance, emotional support and shared futures around possible age reversal and radical longevity as a planning assumption. Removed the 120-year ceiling; ages must still be whole chronological years of at least 18, with minimum/maximum consistency. A blank maximum means no upper preference. The app does not verify age or jurisdiction-specific legal eligibility.
