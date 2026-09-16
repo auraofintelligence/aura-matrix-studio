@@ -1,6 +1,7 @@
-import {validateProject} from './core.js?v=0.4.6';
-import {EYE_POSES,eyePhotos} from './eye-photos.js?v=0.4.6';
+import {validateProject} from './core.js?v=0.4.7';
+import {EYE_POSES,eyePhotos} from './eye-photos.js?v=0.4.7';
 export const AVATAR_HOME='DD2667DF-4A8C-461B-9196-655447A018F3';
+export const AVATAR_CREATION='3A178076-5EF1-41A0-8229-62636BE4F256';
 const choice=(id,label,options)=>({id,label,options:[...options,'Prefer not to say'],unit:'',kind:'choice'});
 export const AVATAR_QUESTIONS=[
  choice('avatar-answer-0','Which hand do you prefer to use?',['Right handed','Left handed','Both','Varies by activity']),

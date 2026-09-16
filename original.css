@@ -136,3 +136,22 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid #226
 .measurement-photo-row img{width:38px;height:42px;object-fit:contain;border-radius:5px}
 .measurement-photo-row>span{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .measurement-visual svg:focus-visible{outline:2px solid #9876c2;outline-offset:-3px;border-radius:12px}
+
+.avatar-creation{gap:10px;padding:12px}
+.creation-intro{color:#6d6278;font-size:12px}
+.creation-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1.4fr 1.4fr;gap:10px;flex:1;min-height:0}
+.avatar-panel .creation-card{padding:0;display:flex;flex-direction:column;overflow:hidden;min-height:0;text-align:left;border-radius:16px;border-color:#e2dbe9;box-shadow:0 2px 6px #38274607}
+.creation-art{flex:1;min-height:0;display:block;width:100%;overflow:hidden;background:#fff}
+.creation-art svg{display:block;width:100%;height:100%}
+.creation-copy{display:flex;flex-direction:column;gap:3px;padding:9px 10px;background:#f1edf8;flex-shrink:0;width:100%}
+.creation-copy strong{font-size:14px;line-height:1.15;font-weight:600}
+.creation-copy small{font-size:10px;line-height:1.2;color:#71617d}
+.avatar-panel .creation-body{grid-column:1/-1;flex-direction:row;align-items:stretch;background:#ece7f5}
+.creation-body .creation-art{flex:none;width:36%;height:100%;background:#ece7f5}
+.creation-body .creation-copy{width:auto;flex:1;justify-content:center;padding:12px;background:transparent}
+.creation-body .creation-copy strong{font-size:20px}
+.creation-body .creation-copy small{font-size:12px;line-height:1.4}
+.creation-face .creation-copy{background:#eaf4f3}
+.creation-expression .creation-copy{background:#fcf0e7}
+.creation-language .creation-copy{background:#f0eaf9}
+.avatar-creation .avatar-footer button{min-height:38px;padding:7px}

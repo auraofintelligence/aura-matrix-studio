@@ -170,3 +170,9 @@ Browser review at 390 x 664 checked the blue side field and red overhead field w
 - Phone review at 390 x 664: standing, overhead and seated height, arm span and eye width inspected. All nine gaze positions traversed; female reference selection checked. No page scrolling required.
 - Local image attachment, saved photo reload, numerical eye input reload and clearing the test input checked through the browser. Photos remain in the project tables; backup round-trip and separate pose identity covered by tests.
 - 72 Node tests and 2 Python tests passed before release. Real phone pinch/hold gestures were not exercised; keyboard browsing/reference changes and browser pointer UI were checked.
+
+## 0.4.7: Visual avatar menu and measurement corrections
+
+- Avatar creation uses five illustrated cards with the original destinations, Back and QuickStart preserved. Verified at 390 x 664 without page scrolling or grid overflow.
+- The forehead ruler has 300 one-millimetre intervals, longer five-millimetre ticks, centimetre labels 0-30, and all ticks aligned to its bottom edge. Browser inspection confirmed 301 boundaries including 0 and 300 mm.
+- Shoulder width uses matching male/female references with arms relaxed by the sides, separate from the arm-span T pose. Measurement endpoints and instructions updated together.

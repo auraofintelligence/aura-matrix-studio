@@ -1,7 +1,7 @@
-import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.6';
-import {readPersonalSpace} from './personal-space-data.js?v=0.4.6';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.6';
-import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.6';
+import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.7';
+import {readPersonalSpace} from './personal-space-data.js?v=0.4.7';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.7';
+import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.7';
 
 // Landmarks are artwork coordinates, not inferred measurements of the user.
 const guides={
@@ -13,7 +13,7 @@ const guides={
  'body-seated':{crop:[730,630,430,585],a:[875,665],b:[875,1000],femaleA:[875,676],femaleB:[875,1000],offset:760,vertical:true,title:'Seated height',help:'Sit upright on a firm, level seat with feet supported. Measure vertically from the seat surface to the top of your head.',ends:'Seat surface to the crown of the head.',seat:1000},
  'body-shoulder-height':{asset:'side',crop:[210,0,790,1490],a:[348,284],b:[348,1428],femaleA:[365,280],femaleB:[365,1426],offset:250,vertical:true,title:'Shoulder height',help:'Stand upright with your arms out at shoulder height, as shown. Measure vertically from the floor to the top outer point of your shoulder.',ends:'Floor to the top outer point of the shoulder.',ground:1428},
  'body-arm-span':{crop:[640,0,595,605],a:[679,140],b:[1198,140],offset:95,title:'Full arm span',help:'Hold both arms straight out to the sides at shoulder height. Measure in a straight line from one middle fingertip to the other.',ends:'Middle fingertip to middle fingertip, across both outstretched arms.'},
- 'body-shoulder-width':{crop:[770,50,330,255],a:[853,127],b:[1016,127],femaleA:[857,127],femaleB:[1010,127],offset:88,title:'Shoulder width',help:'Measure straight across between the outer bony points of your shoulders. Follow the guide, rather than the curved surface of your shirt.',ends:'Outer shoulder point to outer shoulder point.'}
+ 'body-shoulder-width':{asset:'shoulders',crop:[200,0,850,1110],a:[347,461],b:[875,461],femaleA:[367,443],femaleB:[849,443],offset:355,title:'Shoulder width',help:'Let your arms hang naturally by your sides and relax your shoulders. Measure straight across between the outer bony shoulder points, rather than following the curve of your shirt.',ends:'Outer shoulder point to outer shoulder point, with both arms relaxed by the sides.'}
 };
 for(const pose of EYE_POSES)guides[pose.id]={...pose,crop:[pose.index%3*418,Math.floor(pose.index/3)*418,418,418],ends:pose.help};
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -24,14 +24,20 @@ function diagram(field,figure){
  const g=guides[field.id],svg=svgNode('svg',{viewBox:g.crop.join(' '),role:'img',tabindex:0,'aria-label':`${figure==='female'?'Female':'Male'} reference: ${g.ends}`,'data-measurement':field.id,'data-figure':figure});
  svg.append(svgNode('title',{},g.ends));
  const defs=svgNode('defs'),clip=svgNode('clipPath',{id:'measurement-crop'});clip.append(svgNode('rect',{x:g.crop[0],y:g.crop[1],width:g.crop[2],height:g.crop[3]}));defs.append(clip);svg.append(defs);
- const source=field.kind==='photo'?`assets/avatar/eyes-${figure}.png`:g.asset==='side'?`assets/avatar/human-${figure==='female'?'female-':''}side.png`:`assets/avatar/measurements-${figure}.png`;
+ const source=field.kind==='photo'?`assets/avatar/eyes-${figure}.png`:g.asset==='shoulders'?`assets/avatar/shoulders-${figure}.png`:g.asset==='side'?`assets/avatar/human-${figure==='female'?'female-':''}side.png`:`assets/avatar/measurements-${figure}.png`;
  svg.append(svgNode('image',{href:source,x:0,y:0,width:g.asset==='side'?1024:1254,height:g.asset==='side'?1536:1254,'clip-path':'url(#measurement-crop)'}));
  svg.setAttribute('aria-description','Swipe left or right to browse. Hold to change male or female reference. Keyboard: arrows browse, F selects female, M selects male.');
  if(field.kind==='photo'){
-  const x=g.crop[0]+22,y=g.crop[1]+111,w=374;
-  svg.append(svgNode('rect',{x,y,width:w,height:22,rx:2,fill:'#fff6cf',stroke:'#786846','stroke-width':1}));
-  for(let i=0;i<=30;i++)svg.append(svgNode('line',{x1:x+i*w/30,y1:y,x2:x+i*w/30,y2:y+(i%5===0?9:5),stroke:'#786846','stroke-width':1}));
-  svg.append(svgNode('text',{x:x+5,y:y+19,fill:'#56482e','font-size':12},'0'),svgNode('text',{x:x+w-5,y:y+19,fill:'#56482e','font-size':12,'text-anchor':'end'},'30 cm'));
+  const x=g.crop[0]+22,y=g.crop[1]+103,w=374,h=30;
+  const ruler=svgNode('g',{'data-ruler':'millimetres','aria-label':'30 centimetre ruler. Bottom edge has 1 millimetre divisions, longer 5 millimetre marks and numbered centimetres.'});
+  ruler.append(svgNode('rect',{x,y,width:w,height:h,rx:2,fill:'#fff6cf',stroke:'#786846','stroke-width':.8}));
+  for(let mm=0;mm<=300;mm++){
+   const at=x+4+mm*(w-8)/300,cm=mm%10===0,half=mm%5===0;
+   ruler.append(svgNode('line',{x1:at,y1:y+h,x2:at,y2:y+h-(cm?11:half?7:4),stroke:'#493d29','stroke-width':cm?.9:half?.65:.45,'data-mm':mm}));
+   if(cm)ruler.append(svgNode('text',{x:at,y:y+16,fill:'#493d29','font-size':8,'font-family':'Arial, sans-serif','text-anchor':mm===0?'start':mm===300?'end':'middle'},String(mm/10)));
+  }
+  ruler.append(svgNode('text',{x:x+4,y:y+7,fill:'#493d29','font-size':7,'font-family':'Arial, sans-serif'},'cm'),svgNode('text',{x:x+w/2,y:y+7,fill:'#493d29','font-size':7,'font-family':'Arial, sans-serif','text-anchor':'middle'},'1 cm = 10 mm'));
+  svg.append(ruler);
   return svg;
  }
  const a=figure==='female'&&g.femaleA?g.femaleA:g.a,b=figure==='female'&&g.femaleB?g.femaleB:g.b;
