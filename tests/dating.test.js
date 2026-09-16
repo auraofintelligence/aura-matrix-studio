@@ -27,3 +27,13 @@ test('friendship preferences support new connections, differences, boundaries an
  assert.equal(friendshipProfile(p).Activities,'Walking');assert.equal(friendshipProfile(p).Boundaries,'No pressure');assert.equal(chapterProgress(FRIENDSHIP_CHAPTERS.find(c=>c.id==='time'),friendshipProfile(p)),3);assert.equal(datingProfile(p).Hopes,undefined);
  p=saveFriendshipProfile(p,{'Weekly availability':'[]'});assert.equal(friendshipProfile(p)['Weekly availability'],'[]');assert.throws(()=>saveFriendshipProfile(p,{'Hours for friends':'-1'}));assert.deepEqual(validateProject(JSON.parse(JSON.stringify(p))),p);
 });
+
+test('longevity planning accepts older adults without weakening chronological adult age limits',()=>{
+ const imported=saveRow(blankProject(),'aura-preferences','Preferences',{'Chronological age':'17'},'social-dating');assert.throws(()=>saveDatingProfile(imported,{Hopes:'A new chapter'}));
+ const fields=DATING_CHAPTERS.flatMap(c=>c.fields);assert.equal(fields.some(f=>f.key==='Pronouns'),false);
+ assert.ok(fields.some(f=>f.key==='Longevity outlook'));assert.ok(fields.some(f=>f.key==='Renewing agreements'));
+ let p=saveDatingProfile(blankProject(),{'Chronological age':'220','Age minimum':'18','Age maximum':'700','Planning horizon':'["Centuries or longer","Open-ended"]'});
+ assert.equal(datingProfile(p)['Age maximum'],'700');assert.deepEqual(validateProject(JSON.parse(JSON.stringify(p))),p);
+ for(const key of ['Chronological age','Age minimum','Age maximum'])for(const value of ['17','17.9','-1','Infinity','9007199254740992'])assert.throws(()=>saveDatingProfile(p,{[key]:value}));
+ p=saveDatingProfile(p,{'Age maximum':''});assert.equal(datingProfile(p)['Age maximum'],'');assert.equal(datingProfile(p)['Chronological age'],'220');
+});

@@ -1,5 +1,12 @@
 # Validation record
 
+## Longevity-focused Dating (0.4.11)
+
+Removed the pronoun question and replaced it with optional chronological age. Reframed relationship intentions, appearance, emotional support and shared futures around possible age reversal and radical longevity as a planning assumption. Removed the 120-year ceiling; ages must still be whole chronological years of at least 18, with minimum/maximum consistency. A blank maximum means no upper preference. The app does not verify age or jurisdiction-specific legal eligibility.
+
+97 Node tests pass, including older hypothetical ages, under-18 and fractional rejection, no fixed upper ceiling, and retained backup data. At 320 x 568, all 31 question cards in the four main changed chapters fit without internal overflow. Tested using fictional localhost data; no live profile answers were altered.
+
+
 ## Visual Dating and Friendships profiles (0.4.10)
 
 96 Node tests pass. Added coverage for legacy profile and connection preservation, separate giving/receiving preferences, explicit zero versus unanswered sliders, invalid scores/choices/age ranges/time windows, separate friendship/dating profiles and backup round trips. All 12 Dating and nine Friendship areas retain optional answers.

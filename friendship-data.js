@@ -1,5 +1,5 @@
-import {rows} from './local-tools.js?v=0.4.10';
-import {savePreferenceProfile} from './dating-data.js?v=0.4.10';
+import {rows} from './local-tools.js?v=0.4.11';
+import {savePreferenceProfile} from './dating-data.js?v=0.4.11';
 const choices=(key,label,options,hint='')=>({key,label,type:'choices',options:options.split('|'),hint});
 const words=(key,label,hint='')=>({key,label,type:'text',hint});
 export const FRIENDSHIP_CHAPTERS=[
