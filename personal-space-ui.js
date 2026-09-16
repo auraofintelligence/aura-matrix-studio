@@ -1,6 +1,6 @@
-import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceDiagram,personalTorusPoint,savePersonalSpace} from './personal-space-data.js?v=0.4.4';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.4';
-import {AVATAR_HOME} from './avatar-data.js?v=0.4.4';
+import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceDiagram,personalTorusPoint,savePersonalSpace} from './personal-space-data.js?v=0.4.5';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.5';
+import {AVATAR_HOME} from './avatar-data.js?v=0.4.5';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const b=make('button',cls,text);b.type='button';b.onclick=fn;return b;};
 const svgNode=(tag,attrs={},text)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n;};
@@ -65,31 +65,36 @@ export function mountPersonalSpace({screen,go}){
   const female=state.figure==='female',sideCrown=female?25:20,sideSoles=female?1426:1428,bodyPixels=sideSoles-sideCrown;
   svg.replaceChildren();const scale=diagram.scale,cx=w/2,cy=(h-36)/2;svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.setAttribute('data-pixels-per-cm',String(scale));svg.setAttribute('data-view',view);svg.setAttribute('data-zoom',String(zoom));
   svg.setAttribute('aria-label',view==='top'?'Overhead human surrounded by seven Aura torus shells':'Human inside seven stretched horn torus bubbles');
-  const defs=svgNode('defs');svg.append(defs);const scene=svgNode('g',{transform:`translate(${pan.x} ${pan.y})`,'data-space-scene':'true'});svg.append(scene);
+  const defs=svgNode('defs');
+  // Remove the near-white image backdrop when compositing; retain opaque human colours.
+  const cutout=svgNode('filter',{id:'space-human-cutout',x:0,y:0,width:1,height:1,'color-interpolation-filters':'sRGB'});
+  cutout.append(svgNode('feColorMatrix',{type:'matrix',values:'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -0.2126 -0.7152 -0.0722 0 1'}));
+  const alpha=svgNode('feComponentTransfer');alpha.append(svgNode('feFuncA',{type:'linear',slope:60,intercept:-.9}));cutout.append(alpha);defs.append(cutout);svg.append(defs);const scene=svgNode('g',{transform:`translate(${pan.x} ${pan.y})`,'data-space-scene':'true'});svg.append(scene);
   const curve=points=>points.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(' ')+'Z';
-  for(let i=6;i>=0;i--){const shell=shells[i],r=shell.radiusPx,b=diagram.personHeight/2,R=r/2,id=`space-mist-${i}`;
-   const gradient=svgNode('radialGradient',{id});gradient.append(svgNode('stop',{offset:'0%','stop-color':shell.colour,'stop-opacity':0}),svgNode('stop',{offset:'65%','stop-color':shell.colour,'stop-opacity':.015}),svgNode('stop',{offset:'90%','stop-color':shell.colour,'stop-opacity':i===selected?.16:.055}),svgNode('stop',{offset:'100%','stop-color':shell.colour,'stop-opacity':.015}));defs.append(gradient);
-   const group=svgNode('g',{'data-space-layer':shell.id,'data-radius-cm':shell.radius,'data-diameter-px':shell.diameterPx,'data-torus-height-cm':state.height});
+  for(const i of [...shells.keys()].reverse().filter(i=>i!==selected).concat(selected)){const shell=shells[i],r=shell.radiusPx,b=diagram.personHeight/2,R=r/2,id=`space-mist-${i}`;
+   const gradient=svgNode('radialGradient',{id});
+   for(const [offset,opacity]of [['0%',.24],['45%',.34],['100%',.34]])gradient.append(svgNode('stop',{offset,'stop-color':shell.colour,'stop-opacity':opacity}));defs.append(gradient);
+   const group=svgNode('g',{'data-space-layer':shell.id,'data-radius-cm':shell.radius,'data-diameter-px':shell.diameterPx,'data-torus-height-cm':state.height,'data-selected-field':String(i===selected),'data-fog-visible':String(mist&&i===selected)});
    if(view==='top'){
-    group.append(svgNode('circle',{cx,cy,r,fill:mist?`url(#${id})`:'none',stroke:shell.colour,'stroke-opacity':i===selected?.9:.5,'stroke-width':i===selected?2:1}));
+    group.append(svgNode('circle',{cx,cy,r,fill:mist&&i===selected?`url(#${id})`:'none',stroke:shell.colour,'stroke-opacity':i===selected?.9:.5,'stroke-width':i===selected?2:1}));
    }else{
     const outline=`M${cx-R} ${cy-b}H${cx+R}A${R} ${b} 0 0 1 ${cx+R} ${cy+b}H${cx-R}A${R} ${b} 0 0 1 ${cx-R} ${cy-b}Z`;
-    group.append(svgNode('path',{d:outline,fill:mist?`url(#${id})`:'none',stroke:shell.colour,'stroke-opacity':i===selected?.9:.3,'stroke-width':i===selected?1.7:.8,'data-torus-envelope':'true'}));
-    for(const u of [0,Math.PI/3,Math.PI*2/3,Math.PI]){
+    group.append(svgNode('path',{d:outline,fill:mist&&i===selected?`url(#${id})`:'none',stroke:shell.colour,'stroke-opacity':i===selected?.9:.3,'stroke-width':i===selected?1.7:.8,'data-torus-envelope':'true'}));
+    for(const u of (i===selected?[0,Math.PI/6,Math.PI/3,Math.PI*2/3,Math.PI*5/6,Math.PI]:[0,Math.PI/3,Math.PI*2/3,Math.PI])){
      const points=Array.from({length:65},(_,j)=>{const p=personalTorusPoint(shell.radius,state.height,u,j*Math.PI/32);return [cx+p[0]*scale,cy-p[1]*scale];});
-     group.append(svgNode('path',{d:curve(points),fill:'none',stroke:shell.colour,'stroke-opacity':i===selected?.34:.09,'stroke-width':.8,'data-torus-meridian':'true'}));
+     group.append(svgNode('path',{d:curve(points),fill:'none',stroke:shell.colour,'stroke-opacity':i===selected?.48:.07,'stroke-width':.8,'data-torus-meridian':'true'}));
     }
    }
    scene.append(group);
   }
   if(view==='top'){
    const unit=diagram.personHeight/2135;
-   scene.append(svgNode('image',{href:female?'assets/avatar/human-female-top.png':'assets/avatar/human-top.png',x:cx-380*unit,y:cy-380*unit,width:1254*unit,height:1254*unit,style:'mix-blend-mode:multiply','data-human-view':'top','data-reference-figure':state.figure}));
+   scene.append(svgNode('image',{href:female?'assets/avatar/human-female-top.png':'assets/avatar/human-top.png',x:cx-380*unit,y:cy-380*unit,width:1254*unit,height:1254*unit,filter:'url(#space-human-cutout)','data-human-view':'top','data-reference-figure':state.figure}));
   }else{
    const ground=cy+diagram.personHeight/2,top=cy-diagram.personHeight/2,hx=cx-diagram.personHeight*.13-8;
    scene.append(svgNode('path',{d:`M8 ${ground}H${w-8}`,stroke:'#b5afbe','stroke-width':.8}));
    const unit=diagram.personHeight/bodyPixels;
-   scene.append(svgNode('image',{href:female?'assets/avatar/human-female-side.png':'assets/avatar/human-side.png',x:cx-430*unit,y:ground-sideSoles*unit,width:1024*unit,height:1536*unit,style:'mix-blend-mode:multiply','data-human-view':'side','data-reference-figure':state.figure,'data-person-height-cm':state.height,'data-person-height-px':diagram.personHeight}));
+   scene.append(svgNode('image',{href:female?'assets/avatar/human-female-side.png':'assets/avatar/human-side.png',x:cx-430*unit,y:ground-sideSoles*unit,width:1024*unit,height:1536*unit,filter:'url(#space-human-cutout)','data-human-view':'side','data-reference-figure':state.figure,'data-person-height-cm':state.height,'data-person-height-px':diagram.personHeight}));
    scene.append(svgNode('path',{d:`M${hx} ${top}V${ground}M${hx-3} ${top}H${hx+3}M${hx-3} ${ground}H${hx+3}`,stroke:'#304557','stroke-width':.8,fill:'none'}),svgNode('text',{x:cx+10,y:Math.max(12,top-5),fill:'#42374f','font-size':10},`${state.height} cm`));
    for(let i=6;i>=0;i--){const shell=shells[i],y=ground+4+i*2,x1=cx-shell.radiusPx,x2=cx+shell.radiusPx;scene.append(svgNode('path',{d:`M${x1} ${y}H${x2}`,stroke:shell.colour,'stroke-width':i===selected?1.5:.7,fill:'none','data-distance-guide':shell.id}));}
   }

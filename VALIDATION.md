@@ -156,3 +156,10 @@ The side diagram now projects a horn torus for every radius: major and horizonta
 Unsaved example radii are now 45, 60, 75, 90, 110, 130 and 150 cm (outer diameter 3 m). Saved distances are not rewritten. All 69 Node tests and both Python tests passed; geometry regression checks entered dimensions and the coincident horn. Browser review at 390 x 664 confirmed seven torus envelopes and 28 meridian curves, with a 174-unit human in Fit all (previously 53 units with the older defaults). At 320 x 568, top view, female selection, mist off and zoom were checked without document overflow. Physical device testing was not performed.
 
 Final gesture-layout browser checks confirmed tap-to-turn, dragging, zoom and double-click reset, keyboard figure selection, and no console errors. The 320 x 568 screen fits without scrolling and the diagram uses the space previously occupied by controls. Two-finger pinch and long-press still require physical touch-device verification.
+
+
+## Version 0.4.5: selected-colour fog with a firm boundary
+
+Only the selected torus carries coloured fog, with stronger interior opacity and no fade at the outline. The selected field renders after the other shell outlines and before the human. The source images' near-white backdrop is removed during SVG compositing so the person keeps their original colours instead of being tinted by multiply blending. No image files or measurements are changed.
+
+Browser review at 390 x 664 checked the blue side field and red overhead field with the female reference. Exactly one layer was shaded and matched the selection. The field stopped at the outline and the figure stayed visibly in front in both views. Existing gesture controls remain.
