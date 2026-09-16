@@ -1,13 +1,13 @@
-import {AVATAR_SECTIONS,avatarValues,saveAvatar} from './avatar-data.js?v=0.4.3';
-import {validateProject} from './core.js?v=0.4.3';
+import {AVATAR_SECTIONS,avatarValues,saveAvatar} from './avatar-data.js?v=0.4.4';
+import {validateProject} from './core.js?v=0.4.4';
 export const SPACE_LAYERS=[
  {id:'space-close',name:'Red',colour:'#e84b49',colourName:'Red',example:45},
- {id:'space-conversation',name:'Orange',colour:'#ed902e',colourName:'Orange',example:100},
- {id:'space-group',name:'Yellow',colour:'#d2ad16',colourName:'Yellow',example:160},
- {id:'space-public',name:'Green',colour:'#43a465',colourName:'Green',example:240},
- {id:'space-blue',name:'Blue',colour:'#3b8bdd',colourName:'Blue',example:320},
- {id:'space-indigo',name:'Indigo',colour:'#6555c5',colourName:'Indigo',example:400},
- {id:'space-violet',name:'Violet',colour:'#a460cb',colourName:'Violet',example:480}
+ {id:'space-conversation',name:'Orange',colour:'#ed902e',colourName:'Orange',example:60},
+ {id:'space-group',name:'Yellow',colour:'#d2ad16',colourName:'Yellow',example:75},
+ {id:'space-public',name:'Green',colour:'#43a465',colourName:'Green',example:90},
+ {id:'space-blue',name:'Blue',colour:'#3b8bdd',colourName:'Blue',example:110},
+ {id:'space-indigo',name:'Indigo',colour:'#6555c5',colourName:'Indigo',example:130},
+ {id:'space-violet',name:'Violet',colour:'#a460cb',colourName:'Violet',example:150}
 ];
 const space=AVATAR_SECTIONS.find(s=>s.key==='space'),body=AVATAR_SECTIONS.find(s=>s.key==='reach');
 const positive=v=>Number.isFinite(Number(v))&&Number(v)>0&&Number.isFinite(Number(v)*2);
@@ -28,11 +28,20 @@ export function spaceShells(height,radii){
  if(!Number.isFinite(height)||height<=0||radii.length!==SPACE_LAYERS.length||radii.some((r,i)=>!Number.isFinite(r)||r<=0||(i>0&&r<=radii[i-1])))throw Error('Use a positive height and seven increasing distances.');
  return SPACE_LAYERS.map((layer,i)=>({...layer,radius:radii[i],diameter:radii[i]*2}));
 }
-// One centimetre has the same screen length on both axes and on the person.
-export function spaceDiagram(height,radii,view='top',focus=null){
+// A horn torus with independent horizontal radius and vertical body-height stretch.
+export function personalTorusPoint(radius,height,u,v){
+ const ring=radius/2,rho=ring*(1+Math.cos(v));
+ return [rho*Math.cos(u),height/2*Math.sin(v),rho*Math.sin(u)];
+}
+// Zoom changes the camera scale, never the relative size of person and shells.
+export function spaceDiagram(height,radii,view='top',focus=null,viewport={width:336,height:218},framing='all',zoom=1){
  if(!['top','side'].includes(view))throw Error('Choose a top or side view.');
  if(focus!==null&&(!Number.isInteger(focus)||focus<0||focus>6))throw Error('Choose one of the seven layers.');
- const shells=spaceShells(height,radii),extent=focus===null?radii[6]:Math.max(radii[focus],height*.6),scale=view==='top'?78/Math.max(extent,height*.6):Math.min(150/extent,106/height);
+ const shells=spaceShells(height,radii),extent=focus===null?radii[6]:Math.max(radii[focus],height*.6);
+ const halfWidth=(viewport.width-32)/2,availableHeight=Math.max(80,viewport.height-70);
+ let scale=view==='top'?Math.min(halfWidth,availableHeight/2)/Math.max(extent,height*.6):Math.min(halfWidth/extent,availableHeight/height);
+ if(framing==='person')scale=view==='side'?Math.min(availableHeight/height,halfWidth/(height*.55)):Math.min(halfWidth,availableHeight/2)/(height*.65);
+ scale*=zoom;
  return {scale,personHeight:height*scale,shells:shells.map(s=>({...s,radiusPx:s.radius*scale,diameterPx:s.diameter*scale}))};
 }
 export function savePersonalSpace(project,height,radii,meanings=[],notes={},figure){
