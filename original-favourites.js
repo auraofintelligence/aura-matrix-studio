@@ -1,9 +1,9 @@
-import {framePoint} from './frame-display.js?v=0.4.0';
-import {favouriteGroups} from './favourite-groups.js?v=0.4.0';
-import {pageIcon,favouriteIcon} from './page-icons.js?v=0.4.0';
-import {blankProject,validateProject} from './core.js?v=0.4.0';
-import {updateFavourite} from './favourites-data.js?v=0.4.0';
-import {mapPages,pageTitle} from './original-sitemap.js?v=0.4.0';
+import {framePoint} from './frame-display.js?v=0.4.1';
+import {favouriteGroups} from './favourite-groups.js?v=0.4.1';
+import {pageIcon,favouriteIcon} from './page-icons.js?v=0.4.1';
+import {blankProject,validateProject} from './core.js?v=0.4.1';
+import {updateFavourite} from './favourites-data.js?v=0.4.1';
+import {mapPages,pageTitle} from './original-sitemap.js?v=0.4.1';
 export const FAVOURITES='B47A9839-38E6-49D8-B255-0D9E428E521C';
 const KEY='aura-matrix-studio:v4:project';
 export function mountFavourites({page,screen,pages,go}){

@@ -1,20 +1,20 @@
-import {AVATAR_HOME,AVATAR_PAGES} from './avatar-data.js?v=0.4.0';
-import {mountAvatar} from './avatar-ui.js?v=0.4.0';
-import {mountEarth} from './earth-map.js?v=0.4.0';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.0';
-import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.4.0';
-import {TIMING_PAGES} from './timing-data.js?v=0.4.0';
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.4.0';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.0';
-import {mountCelestial} from './celestial-clock.js?v=0.4.0';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.0';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.0';
-import {mountMenuCamera} from './menu-camera.js?v=0.4.0';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.0';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.0';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.0';
-import {mountLiveMatrix} from './original-live.js?v=0.4.0';
-import {frameOrientation} from './frame-display.js?v=0.4.0';
+import {AVATAR_HOME,AVATAR_PAGES} from './avatar-data.js?v=0.4.1';
+import {mountAvatar} from './avatar-ui.js?v=0.4.1';
+import {mountEarth} from './earth-map.js?v=0.4.1';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.1';
+import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.4.1';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.1';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.4.1';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.1';
+import {mountCelestial} from './celestial-clock.js?v=0.4.1';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.1';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.1';
+import {mountMenuCamera} from './menu-camera.js?v=0.4.1';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.1';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.1';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.1';
+import {mountLiveMatrix} from './original-live.js?v=0.4.1';
+import {frameOrientation} from './frame-display.js?v=0.4.1';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',

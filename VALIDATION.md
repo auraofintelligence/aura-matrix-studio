@@ -124,3 +124,12 @@ Updated the Body to Aura Ratios entry page and its five linked input sections. A
 All 64 Node tests and two Python tests passed, along with JavaScript syntax and whitespace checks. New tests cover the five original destinations, QuickStart row sharing, preserved legacy values and custom fields, optional blanks, atomic rejection of invalid measurements, unit labels and calculated ratios.
 
 Browser review checked all six pages at 320 x 568 with no panel overflow or form/status overlap. At 390 x 664, the avatar menu, height form and three personal-space note fields were visually reviewed. Fictional local measurements survived save and reload; the summary showed the saved count and reach-to-height ratio. A partial questionnaire answer saved while the other field remained blank and survived question navigation. At 568 x 320 the portrait questionnaire retained its designed orientation. No browser errors were recorded. No physical-phone keyboard behaviour, pose detection or live-matrix resizing is claimed.
+
+
+## Version 0.4.1: seven visual personal-space shells
+
+Personal space now opens a 2D person with seven nested coloured shells, selectable colour controls, a distance slider, exact distance entry and a person-height slider. Radius and diameter are explicit; each layer can have its own meaning. Earlier four-zone artwork is treated as a visual reference, not the definition of the seven-layer model. Adjacent radii move when needed to preserve nesting. The fitted-axis drawing is a schematic, not a uniformly scaled map.
+
+The additional shells save in a separate project table alongside shared height and boundary inputs. Existing notes and extra table fields are preserved, and the fixed matrix remains unchanged. Tests cover seven-layer defaults, radius/diameter arithmetic, every layer moving inward and outward, backup round trips and separation from matrix data. All 67 Node tests and two Python tests passed; script syntax and whitespace checks passed.
+
+Browser checks verified an arrow-key slider change altered the rendered radius and diameter, exact Blue distance 450 cm produced a 900 cm diameter and moved the adjoining Indigo layer, and height changes altered the person reference. A custom layer meaning and dimensions survived save/reload. At 320 x 568 the page showed seven shells with no panel overflow. At 568 x 320 a direct drag on the rotated distance slider changed Blue from 450 to 334 cm. No browser errors were recorded. Physical-phone touch hardware was not tested.

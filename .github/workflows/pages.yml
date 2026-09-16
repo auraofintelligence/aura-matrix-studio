@@ -41,6 +41,8 @@ jobs:
           node --check timing-data.js
           node --check avatar-data.js
           node --check avatar-ui.js
+          node --check personal-space-data.js
+          node --check personal-space-ui.js
           node --check timing-ui.js
           node --check timing-ideas.js
           node --check earth-map.js
@@ -50,7 +52,7 @@ jobs:
       - name: Prepare public files only
         run: |
           mkdir -p _site/tools
-          cp avatar-data.js avatar-ui.js earth-map.js earth-data.js timing-data.js timing-ui.js timing-ideas.js solar-system.js frame-display.js favourite-groups.js _site/
+          cp personal-space-data.js personal-space-ui.js avatar-data.js avatar-ui.js earth-map.js earth-data.js timing-data.js timing-ui.js timing-ideas.js solar-system.js frame-display.js favourite-groups.js _site/
           cp page-icons.js market-map.js travel-data.js travel-ui.js celestial-clock.js time-context.js MARKET-DATA.md TRAVEL-AND-TIMING.md index.html matrix.html original.js original.css original-live.js original-routes.js original-sitemap.js menu-camera.js original-favourites.js favourites-data.js quickstart.js dataset-schema.js dataset-allocation.js DATASET-CATALOGUE.md inventory.html explainer.html guide.html styles.css core.js renderer.js app.js spatial.js spatial-ui.js workspace.js LICENCE.md .nojekyll _site/
           cp -r assets vendor _site/
           cp tools/blender_import.py _site/tools/

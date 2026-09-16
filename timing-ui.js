@@ -1,7 +1,7 @@
-import {TIMING_IDEAS,ideaDraft,originalTimingNotes} from './timing-ideas.js?v=0.4.0';
-import {TIMING_PAGES,timingEntries,timingRows,timingDate,repeatOf,saveTiming,nextOccurrences,conditionResult,timingRule} from './timing-data.js?v=0.4.0';
-import {readTravelProject,writeTravelProject,TIMELINES} from './travel-data.js?v=0.4.0';
-import {QUICKSTART} from './quickstart.js?v=0.4.0';
+import {TIMING_IDEAS,ideaDraft,originalTimingNotes} from './timing-ideas.js?v=0.4.1';
+import {TIMING_PAGES,timingEntries,timingRows,timingDate,repeatOf,saveTiming,nextOccurrences,conditionResult,timingRule} from './timing-data.js?v=0.4.1';
+import {readTravelProject,writeTravelProject,TIMELINES} from './travel-data.js?v=0.4.1';
+import {QUICKSTART} from './quickstart.js?v=0.4.1';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
 const names={birthdays:'Birthdays',milestones:'Milestones & goals',counters:'Counters',schedules:'Schedules',reminders:'Reminders',ceremonies:'Ceremonies',learning:'Learning & skills',work:'Work',weather:'Weather signals',community:'Community'};
