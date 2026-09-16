@@ -1,4 +1,4 @@
-import {validateProject} from './core.js?v=0.4.12';
+import {validateProject} from './core.js?v=0.4.13';
 // Original Eyes and Distance page: preserve its nine positions and order.
 export const EYE_POSES=[
  ['camera','Look into the camera','Keep your head level and look into the camera.'],

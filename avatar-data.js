@@ -1,5 +1,5 @@
-import {validateProject} from './core.js?v=0.4.12';
-import {EYE_POSES,eyePhotos} from './eye-photos.js?v=0.4.12';
+import {validateProject} from './core.js?v=0.4.13';
+import {EYE_POSES,eyePhotos} from './eye-photos.js?v=0.4.13';
 export const AVATAR_HOME='DD2667DF-4A8C-461B-9196-655447A018F3';
 export const AVATAR_CREATION='3A178076-5EF1-41A0-8229-62636BE4F256';
 const choice=(id,label,options)=>({id,label,options:[...options,'Prefer not to say'],unit:'',kind:'choice'});

@@ -1,5 +1,7 @@
-import {rows,saveRow} from './local-tools.js?v=0.4.12';
-import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.12';
+import {rows,saveRow} from './local-tools.js?v=0.4.13';
+import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.13';
+import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.13';
+import {validateDisclosure} from './connection-sharing.js?v=0.4.13';
 
 export const RHYTHM_FIELDS=[
  {key:'Planning style',label:'How planned or spontaneous?',type:'scale',options:['Fully planned','Mostly planned','A mix','Mostly spontaneous','In the moment'],hint:'Choose how much advance planning feels right. You can add exceptions in your own words.'},
@@ -46,20 +48,34 @@ export const DATING_CHAPTERS=[
   words('Green signals','What helps you relax and open up?','Reliability, mutual curiosity, humour, clear intentions or shared values.'),words('Amber signals','What means slow down and ask more?','Mixed signals, differences, uncertainty, distance or a busy season of life.'),words('Red signals','What means stop for you?'),words('First step','What makes a first approach feel welcome?'),words('Deeper questions','What would you like to learn about each other?')]}
 ];
 DATING_CHAPTERS.find(c=>c.id==='time').fields.push(...RHYTHM_FIELDS);
-DATING_CHAPTERS.find(c=>c.id==='personality').fields.push(SIMILARITY_FIELD);
-DATING_CHAPTERS.find(c=>c.id==='personality').fields.push(...CULTURE_FIELDS);
+DATING_CHAPTERS.find(c=>c.id==='personality').fields.push({...SIMILARITY_FIELD});
+DATING_CHAPTERS.find(c=>c.id==='personality').fields.push(...CULTURE_FIELDS.map(f=>({...f})));
+const attraction=DATING_CHAPTERS.find(c=>c.id==='appearance');
+attraction.title='Attraction, body & senses';attraction.short='Attraction';
+attraction.intro='What draws you in is yours to describe: bodies, senses, qualities, resources, familiar patterns or something entirely individual.';
+const oldAttractionGroups={'My appearance':'About me','My height':'About me','My style':'About me','Attraction cues':'What draws me','Appearance preferences':'Body & looks','Attraction flexibility':'What draws me','Rejuvenation preferences':'About me'};
+attraction.fields.forEach(f=>f.group=oldAttractionGroups[f.key]);
+attraction.fields.unshift(...ATTRACTION_FIELDS);
+const attractionGroups=['What draws me','Body & looks','Senses','Reflection','About me'];
+attraction.fields.sort((a,b)=>attractionGroups.indexOf(a.group)-attractionGroups.indexOf(b.group));
+const personality=DATING_CHAPTERS.find(c=>c.id==='personality');
+personality.fields.forEach(f=>f.group=f.key==='Personality frameworks'?'Frameworks':'Qualities & values');
+personality.fields.push(...FRAMEWORK_FIELDS);
+personality.fields.sort((a,b)=>(a.group==='Frameworks')-(b.group==='Frameworks'));
 export const profileFields=DATING_CHAPTERS.flatMap(c=>c.fields);
 export function datingProfile(project){return rows(project,'aura-preferences').find(r=>r.id==='social-dating')||{};}
 export function listValue(value){if(!value)return [];try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[];}catch{return [];}}
 export function loveValue(value){if(!value)return {};try{const parsed=JSON.parse(value);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{};}catch{return {};}}
-export function fieldAnswered(field,value){if(!value)return false;if(['choices','week'].includes(field.type))return listValue(value).length>0;if(field.type==='love')return Object.keys(loveValue(value)).length>0;return String(value).trim().length>0;}
+export function fieldAnswered(field,value){if(!value)return false;if(['choices','week'].includes(field.type))return listValue(value).length>0;if(['love','weights'].includes(field.type))return Object.keys(loveValue(value)).length>0;return String(value).trim().length>0;}
 export function chapterProgress(chapter,profile){return chapter.fields.filter(f=>fieldAnswered(f,profile[f.key])||ownNote(profile,f.key).trim()).length;}
 export function savePreferenceProfile(project,fields,chapters,id,title){
  const values={...fields};delete values.id;
  const combined={...rows(project,'aura-preferences').find(r=>r.id===id),...values};
  validateGuidance(combined,chapters);
+ validateDisclosure(combined,chapters);
  for(const f of chapters.flatMap(c=>c.fields)){const v=combined[f.key];if(v===undefined||v==='')continue;
   if(['scale','single'].includes(f.type)&&!f.options.includes(v))throw Error('Choose a valid option for '+f.label);
+  if(f.type==='weights'){let values;try{values=JSON.parse(v);}catch{throw Error('Use valid attraction preferences.');}if(!values||Array.isArray(values)||typeof values!=='object'||Object.entries(values).some(([axis,n])=>!f.axes.includes(axis)||!Number.isInteger(n)||n<0||n>5))throw Error('Attraction preferences use independent values from 0 to 5.');}
   if(f.type==='number'&&(!Number.isFinite(Number(v))||Number(v)<f.min||(f.max!=null&&Number(v)>f.max)||(f.unit==='years'&&!Number.isSafeInteger(Number(v)))))throw Error(`${f.label}: use ${numericRange(f)}, or leave blank.`);
   if(['choices','week'].includes(f.type)){let a;try{a=JSON.parse(v);}catch{throw Error('Choose valid options for '+f.label);}const allowed=f.type==='week'?DAYS.flatMap(d=>DAY_PARTS.map(t=>d+' '+t)):f.options;if(!Array.isArray(a)||a.some(x=>!allowed.includes(x))||new Set(a).size!==a.length)throw Error('Choose valid options for '+f.label);}
   if(f.type==='love'){let obj;try{obj=JSON.parse(v);}catch{throw Error('Use valid love language preferences.');}if(!obj||Array.isArray(obj)||typeof obj!=='object'||Object.entries(obj).some(([k,n])=>!LOVE_LANGUAGES.some(l=>l[0]===k)||!Number.isInteger(n)||n<0||n>5))throw Error('Love language preferences use 0 to 5.');}

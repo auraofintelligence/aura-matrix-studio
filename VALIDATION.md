@@ -1,12 +1,20 @@
 # Validation record
 
-## Guided visual connection preferences (0.4.12, local release candidate)
+## Personal attraction, senses and disclosure (0.4.13)
+
+108 Node tests and two Python filtering tests pass. New tests cover explicit body and scent preferences, self-described frameworks, family-pattern reflection, independent attraction factors with zero distinct from unanswered, unchanged legacy answers and backup round trips. Disclosure tests check private defaults, separate public and permission audiences, own-word notes, exclusion of unrelated data, reverting to private, and rejection of malformed imported settings.
+
+At 320 x 568, all 25 attraction and 14 personality cards fit without card or document overflow. Browser checks covered multi-select across two scent pages, independent importance sliders, selected choices plus own words, an exact one-answer outer Aura preview, saving and reload persistence. The shared editor was also checked across the other 64 Dating and 47 Friendship cards. Two clipped Friendship cards were corrected and rechecked. Shared question definitions are cloned so Dating group labels do not alter Friendship navigation. Test data was fictional and local. No public profile was edited. Real phone keyboards and touch gestures remain untested.
+
+Audience choices are saved intentions. Previews and selective JSON exports work locally; this release does not publish profiles or enforce access permissions on a server.
+
+## Guided visual connection preferences (0.4.12)
 
 103 Node tests pass. New cases cover reversible suggestion selections, preserved legacy and typed notes, explicit source-labelled suggestions, custom notes alongside multiple choice, independent importance and urgency, unique reordered priorities, optional scales and culture/faith choices in both profiles, malformed imports and full backup round trips. The chronological adult-age checks from 0.4.11 remain in place.
 
 Browser QA at 320 x 568 visited all 79 Dating and 50 Friendship question cards with no vertical or horizontal content overflow. Checked a complete 12-area priority ranking, independent Essential/Later choices, saving and reloading a combined selected/typed answer, deselection without loss of typed words, and suggestions drawn from an explicitly selected shared interest. Tests used fictional localhost data only. Physical phone keyboards and gestures remain untested.
 
-0.4.11 and 0.4.12 are local changes pending explicit publication approval following automatic approval review of the earlier push. No new generated image is included in this release.
+0.4.12 was published at b0e61d60c9dcbd678ee2cf91e0889ff106d26256 after approval. GitHub Actions run 35104003793 succeeded and 258 public files matched that commit. No new generated image was included.
 
 ## Longevity-focused Dating (0.4.11)
 
