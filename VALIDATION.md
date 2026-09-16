@@ -163,3 +163,10 @@ Final gesture-layout browser checks confirmed tap-to-turn, dragging, zoom and do
 Only the selected torus carries coloured fog, with stronger interior opacity and no fade at the outline. The selected field renders after the other shell outlines and before the human. The source images' near-white backdrop is removed during SVG compositing so the person keeps their original colours instead of being tinted by multiply blending. No image files or measurements are changed.
 
 Browser review at 390 x 664 checked the blue side field and red overhead field with the female reference. Exactly one layer was shaded and matched the selection. The field stopped at the outline and the figure stayed visibly in front in both views. Existing gesture controls remain.
+
+## 0.4.6: Matching human measurement references
+
+- Eyes, height/reach and shoulders/span have one-measurement views with matching male/female references and endpoint guides. The original nine eye-photo positions and 30 cm forehead-ruler instructions are restored.
+- Phone review at 390 x 664: standing, overhead and seated height, arm span and eye width inspected. All nine gaze positions traversed; female reference selection checked. No page scrolling required.
+- Local image attachment, saved photo reload, numerical eye input reload and clearing the test input checked through the browser. Photos remain in the project tables; backup round-trip and separate pose identity covered by tests.
+- 72 Node tests and 2 Python tests passed before release. Real phone pinch/hold gestures were not exercised; keyboard browsing/reference changes and browser pointer UI were checked.

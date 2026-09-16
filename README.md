@@ -151,3 +151,9 @@ Geometry follows the [Horn Torus roll path](https://auraofintelligence.github.io
 Original code, design and content are by **Luke Nathan Hayes / Strange But True / Aura of Intelligence**, under the [Strange But True Public Source Licence](LICENCE.md). This is a public-source licence, not a standard open-source licence. Read its terms before reuse.
 
 Bundled Three.js, Leaflet and Astronomy Engine retain their MIT notices in `vendor/`. OpenStreetMap data and tiles retain their source attribution. Astronomy calculations use [Astronomy Engine 2.1.19](https://github.com/cosinekitty/astronomy).
+
+## Visual measurement guides (0.4.6)
+
+Eyes and spacing, Height and reach, and Shoulders and arm span now use the same male and female references as Personal space. Each guide shows the pose and the two measurement endpoints with one input at a time. Swipe to browse, or use the previous/save controls. Hold the figure to change the reference; keyboard F/M is also available. Measurements retain their existing QuickStart row IDs and units.
+
+The original nine eye-photo positions are restored in order: camera, eyes wide open, left, right, up, down, ahead again, gently closed and tightly closed. Each shows the ruler placement and can hold its own photo. Compressed local photo copies are saved in the `avatar-eye-photos` table and included in the existing project backup. The three numerical eye measurements remain available from the same page. Photo references show how to measure; the app does not infer dimensions from photographs.

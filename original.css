@@ -108,3 +108,31 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid #226
 
 
 .space-figure svg{touch-action:none;user-select:none;cursor:grab}.space-figure svg:active{cursor:grabbing}.space-figure svg:focus-visible{outline:2px solid #9473bf;outline-offset:-2px}
+
+/* Measurement tutorials keep the figure, guide and one input in the same frame. */
+.measurement-panel{gap:8px;padding:12px}
+.measurement-panel .avatar-header h1{font-size:19px}
+.measurement-panel .avatar-header .avatar-back{width:38px;min-height:38px}
+.measurement-progress{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.measurement-progress button{min-height:32px;width:32px;padding:3px;border-radius:50%;font-size:12px;background:transparent}
+.measurement-progress [aria-current=step]{background:#e9dff6;border-color:#a58acb;color:#583887}
+.measurement-progress>span{margin-left:auto;font-size:12px;color:#756780}
+.measurement-form{display:flex;flex-direction:column;gap:9px;flex:1;min-height:0}
+.measurement-form h2{font-size:17px;margin:0;flex-shrink:0}
+.measurement-visual{margin:0;display:flex;flex-direction:column;flex:1;min-height:90px;border:1px solid #e5ddf0;border-radius:16px;background:white;overflow:hidden}
+.measurement-visual svg{display:block;width:100%;height:0;flex:1;min-height:0;touch-action:none;user-select:none;cursor:grab}
+.measurement-visual figcaption{padding:6px;text-align:center;font-size:10px;color:#73667e;flex-shrink:0}
+.measurement-help{font-size:12px;line-height:1.4;color:#594f64;flex-shrink:0;min-height:50px}
+.measurement-input{display:flex;align-items:center;gap:10px}
+.measurement-input input{flex:1;min-width:0}
+.measurement-input>span{font-weight:400;width:25px;color:#756780}
+.measurement-panel .avatar-status{min-height:18px;font-size:11px}
+.measurement-panel .avatar-footer button{min-height:42px;padding:8px}
+.measurement-panel button:disabled{opacity:.4;cursor:default}
+.measurement-progress .measurement-jump{width:auto;border-radius:10px;padding:4px 10px}
+.measurement-setup{font-size:11px;line-height:1.4;color:#6d6179}
+.measurement-photo-row{display:flex;align-items:center;gap:8px;min-height:44px;flex-shrink:0}
+.measurement-photo-row button{min-height:42px;white-space:nowrap}
+.measurement-photo-row img{width:38px;height:42px;object-fit:contain;border-radius:5px}
+.measurement-photo-row>span{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.measurement-visual svg:focus-visible{outline:2px solid #9876c2;outline-offset:-3px;border-radius:12px}

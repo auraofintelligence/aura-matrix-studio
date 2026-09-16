@@ -1,12 +1,14 @@
-import {mountPersonalSpace} from './personal-space-ui.js?v=0.4.5';
-import {AVATAR_HOME,AVATAR_SECTIONS,AVATAR_PAGES,avatarValues,avatarProgress,saveAvatar,avatarRatios} from './avatar-data.js?v=0.4.5';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.5';
+import {mountPersonalSpace} from './personal-space-ui.js?v=0.4.6';
+import {mountMeasurements} from './measurement-ui.js?v=0.4.6';
+import {AVATAR_HOME,AVATAR_SECTIONS,AVATAR_PAGES,avatarValues,avatarProgress,saveAvatar,avatarRatios} from './avatar-data.js?v=0.4.6';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.6';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const n=make('button',cls,text);n.type='button';n.onclick=fn;return n;};
 const paths={person:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M4 22v-3a8 8 0 0 1 16 0v3',space:'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14M8 2h8M8 22h8',eyes:'M1 12s4-6 11-6 11 6 11 6-4 6-11 6S1 12 1 12M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6',reach:'M12 7v14M8 22l4-7 4 7M5 2l7 9 7-9M12 2v1',shoulders:'M2 12h20M12 10v12M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6'};
 function icon(name){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',paths[name]);svg.append(path);return svg;}
 export function mountAvatar({page,screen,go}){
  if(AVATAR_PAGES[page.id]?.key==='space')return mountPersonalSpace({screen,go});
+ if(['eyes','reach','shoulders'].includes(AVATAR_PAGES[page.id]?.key))return mountMeasurements({screen,go,section:AVATAR_PAGES[page.id]});
  for(const child of screen.children)child.hidden=true;
  const panel=make('section','avatar-panel');screen.append(panel);const section=AVATAR_PAGES[page.id];let project,values,index=0,dirty=false;
  const status=make('p','avatar-status');status.setAttribute('role','status');
