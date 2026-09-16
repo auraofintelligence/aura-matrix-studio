@@ -57,6 +57,12 @@ The starting goal of 256 destinations over 10 years is editable. It is a persona
 
 Trips can hold departure and return dates, seasonal region, preferred season, purpose and personal astrology notes. Dated trips appear in the travel timeline and can open Crown's celestial tools at that date. Travel Plans also links to the World Travel route and logistics tools, the Visa & Activity Atlas and the Strange But True Travel Oracle.
 
+## Avatar preferences and body proportions
+
+[Your avatar](https://auraofintelligence.github.io/aura-matrix-studio/?page=DD2667DF-4A8C-461B-9196-655447A018F3) opens five mobile forms: avatar preferences, personal space, eyes and spacing, height and reach, and shoulders and arm span. Short question pages, clear measurement units, saved-answer counts and large controls replace the original static instructions. Every input is optional; photos are not required.
+
+The eight avatar preferences use the same rows as QuickStart, so answers can be edited from either place. Existing answers, custom columns and attachments are preserved. Measurements use centimetres or millimetres as labelled. Personal-space distances and context notes are stored in a boundaries table. Saved height, reach and arm span produce simple ratio summaries. These values prepare avatar calibration; they do not yet resize the live matrix or operate proximity sensors. All records remain in browser storage and project backups.
+
 ## Working Timing and Signals pages
 
 QuickStart birthdays, key dates, schedules, skills and goals appear in their matching Timing and Signals sections. Ten working pages replace the old placeholders: Birthdays, Milestones and goals, Counters, Schedules, Reminders, Ceremonies, Learning, Work, Weather signals and Community. The original timing menu shows saved-entry counts.

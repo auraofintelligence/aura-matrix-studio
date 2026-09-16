@@ -1,18 +1,20 @@
-import {mountEarth} from './earth-map.js?v=0.3.9';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.3.9';
-import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.3.9';
-import {TIMING_PAGES} from './timing-data.js?v=0.3.9';
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.3.9';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.3.9';
-import {mountCelestial} from './celestial-clock.js?v=0.3.9';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.3.9';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.3.9';
-import {mountMenuCamera} from './menu-camera.js?v=0.3.9';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.3.9';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.3.9';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.3.9';
-import {mountLiveMatrix} from './original-live.js?v=0.3.9';
-import {frameOrientation} from './frame-display.js?v=0.3.9';
+import {AVATAR_HOME,AVATAR_PAGES} from './avatar-data.js?v=0.4.0';
+import {mountAvatar} from './avatar-ui.js?v=0.4.0';
+import {mountEarth} from './earth-map.js?v=0.4.0';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.0';
+import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.4.0';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.0';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.4.0';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.0';
+import {mountCelestial} from './celestial-clock.js?v=0.4.0';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.0';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.0';
+import {mountMenuCamera} from './menu-camera.js?v=0.4.0';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.0';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.0';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.0';
+import {mountLiveMatrix} from './original-live.js?v=0.4.0';
+import {frameOrientation} from './frame-display.js?v=0.4.0';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -123,6 +125,7 @@ export async function startOriginal(){
     if(MARKET_PAGES[current.id])live=mountMarket({page:current,screen:$('original-screen')});
     if(current.id===TRAVEL)live=mountTravel({page:current,screen:$('original-screen'),go});
     if(current.id===TIMELINES){live=mountTravelTimeline({screen:$('original-screen'),go});mountTimingBadges({page:current,screen:$('original-screen')});}
+    if(current.id===AVATAR_HOME||AVATAR_PAGES[current.id])live=mountAvatar({page:current,screen:$('original-screen'),go});
     if(TIMING_PAGES[current.id])live=mountTiming({page:current,screen:$('original-screen'),go});
     if([EARTH,EARTH_WIDE].includes(current.id)){live=mountEarth({page:current,screen:$('original-screen'),go});document.title='Earth map | Aura of Intelligence';}
     if(current.id===CELESTIAL)live=mountCelestial({page:current,screen:$('original-screen'),go});

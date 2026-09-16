@@ -115,3 +115,12 @@ All ten Timing and Signals sections now have general options before personal dat
 All 60 Node tests and two Python tests passed. New coverage checks every suggested draft can be saved and edited while preserving existing records and the catalogue, and that all original text remains available. All top-level JavaScript syntax checks and the whitespace check passed.
 
 Browser checks found eight populated first-page options and no panel overflow in all ten sections at a 390 x 664 viewport. The birthday idea opened the editor with its seven-day reminder offset. Search found an idea beyond the first page; previous/next options and original-note pages worked. Community retained its portrait design while rotated within a 568 x 320 viewport, without panel overflow. These are browser viewport checks, not physical-phone tests.
+
+
+## Version 0.4.0: mobile avatar setup
+
+Updated the Body to Aura Ratios entry page and its five linked input sections. Avatar preferences and personal-space settings use short question pages; eye, height, reach and shoulder forms use labelled numeric units. Original page URLs, source orientation and artwork remain. The original source archive is unchanged.
+
+All 64 Node tests and two Python tests passed, along with JavaScript syntax and whitespace checks. New tests cover the five original destinations, QuickStart row sharing, preserved legacy values and custom fields, optional blanks, atomic rejection of invalid measurements, unit labels and calculated ratios.
+
+Browser review checked all six pages at 320 x 568 with no panel overflow or form/status overlap. At 390 x 664, the avatar menu, height form and three personal-space note fields were visually reviewed. Fictional local measurements survived save and reload; the summary showed the saved count and reach-to-height ratio. A partial questionnaire answer saved while the other field remained blank and survived question navigation. At 568 x 320 the portrait questionnaire retained its designed orientation. No browser errors were recorded. No physical-phone keyboard behaviour, pose detection or live-matrix resizing is claimed.

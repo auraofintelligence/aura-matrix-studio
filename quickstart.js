@@ -1,10 +1,11 @@
-import {framePoint} from './frame-display.js?v=0.3.9';
-import {tripForm,goalForm} from './travel-ui.js?v=0.3.9';
-import {pageIcon} from './page-icons.js?v=0.3.9';
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.3.9';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.3.9';
-import {targetLabel} from './spatial.js?v=0.3.9';
-import {TORUS} from './original-routes.js?v=0.3.9';
+import {AVATAR_QUESTIONS as AVATAR_FIELDS} from './avatar-data.js?v=0.4.0';
+import {framePoint} from './frame-display.js?v=0.4.0';
+import {tripForm,goalForm} from './travel-ui.js?v=0.4.0';
+import {pageIcon} from './page-icons.js?v=0.4.0';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.4.0';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.0';
+import {targetLabel} from './spatial.js?v=0.4.0';
+import {TORUS} from './original-routes.js?v=0.4.0';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));
@@ -18,16 +19,7 @@ export function saveQuickEntry(project,dataset,values,rowId){
   return validateProject(next);
 }
 export function validBirthday(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}
-const AVATAR_QUESTIONS=[
- ['Are you right handed or left handed?',['Right handed','Left handed','Both']],
- ['Are you right footed or left footed?',['Right footed','Left footed','Both']],
- ['Do you wear corrective lenses for eyesight?',['Yes','No']],
- ['Do you have any facial tattoos or piercings?',['Yes','No']],
- ['Do you prefer tight, slim, or baggy clothes?',['Tight','Slim','Baggy']],
- ['Do you prefer an active or non-active life?',['Active','Non-active']],
- ['Do you alter your hair style or colour often?',['Yes','No']],
- ['Do you wear hats or hair coverings often?',['Yes','No']]
-];
+const AVATAR_QUESTIONS=AVATAR_FIELDS.map(f=>[f.label,f.options]);
 export function mountQuickStart({page,screen,catalogue}){
   const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
   const button=(text,fn)=>{const b=make('button','',text);b.type='button';b.onclick=fn;return b;};
@@ -101,6 +93,7 @@ export function mountQuickStart({page,screen,catalogue}){
     const form=make('form','quick-welcome'),controls=[];let familyBirthday=null,rowId,defaults={},heading='';
     function entry(column,label,type='text',options){
       const saved=project.tables.find(t=>t.id==='quickstart-'+rec.id),row=rowId&&saved?.rows.find(r=>r.id===rowId),value=row?.values[saved.columns.indexOf(column)]||'';
+      if(options&&value&&!options.includes(value))options=[...options,value];
       const n=options?select(label,[['','Choose'],...options.map(v=>[v,v])],value,()=>{}):input(label,value,type);n.required=true;controls.push([column,n]);form.append(field(label,n));return n;
     }
     if(index===0){rowId='my-birthday';defaults={Title:'My birthday'};heading='Start with your date of birth.';entry('Date','Date of birth','date');}
