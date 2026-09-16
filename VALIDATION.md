@@ -140,3 +140,10 @@ Browser checks verified an arrow-key slider change altered the rendered radius a
 Replaced the independently fitted axes with one centimetre-to-screen scale shared by the person and all seven circular shells. The drawing fits the largest radius or person height without stretching. Radius from centre is labelled at the input; the dimension line shows radius and the caption also states full diameter. Saved dimensions and meanings are unchanged.
 
 All 68 Node tests and both Python tests passed. The new geometry regression checks person-to-radius and person-to-diameter ratios over multiple heights and outer radii, including a 200 cm radius against a 170 cm person. In the browser at 320 x 568, the rendered radius was 32.5 units on both axes and person height was 27.625 units, giving the exact 200/170 ratio. No document overflow occurred. Physical device testing was not performed.
+
+
+## Version 0.4.3: top and side human views
+
+Top view now places an overhead human reference inside the seven ground-distance rings. Side view places the matching standing figure on the ground with seven horizontal dimension guides. Each view uses a uniform physical scale and fits independently. Focus layer enlarges the selected area and Fit all layers restores every radius. The Male/Female selection uses four generated pose images: one arm forward and the other sideways at shoulder height. Figure choice is saved in the existing shell table without changing dimensions or meanings. Side head-to-foot height follows the entered height; other body proportions remain illustrative.
+
+Browser checks at 320 x 568 and 390 x 664 covered both views, the focus toggle, both female images, and saved figure selection after reload. View changes retained unsaved radius edits. There was no document overflow. Geometry tests cover both view scales and focused layouts; saved-data tests cover female selection and preserving it during subsequent edits. No physical device or personalised arm-reach calibration is claimed.

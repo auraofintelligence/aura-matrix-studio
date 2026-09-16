@@ -4,15 +4,16 @@ import {blankProject,validateProject} from '../core.js';
 import {AVATAR_SECTIONS,saveAvatar,avatarValues} from '../avatar-data.js';
 import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceShells,spaceDiagram,savePersonalSpace} from '../personal-space-data.js';
 test('person height and every shell use the same physical scale at all fitted sizes',()=>{
- for(const height of [100,170,220,1200])for(const outer of [480,1000,10000]){
-  const radii=[105,150,200,240,320,400,outer],d=spaceDiagram(height,radii);
+ for(const height of [100,170,220,1200])for(const outer of [480,1000,10000])for(const view of ['top','side']){
+  const radii=[105,150,200,240,320,400,outer],d=spaceDiagram(height,radii,view);
   for(const [i,shell] of d.shells.entries()){
    assert.ok(Math.abs(shell.radiusPx/d.personHeight-radii[i]/height)<1e-10);
    assert.ok(Math.abs(shell.diameterPx/d.personHeight-2*radii[i]/height)<1e-10);
-   assert.ok(shell.radiusPx<=78);
+   assert.ok(shell.radiusPx<=(view==='top'?78:150));
   }
-  assert.ok(d.personHeight<=156);
+  assert.ok(d.personHeight<=(view==='top'?130:106)+1e-10);
  }
+ const focused=spaceDiagram(170,[45,100,160,240,320,400,480],'side',0);assert.ok(focused.personHeight>spaceDiagram(170,[45,100,160,240,320,400,480],'side').personHeight);assert.throws(()=>spaceDiagram(170,[45,100,160,240,320,400,480],'side',7));
  const d=spaceDiagram(170,[105,150,200,240,320,400,480]);
  assert.ok(d.shells[2].radiusPx>d.personHeight,'a 2 m radius must be longer than a 1.7 m person');
  assert.ok(d.shells[0].diameterPx>d.personHeight,'a 210 cm diameter must exceed a 170 cm height');
@@ -29,9 +30,10 @@ test('changing any radius keeps seven layers nested and diameter is twice its ra
 });
 test('saved shell geometry, meanings and notes round-trip without changing matrix shells or losing attachments',()=>{
  const p=blankProject(),before=JSON.stringify(p),r=[45,100,160,240,320,400,480],meanings=['Close friends','','','','','Learning','Reflection'];
- let next=savePersonalSpace(p,185,r,meanings,{'space-context':'A shared workspace'});assert.equal(JSON.stringify(p),before);
- const loaded=readPersonalSpace(validateProject(JSON.parse(JSON.stringify(next))));assert.deepEqual(loaded.radii,r);assert.deepEqual(loaded.meanings,meanings);assert.equal(loaded.height,185);assert.equal(loaded.notes['space-context'],'A shared workspace');assert.equal(loaded.example,false);
+ let next=savePersonalSpace(p,185,r,meanings,{'space-context':'A shared workspace'},'female');assert.equal(JSON.stringify(p),before);
+ const loaded=readPersonalSpace(validateProject(JSON.parse(JSON.stringify(next))));assert.deepEqual(loaded.radii,r);assert.deepEqual(loaded.meanings,meanings);assert.equal(loaded.height,185);assert.equal(loaded.notes['space-context'],'A shared workspace');assert.equal(loaded.example,false);assert.equal(loaded.figure,'female');
  const t=next.tables.find(t=>t.id==='aura-personal-space-shells');t.columns.push('Asset');t.rows.forEach((row,i)=>row.values.push(i===0?'my-asset':''));next=savePersonalSpace(next,185,changeSpaceRadius(r,0,60),meanings);assert.equal(next.tables.find(t=>t.id==='aura-personal-space-shells').rows[0].values.at(-1),'my-asset');
+ assert.equal(readPersonalSpace(next).figure,'female');assert.throws(()=>savePersonalSpace(next,185,r,meanings,{},'invalid'));
  const geometry=next.tables.find(t=>t.id==='aura-personal-space-shells');assert.equal(geometry.rows.length,7);assert.equal(geometry.rows[0].values[geometry.columns.indexOf('Diameter')],'120');
  for(const key of Object.keys(p).filter(k=>k!=='tables'))assert.deepEqual(next[key],p[key],key);
 });

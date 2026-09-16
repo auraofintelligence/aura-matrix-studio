@@ -1,4 +1,4 @@
-import {validateProject} from './core.js?v=0.4.2';
+import {validateProject} from './core.js?v=0.4.3';
 export const AVATAR_HOME='DD2667DF-4A8C-461B-9196-655447A018F3';
 const choice=(id,label,options)=>({id,label,options:[...options,'Prefer not to say'],unit:'',kind:'choice'});
 export const AVATAR_QUESTIONS=[
