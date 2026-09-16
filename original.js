@@ -1,22 +1,26 @@
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.8';
-import {LIFE_PAGES} from './life-data.js?v=0.4.8';
-import {mountLife} from './life-ui.js?v=0.4.8';
-import {mountAvatar} from './avatar-ui.js?v=0.4.8';
-import {mountEarth} from './earth-map.js?v=0.4.8';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.8';
-import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.4.8';
-import {TIMING_PAGES} from './timing-data.js?v=0.4.8';
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.4.8';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.8';
-import {mountCelestial} from './celestial-clock.js?v=0.4.8';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.8';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.8';
-import {mountMenuCamera} from './menu-camera.js?v=0.4.8';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.8';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.8';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.8';
-import {mountLiveMatrix} from './original-live.js?v=0.4.8';
-import {frameOrientation} from './frame-display.js?v=0.4.8';
+import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.9';
+import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.9';
+import {mountPalace,PALACE_PAGES} from './palace-ui.js?v=0.4.9';
+import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.9';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.9';
+import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.9';
+import {mountLife} from './life-ui.js?v=0.4.9';
+import {mountAvatar} from './avatar-ui.js?v=0.4.9';
+import {mountEarth} from './earth-map.js?v=0.4.9';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.9';
+import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.4.9';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.9';
+import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.4.9';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.9';
+import {mountCelestial} from './celestial-clock.js?v=0.4.9';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.9';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.9';
+import {mountMenuCamera} from './menu-camera.js?v=0.4.9';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.9';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.9';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.9';
+import {mountLiveMatrix} from './original-live.js?v=0.4.9';
+import {frameOrientation} from './frame-display.js?v=0.4.9';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -45,7 +49,7 @@ export function screenLayout(page,availableWidth,availableHeight){
 export async function startOriginal(){
   if(new URLSearchParams(location.search).has('inspect'))document.body.dataset.inspect='true';
   const [response,catalogueResponse]=await Promise.all([fetch('assets/mockplus/pages.json'),fetch('assets/dataset-catalogue.json')]);if(!response.ok)throw Error('Original layouts could not be loaded.');
-  const catalogue=await catalogueResponse.json(),source=await response.json(),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live,menuCamera;
+  const catalogue=await catalogueResponse.json(),source=addSocialPages(await response.json()),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live,menuCamera;
   const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
   const warn=text=>{$('original-status').textContent=text;};
   function go(id,extra={}){
@@ -69,7 +73,7 @@ export async function startOriginal(){
     if(type==='StatusBar(Android)'){
       node.classList.add('original-phone-status');node.append(make('span',null,'◉ ▰  02:18 PM'));
     }else if(p.URL){
-      const img=make('img');img.src='assets/mockplus/'+p.URL;img.alt=CAMERA_VARIANTS[c.links[0]?.target]?'Camera background':c.links[0]?.title||'';img.draggable=false;node.append(img);
+      const lifeDestination=LIFE_PAGES[c.links[0]?.target],img=make('img');img.src='assets/mockplus/'+(lifeDestination?.image||p.URL);img.alt=CAMERA_VARIANTS[c.links[0]?.target]?'Camera background':c.links[0]?.title||'';img.draggable=false;node.append(img);if(current.id===SOCIAL_HOME&&lifeDestination)node.append(make('span','life-source-caption',lifeDestination.title));
     }else if(type==='AlarmIcon2'){
       node.classList.add('original-alarm');const alarm=c.children.find(child=>child.properties.alias==='alarm');
       if(alarm){const badge=make('span','original-count',alarm.properties.text);position(badge,bounds(alarm));badge.style.background=colour(alarm.properties.color);badge.style.color=colour(alarm.properties.textColor||4294967295);badge.style.fontSize=(Number(alarm.properties.textSize)||7)+'px';node.append(badge);}
@@ -103,7 +107,7 @@ export async function startOriginal(){
       for(const area of link.areas.length?link.areas:[null]){
         const box=linkBounds(area,c);if(box[2]<=0||box[3]<=0)continue;
         const destination=livePage(canonicalPage(link.target)),destinationTitle=destination?(destination.shape==='flat'?'Finite map':['Red','Orange','Yellow','Green','Blue','Indigo','Violet'][destination.shell]+' torus'):null;
-        const a=make('a','original-link');a.href=link.target==='command:back'?'#back':'?page='+canonicalPage(link.target);a.title=CAMERA_VARIANTS[link.target]?'Camera background':destinationTitle||link.title||pages.get(link.target)?.name||'Back';a.setAttribute('aria-label',a.title);position(a,box);if(CAMERA_VARIANTS[link.target]){a.dataset.cameraToggle='true';a.setAttribute('role','button');}
+        const a=make('a','original-link');a.href=link.target==='command:back'?'#back':'?page='+canonicalPage(link.target);a.title=CAMERA_VARIANTS[link.target]?'Camera background':destinationTitle||LIFE_PAGES[link.target]?.title||link.title||pages.get(link.target)?.name||'Back';a.setAttribute('aria-label',a.title);position(a,box);if(CAMERA_VARIANTS[link.target]){a.dataset.cameraToggle='true';a.setAttribute('role','button');}
         a.onclick=e=>{e.preventDefault();e.stopPropagation();go(link.target);};node.append(a);
       }
     }
@@ -116,7 +120,7 @@ export async function startOriginal(){
   }
 
   function show(id){
-    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(canonicalPage(id)!==id){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(openingPage(id,pages));document.title=current.name+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
+    live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(canonicalPage(id)!==id){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(openingPage(id,pages));document.title=(LIFE_PAGES[current.id]?.title||current.name)+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
     Object.assign($('original-screen').style,{width:current.width+'px',height:current.height+'px'});
     for(const control of current.controls)draw(control,$('original-screen'));
     $('page-name').textContent=current.name;$('original-page').value=current.id;
@@ -124,7 +128,10 @@ export async function startOriginal(){
     const advanced=/\d+ by \d+ Torus/.test(current.name);
     warn(advanced?'Original screen artwork. The working model stays 12 × 24.':'Original screen layouts and links. Live tools are available in the matrix.');
     const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
-    if(MARKET_PAGES[current.id])live=mountMarket({page:current,screen:$('original-screen')});
+    if(AFFINITY_PAGES.has(current.id))live=mountAffinity({page:current,screen:$('original-screen'),go});
+    if(underPage(current,pages,PREFERENCES))live=mountPreferences({page:current,screen:$('original-screen'),pages,go});
+    if(PALACE_PAGES.has(current.id))live=mountPalace({page:current,screen:$('original-screen'),pages,go});
+    if(isSocialPage(current))live=mountSocial({page:current,screen:$('original-screen'),pages,go});
     if(current.id===TRAVEL)live=mountTravel({page:current,screen:$('original-screen'),go});
     if(LIFE_PAGES[current.id])live=mountLife({screen:$('original-screen'),section:LIFE_PAGES[current.id],go});
     if(current.id===TIMELINES){live=mountTravelTimeline({screen:$('original-screen'),go});mountTimingBadges({page:current,screen:$('original-screen')});}

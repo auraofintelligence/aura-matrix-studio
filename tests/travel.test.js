@@ -7,7 +7,7 @@ import {blankProject,validateProject} from '../core.js';
 import {saveTrip,saveTravelGoal,travelProgress,travelEntries,travelTimeline} from '../travel-data.js';
 import {buildTimeContext} from '../time-context.js';
 import {clockState} from '../celestial-clock.js';
-import {PLANETS,solarSystemState,orbitTracks,mapPoint} from '../solar-system.js';
+import {PLANETS,solarSystemState,orbitTracks,mapPoint,zoomSolarView,solarSystemSvg} from '../solar-system.js';
 const context=vm.createContext({Date,Math});vm.runInContext(readFileSync(new URL('../vendor/astronomy/astronomy.browser.min.js',import.meta.url),'utf8'),context);const A=context.Astronomy;
 test('travel goals stay editable and repeat visits count once without limiting custom territories',()=>{
  let p=saveTravelGoal(blankProject(),{target:400,years:7.5,start:'2027-01-01'});
@@ -58,4 +58,13 @@ test('solar map contains eight physical planet positions and a Moon orbiting Ear
  const one=mapPoint({x:1,y:0},'scale'),two=mapPoint({x:2,y:0},'scale');assert.ok(Math.abs((two.x-108)/(one.x-108)-2)<1e-12);
  for(const mode of ['compact','scale'])for(const p of state.planets){const point=mapPoint(p,mode);assert.ok(point.x>20&&point.x<200&&point.y>3&&point.y<171);}
  const tracks=orbitTracks(A,date);assert.equal(tracks.length,8);assert.equal(tracks[0].points.length,97);
+});
+
+
+test('solar zoom preserves the point under the gesture and leaves physical positions unchanged',()=>{
+ const original={zoom:1,x:0,y:0},anchor={x:80,y:50},zoomed=zoomSolarView(original,4,anchor);
+ assert.deepEqual(zoomed,{zoom:4,x:-240,y:-150});assert.equal((anchor.x-zoomed.x)/zoomed.zoom,anchor.x);assert.equal((anchor.y-zoomed.y)/zoomed.zoom,anchor.y);
+ assert.equal(zoomSolarView(zoomed,100,anchor).zoom,32);assert.equal(zoomSolarView(original,.001,anchor).zoom,.5);assert.deepEqual(zoomSolarView(zoomed,.25,anchor),original);
+ const date=new Date('2026-09-10T00:00:00Z'),state=solarSystemState(A,date),before=JSON.stringify(state),svg=solarSystemSvg(state,orbitTracks(A,date),'scale','Earth',zoomed);
+ assert.ok(svg.includes('translate(-240 -150) scale(4)'));assert.ok(svg.includes('solar-map-clip'));assert.equal(JSON.stringify(state),before);
 });

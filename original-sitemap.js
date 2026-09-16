@@ -1,13 +1,14 @@
-import {framePoint} from './frame-display.js?v=0.4.8';
-import {pageIcon} from './page-icons.js?v=0.4.8';
-import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.4.8';
+import {LIFE_PAGES} from './life-data.js?v=0.4.9';
+import {framePoint} from './frame-display.js?v=0.4.9';
+import {pageIcon} from './page-icons.js?v=0.4.9';
+import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.4.9';
 export const SITEMAP='E3222692-1B76-4EAF-9517-C5E94323947C';
 const LABELS={'Aura Menu':'Main menu','QuickStart Aura':'QuickStart','We Are Family':'Family','Schedules':'Calendar','Public Life Goals':'Goals','Favorites Lists':'Favourites','Learning':'Skills & learning','Timelines':'Timing & signals','Private Wish Lists':'Hopes & wishes','Matrix Programmer':'Enter the matrix','System Preferences':'Settings','SiteMap':'Find your way'};
 export const SECTIONS=[['daily','Everyday'],['people','People'],['aura','Aura'],['places','Places'],['tools','Tools'],['all','All']];
 const SHORTCUTS=['We Are Family','Birthdays','Schedules','Reminders','Public Life Goals','Favorites Lists','Learning','Private Wish Lists','Avatar','Timelines','QuickStart Aura','Matrix Programmer'];
 const ROOTS={people:['Social Web'],aura:['Chakras','Avatar','Matrix Programmer','Mind Palace'],places:['Travel Plans','Crown','Mind Palace','Nearby Opportunities','GAJRA.Earth','The Aura Affinity'],tools:['System Preferences','Tool Inventory']};
 const SYMBOLS={'We Are Family':'♡','Birthdays':'🎂','Schedules':'▦','Reminders':'♧','Public Life Goals':'◎','Favorites Lists':'☆','Learning':'📚','Private Wish Lists':'✧','Avatar':'♙','Timelines':'◷','QuickStart Aura':'▷','Matrix Programmer':'◉'};
-export function pageTitle(page){const id=canonicalPage(page.id),live=livePage(id),name=page.name.replace(/ CK$/,'');if(['1D740128-8621-43EE-8D85-E81F0241A569','7E5774BE-BCC6-4684-8A88-0F8D2A26B1F0'].includes(page.parent))return name+' · '+(page.parent==='1D740128-8621-43EE-8D85-E81F0241A569'?'connect':'import');if(['Vision','Membership'].includes(name))return name+' · '+(page.parent==='2DB77618-AB8D-4FDA-84DF-032AEE78FF3E'?'GAJRA':'Affinity');return live?(live.shape==='flat'?'Finite map':['Red','Orange','Yellow','Green','Blue','Indigo','Violet'][live.shell]+' torus')+' · '+(live.face==='I'?'inside':'outside'):LABELS[name]||name;}
+export function pageTitle(page){if(LIFE_PAGES[page.id])return LIFE_PAGES[page.id].title;const id=canonicalPage(page.id),live=livePage(id),name=page.name.replace(/ CK$/,'');if(['1D740128-8621-43EE-8D85-E81F0241A569','7E5774BE-BCC6-4684-8A88-0F8D2A26B1F0'].includes(page.parent))return name+' · '+(page.parent==='1D740128-8621-43EE-8D85-E81F0241A569'?'connect':'import');if(['Vision','Membership'].includes(name))return name+' · '+(page.parent==='2DB77618-AB8D-4FDA-84DF-032AEE78FF3E'?'GAJRA':'Affinity');return live?(live.shape==='flat'?'Finite map':['Red','Orange','Yellow','Green','Blue','Indigo','Violet'][live.shell]+' torus')+' · '+(live.face==='I'?'inside':'outside'):LABELS[name]||name;}
 export function mapPages(pages,section='daily',query=''){
   const clean=pages.filter(p=>!CAMERA_VARIANTS[p.id]&&!PAGE_ALIASES[p.id]&&p.name!=='Page'),q=query.trim().toLowerCase();
   if(q)return clean.filter(p=>(pageTitle(p)+' '+p.name+(p.id===HOME?' camera background':'')).toLowerCase().includes(q));

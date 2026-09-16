@@ -1,5 +1,16 @@
 # Validation record
 
+## Life collections, preferences, palaces and social tools (0.4.9)
+
+92 Node tests and two Python filtering tests pass. New tests cover unlimited family generations and multiple reciprocal/custom links; legacy bucket rows in the combined wish collection; achievements with optional dates; anchored solar zoom; table-preserving settings edits; algorithm dataset/device references; palace dimensions, pin positions, asset/address validation, cascading room removal and backup round trips; idempotent sample creation; social CSV completeness, invalid dates and distinct Dating/Friendships records; valid new favourite icons; and local Affinity draft updates.
+
+Browser checks used an isolated local origin with fictional examples. At 390 x 664 and 320 x 568, the family forms, eight-option algorithm menu, editors and visual pages fit the original portrait frame. Checked saving and reloading a friendship, saving a device and an algorithm specification linked to that device and a table, moving a palace pin by drag, adding a new pin, and creating the optional sample. A catch-up saved from Friendships appeared in Schedules alongside the general starting ideas. A two-row social CSV was previewed, saved and reported as two rows, four columns and seven populated cells out of eight. Family & belonging visibly contains Friendships and Dating.
+
+Affinity's original five branches and accommodation search controls were checked. The map opened filtered to accommodation, and scrolling its list grew the rendered results from 40 to 80 without previous/next buttons. Celestial wheel/keyboard zoom and drag panning were checked, and the added gesture hint and lower controls fit without overlap. Browser emulation does not establish physical multi-touch behaviour on every phone.
+
+New tools are local organisers and specifications. No social login, matching service, message delivery, public membership submission, blockchain transaction, device pairing, algorithm execution, building scan or VR capability was claimed or exercised. All data is part of the existing Aura project backup; the matrix remains 12 x 24.
+
+
 ## Direct destinations and camera variants (0.3.3)
 
 37 automated tests cover the existing model plus direct everyday destinations, 142 browsable pages without duplicate CK modes, calendar/family search aliases, legacy camera URL resolution and logical parents. Camera lifecycle tests use a simulated stream: no access at mount, explicit activation, stopping on toggle/navigation/tab hiding, late permission resolution and denied permission. No physical camera feed was accessed during QA.

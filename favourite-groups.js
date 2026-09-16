@@ -1,7 +1,7 @@
-import {canonicalPage,PAGE_PARENTS} from './original-routes.js?v=0.4.8';
+import {canonicalPage,PAGE_PARENTS} from './original-routes.js?v=0.4.9';
 export const FAVOURITE_GROUPS=[
  ['start','Start & shortcuts',['QuickStart Aura','Aura Menu','Quick Navigation','SiteMap']],
- ['people','People & family',['We Are Family','Birthdays','Milestones','Social Proximity','Nearby Friends','Social Web']],
+ ['people','People & family',['We Are Family','Birthdays','Milestones','Social Proximity','Nearby Friends','Friendships','Dating and Relationships','Social Web']],
  ['time','Time & routines',['Timelines','Schedules','Reminders','Counters','Ceremonies','Home Automation']],
  ['goals','Goals & learning',['Public Life Goals','Private Wish Lists','Public Wish Lists','Bucket List','Learning','Work','Favorites Lists']],
  ['travel','Travel & places',['Travel Plans','Multi-Stop Journey Planner','Navigation Pathfinder','Weather','Nearby Opportunities','Mind Palace']],

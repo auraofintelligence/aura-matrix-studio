@@ -23,17 +23,46 @@ The app opens at **Starting Point Aura / QuickStart**. Each original frame keeps
 
 You can skip questions and return later. Information becomes editable tables rather than a discarded onboarding questionnaire. The catalogue contains 37 recommended datasets covering the 145 original source pages. Suggested chakra associations are philosophical, editable and may include more than one chakra.
 
-## Family, favourites, wishes, bucket list and life goals
+## Family, friendships, dating and life collections
 
-The five original Social Web collections now have working mobile pages. All original list headings are retained across 32 categories, with 192 editable starter ideas. Saved entries and ideas share the same visual cards. Nothing is added until you save.
+[Family & belonging](https://auraofintelligence.github.io/aura-matrix-studio/?page=AE87688C-93C9-4AB1-A72D-A447ED56C5E0) contains the family tree, occasions, support networks, **Friendships** and **Dating**. Family links have no generation limit. People can have multiple connections, including cousins, aunts, uncles, nieces, nephews, ancestors, descendants and chosen kin. Relationship words, reciprocal terms, cultural approaches and meanings are editable. The connection view limits what is drawn at once, not the size of the family.
 
-Family records support relationships, a browsable connection view, birthdays, contact rhythms, memories and family occasions. Favourites retain values, virtues, emotions, sensations, experiences, media and places. Wishes, bucket-list experiences and goals include purpose, next steps, milestones, dates, budgets, resources and measurable progress. The three collections stay distinct within the shared goals dataset.
+Wishes and bucket-list experiences now share one collection while retaining their original categories and saved rows. The former bucket-list destination opens **Achievements & memories**, with accomplishments, places lived, places visited, lessons, experiences and contributions. Dates may be exact, approximate or left blank. Life goals remain separate.
 
-Existing QuickStart answers appear in these pages and keep their row identities. Family birthdays update the shared Timing records. CSV import previews validate the whole list before adding entries and retain extra columns. Each collection supports CSV export, whole-project backup and a shortcut to the existing facet/stack allocation workflow. Data stays in this browser; stored reminders do not create background notifications or publish a public profile.
+Friendships and Dating each have people or group records, shared interests, communication preferences, notes and plans. Catch-up planning creates a record in Timing & signals. These are personal organising tools, not a matching service or messaging network.
+
+Existing QuickStart answers retain their row identities. Family birthdays update the shared timing records. CSV imports preserve extra fields. Entries can be backed up and allocated to facets and stacks through the matrix.
+
+## Social media
+
+[Social Web](https://auraofintelligence.github.io/aura-matrix-studio/?page=0CEE0A43-6ED5-4A00-A522-6C18F90ECD2B) keeps the original life collections alongside Profiles, Import and Explore. Platform pages store profile links, purpose and interests. CSV imports show a review before saving all columns into Aura tables. Dataset summaries show actual row counts, populated cells and distinct field values. No platform login, direct account sync, ZIP archive processing or personality inference is implied.
+
+## System Preferences
+
+[System Preferences](https://auraofintelligence.github.io/aura-matrix-studio/?page=3F0068AA-FE6A-4C6F-B9ED-F7B62B407790) retains Advertising Options, Memory, Network Devices and Algorithms with visual menus and working local editors.
+
+- Advertising pages collect topics, boundaries, sponsorship or crowdfunding plans. Public Wish Lists exports only the selected wish titles and categories; it does not publish them.
+- Memory shows actual project size, tables, rows, facet records, stacks and programs. Tables and full backups can be downloaded.
+- Devices and services form an editable manual inventory. Live capacity, pairing and device control are not connected.
+- All 17 original algorithm pages let you configure inputs, a saved device, trigger, conditions, limits, review and output. Specifications can be exported with their selected dataset for an agent or developer. Saving a configuration does not install or execute an algorithm.
+
+## Mind Palaces
+
+[Mind Palaces](https://auraofintelligence.github.io/aura-matrix-studio/?page=F9CE754E-27BE-49C3-AD43-F39BCEC0B3E8) retains the five original pathways: sample palace, home and office, public buildings, real estate, and resorts and nature.
+
+Create named spaces with width and length, then tap their 2D plans to place information pins. Drag a pin to move it. Pins hold meaning, data, instructions, an asset URL, an Aura table reference and an optional fixed-lattice facet address. A recall walkthrough visits the saved pins in room order, showing a cue before revealing the memory. The optional sample creates three clearly labelled rooms only when requested. Room deletion also removes its pins. This version does not scan buildings, produce a 3D model or provide VR.
+
+## Affinity and visual timing
+
+[Aura Affinity](https://auraofintelligence.github.io/aura-matrix-studio/?page=6421758D-777D-4139-8ECE-4183D8677670) retains Vision, Search, Marketplace, Public Ledger and Membership. Category pages preserve their original search actions. The extra Open market map button has been removed. Map and discovery results scroll continuously, loading more as you browse. Membership and ledger entries are local planning drafts, with no submission or transaction service connected.
+
+Timing & signals keeps starting ideas and saved entries together in illustrated cards, with the working editors retained. The Crown's Celestial Cycles diagram supports wheel or pinch zoom, drag panning, double-tap reset and keyboard controls. Physical celestial calculations are unchanged; zoom affects only the view.
+
+All of these records stay in this browser and are included in the Aura project backup. Stored reminders do not deliver background notifications.
 
 ## Find things and build your own shortcuts
 
-The page finder offers everyday icons, search, category filters and page previews. It currently has 141 distinct destinations. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.
+The page finder offers everyday icons, search, category filters and page previews. It includes the original destinations and the new Friendships section. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.
 
 **Favourites** retains the original 25-slot layout. Tap an empty square to select a page and its icon. Edit mode replaces, moves or clears a shortcut; moving onto an occupied slot swaps them. The turning book below cycles through page icons and titles. Tap the page to open it, or the star to add it to your favourites. Choices are grouped by their relationships: Start and shortcuts, People and family, Time and routines, Goals and learning, Travel and places, Aura and self, Matrix and tools, Markets and community, and Settings and devices. The picker uses a three-column icon grid with as many rows as fit; search spans every group. The flipbook follows those groups rather than the alphabet. Named shortcut menus can be created and renamed. Old blank or arrow icons are replaced with the destination's artwork.
 

@@ -1,6 +1,7 @@
-import {timingRows,timingDate,TIMING_GROUPS} from './timing-data.js?v=0.4.8';
-import {travelEntries,readTravelProject,writeTravelProject,saveTrip,dateValid,TIMELINES} from './travel-data.js?v=0.4.8';
-import {PLANETS,solarSystemState,orbitTracks,solarSystemSvg} from './solar-system.js?v=0.4.8';
+import {framePoint} from './frame-display.js?v=0.4.9';
+import {timingRows,timingDate,TIMING_GROUPS} from './timing-data.js?v=0.4.9';
+import {travelEntries,readTravelProject,writeTravelProject,saveTrip,dateValid,TIMELINES} from './travel-data.js?v=0.4.9';
+import {PLANETS,solarSystemState,orbitTracks,solarSystemSvg,zoomSolarView} from './solar-system.js?v=0.4.9';
 export const ZODIAC=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 export function clockState(A,date,hemisphere='south'){
  const sun=A.SunPosition(date).elon,phase=A.MoonPhase(date),rotation=A.SiderealTime(date),quarter=Math.floor(sun/90);
@@ -16,13 +17,25 @@ export function mountCelestial({page,screen,go}){
  const panel=make('section','celestial-panel'),diagram=make('div','celestial-diagram'),stats=make('div','celestial-stats');
  const view=select('Celestial view',[['compact','Solar system · compact'],['scale','Solar system · to scale'],['inner','Inner planets · to scale'],['earth','Earth, Moon and rotation']]),body=select('Inspect planet or Moon',[...PLANETS,'Moon'].map(p=>[p,p])),views=make('div','celestial-options');body.value='Earth';views.append(view,body);panel.append(views,diagram,stats);
  const timeLabel=make('label','celestial-time','Date and time (UTC)'),time=make('input');time.type='datetime-local';time.setAttribute('aria-label','Date and time (UTC)');timeLabel.append(time);panel.append(timeLabel);
- let A,disposed=false,timer=null,date=new Date(),lastTick=0,selected=null,tracks=null,trackYear=null;
+ let A,disposed=false,timer=null,date=new Date(),lastTick=0,selected=null,tracks=null,trackYear=null,camera={zoom:1,x:0,y:0};
  const project=readTravelProject(),entries=[...travelEntries(project).map(r=>({...r,kind:'trip'})),...timingRows(project).filter(r=>Object.values(TIMING_GROUPS).flat().includes(r.recommendation)).map(r=>({...r,kind:'signal',Date:timingDate(r)})).filter(r=>r.Date&&dateValid(r.Date))],trips=select('Date from Timing and Signals',[['','Choose a date or travel plan'],...entries.map((r,i)=>[String(i),r.Destination||r.Title])]);panel.append(trips);
  const region=select('Seasonal region',[['south','Southern seasons'],['north','Northern seasons'],['local','Local / mixed seasons']]),speed=select('Clock speed',[['.0416666667','1 hour / second'],['1','1 day / second'],['10','10 days / second']]),options=make('div','celestial-options');options.append(region,speed);panel.append(options);
  const controls=make('nav','celestial-controls'),play=button('Play',()=>timer?stop():start()),previous=button('− Day',()=>advance(-1)),next=button('+ Day',()=>advance(1)),now=button('Now',()=>{stop();date=new Date();draw();});controls.append(previous,play,next,now);panel.append(controls);const moons=make('nav','celestial-controls');for(const [angle,label]of [[0,'Next new Moon'],[180,'Next full Moon']])moons.append(button(label,()=>{if(!A)return;stop();const event=A.SearchMoonPhase(angle,new Date(date.getTime()+1000),40);if(event){date=event.date;draw();}}));panel.append(moons);
  const save=button('Use this departure date',()=>{if(!selected||selected.kind!=='trip')return;try{writeTravelProject(p=>{const latest=travelEntries(p).find(r=>r.id===selected.id&&r.tableId===selected.tableId);if(!latest)throw Error('This trip is no longer available.');return saveTrip(p,{...latest,Date:date.toISOString().slice(0,10),Hemisphere:region.value,Status:latest.Status||'Planned'},latest);});message.textContent='Departure date saved to Travel Plans and its timeline.';}catch(e){message.textContent=e.message;}});save.disabled=true;panel.append(save);
  const message=make('p','celestial-message','Calculated positions · tropical zodiac. Your astrology interpretations stay in trip notes.');message.setAttribute('role','status');panel.append(message);screen.append(panel);
  const back=button('Travel timeline',()=>go(TIMELINES));back.className='celestial-back';screen.append(back);
+ const gesture=make('small','celestial-gesture','Pinch or scroll to zoom · drag to pan · double-tap to reset');diagram.after(gesture);diagram.tabIndex=0;diagram.setAttribute('aria-label','Solar system view. Pinch or use plus and minus keys to zoom, arrow keys to pan, zero to reset.');
+ const pointers=new Map();let previousGesture=null,lastTap=0,moved=false;
+ const point=e=>{const p=framePoint(screen,e);return {x:(p.x-panel.offsetLeft-diagram.offsetLeft)*336/diagram.clientWidth,y:(p.y-panel.offsetTop-diagram.offsetTop)*180/diagram.clientHeight};};
+ const snapshot=()=>{const pts=[...pointers.values()];return pts.length>1?{x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2,d:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)}:pts.length?{...pts[0],d:0}:null;};
+ const applyCamera=()=>{if(view.value!=='earth'){draw();return;}const svg=diagram.querySelector('svg');if(svg)svg.setAttribute('viewBox',`${-camera.x/camera.zoom} ${-camera.y/camera.zoom} ${336/camera.zoom} ${180/camera.zoom}`);};
+ const zoom=(factor,p)=>{camera=zoomSolarView(camera,factor,p);applyCamera();};
+ diagram.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(-e.deltaY*.002),point(e));},{passive:false});
+ diagram.addEventListener('pointerdown',e=>{pointers.set(e.pointerId,point(e));diagram.setPointerCapture(e.pointerId);previousGesture=snapshot();moved=pointers.size>1;});
+ diagram.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const before=previousGesture;pointers.set(e.pointerId,point(e));const after=snapshot();if(before&&after){const dx=after.x-before.x,dy=after.y-before.y;if(Math.abs(dx)+Math.abs(dy)>1)moved=true;if(before.d&&after.d){camera=zoomSolarView(camera,after.d/before.d,before);moved=true;}camera={...camera,x:camera.x+dx,y:camera.y+dy};applyCamera();}previousGesture=after;});
+ const end=e=>{if(!moved&&pointers.size===1&&e.type!=='pointercancel'){const now=performance.now();if(lastTap&&now-lastTap<350){camera={zoom:1,x:0,y:0};applyCamera();lastTap=0;}else lastTap=now;}pointers.delete(e.pointerId);previousGesture=snapshot();};
+ diagram.addEventListener('pointerup',end);diagram.addEventListener('pointercancel',end);
+ diagram.addEventListener('keydown',e=>{if(!['+','=','-','0','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();if(['+','=','-'].includes(e.key))zoom(e.key==='-'?.8:1.25);else{if(e.key==='0')camera={zoom:1,x:0,y:0};else{camera.x+=e.key==='ArrowLeft'?15:e.key==='ArrowRight'?-15:0;camera.y+=e.key==='ArrowUp'?15:e.key==='ArrowDown'?-15:0;}applyCamera();}});
  function stop(){clearInterval(timer);timer=null;play.textContent='Play';}
  function start(){if(!A)return;lastTick=performance.now();play.textContent='Pause';timer=setInterval(()=>{const tick=performance.now();date=new Date(date.getTime()+(tick-lastTick)/1000*+speed.value*86400000);lastTick=tick;if(!Number.isFinite(date.getTime())||date.getUTCFullYear()>9999){stop();return;}draw();},100);}
  function advance(days){stop();date=new Date(date.getTime()+days*86400000);draw();}
@@ -30,11 +43,12 @@ export function mountCelestial({page,screen,go}){
   diagram.innerHTML=`<svg viewBox="0 0 336 180" role="img" aria-label="Sun, Earth orbit, Moon and Earth rotation clock"><circle cx="127" cy="80" r="58" fill="none" stroke="#becac2"/><circle cx="127" cy="80" r="13" fill="#e8b743"/><text x="127" y="104" text-anchor="middle" font-size="10">Sun</text>${ZODIAC.map((s,i)=>`<text x="${127+76*Math.cos((i*30+15)*rad)}" y="${83-73*Math.sin((i*30+15)*rad)}" font-size="8" text-anchor="middle" fill="#68776d">${s.slice(0,3)}</text>`).join('')}<line x1="127" y1="80" x2="${ex}" y2="${ey}" stroke="#bb9f62"/><circle cx="${ex}" cy="${ey}" r="9" fill="#378ab1"/><circle cx="${mx}" cy="${my}" r="3" fill="#707978"/><circle cx="282" cy="72" r="25" fill="#daf0f3" stroke="#448498"/><line x1="282" y1="72" x2="${282+22*Math.cos(rotation)}" y2="${72-22*Math.sin(rotation)}" stroke="#245b6c" stroke-width="3"/><text x="282" y="111" text-anchor="middle" font-size="10">Earth rotation</text><text x="282" y="126" text-anchor="middle" font-size="9">${c.rotation.toFixed(2)} h GAST</text><text x="168" y="175" text-anchor="middle" font-size="9" fill="#627268">Sun, Earth and Moon · diagram not to scale</text></svg>`;
   if(view.value!=='earth'){
    if(trackYear!==date.getUTCFullYear()){trackYear=date.getUTCFullYear();tracks=orbitTracks(A,new Date(Date.UTC(trackYear,6,1)));}
-   diagram.innerHTML=solarSystemSvg(solarSystemState(A,date),tracks,view.value,body.value);
+   diagram.innerHTML=solarSystemSvg(solarSystemState(A,date),tracks,view.value,body.value,camera);
   }
+  if(view.value==='earth')diagram.querySelector('svg').setAttribute('viewBox',`${-camera.x/camera.zoom} ${-camera.y/camera.zoom} ${336/camera.zoom} ${180/camera.zoom}`);
   stats.replaceChildren(make('strong','',`${c.season} · Sun in ${c.zodiac}`),make('span','',`${c.moon} Moon · phase ${c.phase.toFixed(1)}°`));
  }
- view.onchange=draw;body.onchange=()=>{if(body.value==='Moon')view.value='earth';else if(view.value==='earth'||view.value==='inner'&&PLANETS.indexOf(body.value)>3)view.value='compact';draw();};
+ view.onchange=()=>{camera={zoom:1,x:0,y:0};draw();};body.onchange=()=>{if(body.value==='Moon')view.value='earth';else if(view.value==='earth'||view.value==='inner'&&PLANETS.indexOf(body.value)>3)view.value='compact';draw();};
  time.onchange=()=>{if(!time.value)return;stop();const d=new Date(time.value+'Z');if(Number.isFinite(d.getTime())){date=d;draw();}};region.onchange=draw;
  function selectTrip(){stop();selected=trips.value===''?null:entries[+trips.value];save.disabled=!selected||selected.kind!=='trip';if(selected){if(selected.Date)date=new Date(selected.Date+'T12:00:00Z');region.value=selected.Hemisphere||'local';}draw();}trips.onchange=selectTrip;
  const params=new URLSearchParams(location.search),index=entries.findIndex(r=>r.id===params.get('trip')&&r.tableId===params.get('table'));if(index>=0){trips.value=String(index);selectTrip();}

@@ -1,10 +1,30 @@
-import {TIMING_IDEAS,ideaDraft,originalTimingNotes} from './timing-ideas.js?v=0.4.8';
-import {TIMING_PAGES,timingEntries,timingRows,timingDate,repeatOf,saveTiming,nextOccurrences,conditionResult,timingRule} from './timing-data.js?v=0.4.8';
-import {readTravelProject,writeTravelProject,TIMELINES} from './travel-data.js?v=0.4.8';
-import {QUICKSTART} from './quickstart.js?v=0.4.8';
+import {TIMING_IDEAS,ideaDraft,originalTimingNotes} from './timing-ideas.js?v=0.4.9';
+import {TIMING_PAGES,timingEntries,timingRows,timingDate,repeatOf,saveTiming,nextOccurrences,conditionResult,timingRule} from './timing-data.js?v=0.4.9';
+import {readTravelProject,writeTravelProject,TIMELINES} from './travel-data.js?v=0.4.9';
+import {QUICKSTART} from './quickstart.js?v=0.4.9';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
 const names={birthdays:'Birthdays',milestones:'Milestones & goals',counters:'Counters',schedules:'Schedules',reminders:'Reminders',ceremonies:'Ceremonies',learning:'Learning & skills',work:'Work',weather:'Weather signals',community:'Community'};
+const colours={birthdays:['#ac4d75','#f8e4ee'],milestones:['#90661f','#f9edce'],counters:['#287e83','#def2f2'],schedules:['#456daa','#e5edf9'],reminders:['#b35e35','#fae7da'],ceremonies:['#8856a5','#f0e4f6'],learning:['#476f54','#e7f2df'],work:['#556d9b','#e9edf6'],weather:['#2c839f','#ddf2f7'],community:['#a26044','#f7eadc']};
+const timingPaths={
+ birthdays:'M4 12h24v16H4ZM8 12V7M16 12V7M24 12V7M8 4V2M16 4V2M24 4V2M4 20q4 5 8 0q4 5 8 0q4 5 8 0',
+ milestones:'M5 29V3M5 4h22l-5 6 5 6H5M11 28l4-5 4 2 8-8',
+ counters:'M16 3a13 13 0 1 0 13 13M16 3v13l9-8M8 24l4-4',
+ schedules:'M5 6h22v23H5ZM5 13h22M10 3v6M22 3v6M10 18h3M19 18h3M10 24h3M19 24h3',
+ reminders:'M5 24h22l-3-5v-7a8 8 0 0 0-16 0v7ZM12 28q4 5 8 0M16 2v2',
+ ceremonies:'M4 28l6-18 12 12ZM17 3l1 6M26 5l-4 6M29 15l-6 1M7 3l3 3',
+ learning:'M16 7Q9 2 3 5v22q7-3 13 2q6-5 13-2V5q-7-3-13 2v22M7 12l5 1M20 13l5-1',
+ work:'M3 10h26v18H3ZM11 10V4h10v6M3 17q13 8 26 0M16 17v6',
+ weather:'M11 18a7 7 0 1 1 13-2q7 0 6 8H9q-6-3-2-7M9 5V2M3 9L1 7M20 6l2-3M14 28l-1 3M23 28l-1 3',
+ community:'M16 14a5 5 0 1 0 0-10 5 5 0 0 0 0 10M7 29v-5a9 9 0 0 1 18 0v5M5 6a4 4 0 0 0 0 8M3 19l-1 9M27 6a4 4 0 0 1 0 8M29 19l1 9',
+ star:'M16 2l4 9 10 1-8 7 3 11-9-6-9 6 3-11-8-7 10-1Z',
+ gift:'M3 12h26v7H3ZM6 19v11h20V19M16 12v18M16 12S4 12 6 5s10 7 10 7S28 12 26 5s-10 7-10 7',
+ place:'M16 30S5 17 5 12a11 11 0 0 1 22 0c0 5-11 18-11 18ZM16 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10',
+ clock:'M16 3a13 13 0 1 0 0 26 13 13 0 0 0 0-26M16 8v9l7 4',
+ action:'M5 4v8h8M5 12l9-9M19 17h9v12h-9ZM5 20h8M9 16v8'
+};
+function timingArt(kind){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg'),path=document.createElementNS(svg.namespaceURI,'path');svg.setAttribute('viewBox','0 0 32 32');svg.setAttribute('aria-hidden','true');path.setAttribute('d',timingPaths[kind]||timingPaths.clock);svg.append(path);return svg;}
+function optionArt(title,group){return /gift|giving/i.test(title)?'gift':/star|sun|moon|astro|orbit/i.test(title)?'star':/travel|place|distance|journey/i.test(title)?'place':/weather|season/i.test(title)?'weather':/family|people|relationship|community/i.test(title)?'community':/learn|skill|practice/i.test(title)?'learning':/time|day|hour|routine|repeat/i.test(title)?'clock':group;}
 const extraFields={birthdays:['Person or subject','Place','Meaning'],milestones:['Next action','Why it matters'],counters:['Value','Unit','Target'],schedules:[],reminders:[],ceremonies:['People','Date or season','Meaning'],learning:['Topic','Practice','Source'],work:['Role','Next action','Outcome'],weather:['Location','Observation','Value','Unit'],community:['People','Commitment','Place']};
 export function mountTimingBadges({page,screen}){
  for(const c of page.controls){const target=c.links?.find(l=>TIMING_PAGES[l.target]);if(!target)continue;const count=timingEntries(readTravelProject(),TIMING_PAGES[target.target]).length;
@@ -13,9 +33,10 @@ export function mountTimingBadges({page,screen}){
 }
 export function mountTiming({page,screen,go}){
  const group=TIMING_PAGES[page.id];let offset=0,query='',editing=false;const panel=make('section','timing-panel');panel.setAttribute('aria-label',names[group]);
+ panel.style.setProperty('--timing-accent',colours[group][0]);panel.style.setProperty('--timing-tint',colours[group][1]);
  // Retain the original status bar and bottom navigation. Replace placeholder content
  // with a fixed-size working page in the same designed frame.
- for(const c of page.controls)if(c.controlTypeID!=='StatusBar(Android)'&&!(c.controlTypeID==='Icon'&&+c.y>=580))screen.querySelector(`[data-source-control="${c.controlID}"]`)?.setAttribute('hidden','');
+ for(const c of page.controls)screen.querySelector(`[data-source-control="${c.controlID}"]`)?.setAttribute('hidden','');
  screen.append(panel);
  function list(){editing=false;panel.classList.add('timing-overview');
   const entries=timingEntries(readTravelProject(),group),ideas=TIMING_IDEAS[group];
@@ -26,9 +47,9 @@ export function mountTiming({page,screen,go}){
   offset=Math.max(0,Math.min(offset,Math.max(0,Math.floor((visible.length-1)/size)*size)));
   panel.replaceChildren();const head=make('header');head.append(make('h2','',names[group]),button('+ Add',()=>edit()));panel.append(head);
   const search=make('input');search.type='search';search.placeholder='Find an option or saved entry';search.setAttribute('aria-label','Find an option or saved entry');search.value=query;search.oninput=()=>{const pos=search.selectionStart;query=search.value;offset=0;list();const next=panel.querySelector('input');next.focus();try{next.setSelectionRange(pos,pos);}catch{}};panel.append(search);
-  panel.append(make('p','timing-note','Explore an option or continue something you have saved.'));
-  const grid=make('div','timing-option-grid');for(const x of visible.slice(offset,offset+size)){const b=button('',()=>x.entry?edit(x.entry):edit(null,ideaDraft(group,x.index),x.item.description));b.append(make('strong','',x.title));
-   let detail=x.item?.description;if(x.entry){const r=x.entry,next=nextOccurrences(r,new Date(),1)[0];detail='Saved · '+(group==='counters'?`${r.Value||'0'} ${r.Unit||''}`:next?next.date:r.Practice||r['Next action']||r.Commitment||'Edit details and signals');b.classList.add('timing-saved-option');}b.append(make('small','',detail));b.title=detail;grid.append(b);}
+  const summary=make('div','timing-visual-summary'),copy=make('div');summary.append(timingArt(group));copy.append(make('strong','',`${entries.length} saved · ${ideas.length} starting points`),make('small','','Explore an idea or continue a saved entry.'));summary.append(copy);panel.append(summary);
+  const grid=make('div','timing-option-grid');for(const x of visible.slice(offset,offset+size)){const b=button('',()=>x.entry?edit(x.entry):edit(null,ideaDraft(group,x.index),x.item.description)),top=make('span','timing-card-top');top.append(timingArt(optionArt(x.title,group)),make('strong','',x.title));b.append(top);
+   let detail=x.item?.description;if(x.entry){const r=x.entry,next=nextOccurrences(r,new Date(),1)[0];detail='Saved · '+(group==='counters'?`${r.Value||'0'} ${r.Unit||''}`:next?next.date:r.Practice||r['Next action']||r.Commitment||'Edit details and signals');b.classList.add('timing-saved-option');if(r.Target&&+r.Target>0&&r.Value!==''&&Number.isFinite(+r.Value)){const progress=make('progress');progress.max=+r.Target;progress.value=Math.max(0,+r.Value);progress.setAttribute('aria-label',`${r.Value} of ${r.Target} ${r.Unit||''}`);b.append(progress);}}b.append(make('small','',detail));b.title=detail;grid.append(b);}
   if(!visible.length)grid.append(make('p','','No matching options. Try another word or add your own.'));panel.append(grid);
   const pager=make('nav','timing-pager'),prev=button('‹',()=>{offset-=size;list();}),next=button('›',()=>{offset+=size;list();});prev.setAttribute('aria-label','Previous options');next.setAttribute('aria-label','More options');prev.disabled=offset===0;next.disabled=offset+size>=visible.length;pager.append(prev,make('span','',visible.length?`${offset+1}-${Math.min(offset+size,visible.length)} of ${visible.length}`:'0 matches'),next);panel.append(pager);
   const foot=make('footer');foot.append(button('Original ideas',readOriginal),button('QuickStart',()=>go(QUICKSTART)),button('Timing menu',()=>go(TIMELINES)));panel.append(foot);
@@ -39,7 +60,7 @@ export function mountTiming({page,screen,go}){
   const tabs=make('nav','timing-tabs'),content=make('div','timing-editor'),actions=make('footer');panel.append(tabs,content,actions,message);
   function field(parent,key,label=key,type='text',options=null){const wrap=make('label','',label),n=make(options?'select':type==='textarea'?'textarea':'input');n.setAttribute('aria-label',label);if(options){for(const [value,text]of options.map(x=>Array.isArray(x)?x:[x,x])){const o=make('option','',text);o.value=value;n.append(o);}}else if(type!=='textarea')n.type=type;n.value=values[key]??'';if(type==='number')n.step='any';n.oninput=()=>values[key]=n.value;n.onchange=()=>values[key]=n.value;controls[key]=n;wrap.append(n);parent.append(wrap);return n;}
   const datasets=timingRows(p),numeric=[];for(const r of datasets)for(const [column,v]of Object.entries(r))if(!['id','tableId','recommendation','tableName'].includes(column)&&typeof v==='string'&&v.trim()!==''&&Number.isFinite(Number(v)))numeric.push({tableId:r.tableId,rowId:r.id,column,title:`${r.Title||r.tableName} · ${column}`});
-  function draw(){content.replaceChildren();tabs.replaceChildren();message.textContent='';for(const [id,label]of [['details','Details'],['when','When'],['if','If'],['action','Action'],['preview','Preview']]){const b=button(label,()=>{pane=id;draw();});b.setAttribute('aria-pressed',String(pane===id));tabs.append(b);}
+  function draw(){content.replaceChildren();tabs.replaceChildren();message.textContent='';for(const [id,label]of [['details','Details'],['when','When'],['if','If'],['action','Action'],['preview','Preview']]){const b=button('',()=>{pane=id;draw();});b.append(timingArt(({details:group,when:'schedules',if:'counters',action:'action',preview:'clock'})[id]),make('span','',label));b.setAttribute('aria-pressed',String(pane===id));tabs.append(b);}
    if(pane==='details'){if(description)content.append(make('p','timing-note',description));field(content,'Title',group==='birthdays'?'Name or birthday title':'Name');for(const key of extraFields[group])field(content,key,key,['Value','Target'].includes(key)?'number':'text');field(content,'Status','Status','text',['Active','Done','Paused']);}
    if(pane==='when'){
     const two=make('div','timing-two');content.append(two);field(two,'Date',group==='birthdays'?'Date of birth':'Start date','date');field(two,'Time','Time','time');
