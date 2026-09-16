@@ -1,7 +1,8 @@
-import {AuraView} from './renderer.js?v=0.4.13';
-import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.13';
-import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.13';
-import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.13';
+import {AuraView} from './renderer.js?v=0.4.14';
+import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.14';
+import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.14';
+import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.14';
+import {chakraImage} from './chakra-art.js?v=0.4.14';
 const KEY='aura-matrix-studio:v4:project',LEGACY='aura-matrix-studio:v3:project';
 export function mountLiveMatrix({page,screen,config,go}){
   let {shell,face,shape}=config,project,selection,view,multi=false,disposed=false,readError=false;
@@ -59,7 +60,7 @@ export function mountLiveMatrix({page,screen,config,go}){
   badges.forEach((c,i)=>{const n=screen.querySelector(`[data-source-control="${c.controlID}"]`);n.hidden=true;const s=7-i;
     const b=button(i===0?'⌂':SHELLS[s][0][0],()=>i===0?go(HOME):owner(s));b.className='live-shell';position(b,[+c.x-2,+c.y-2,28,28]);
     b.title=i===0?'Aura Menu':SHELLS[s][0]+' torus';b.setAttribute('aria-label',b.title);
-    if(i){b.dataset.shell=s;b.style.setProperty('--shell',SHELLS[s][1]);shellButtons.push(b);}screen.append(b);
+    if(i){b.replaceChildren(chakraImage(s));b.classList.add('live-chakra-symbol');b.dataset.shell=s;b.style.setProperty('--shell',SHELLS[s][1]);shellButtons.push(b);}screen.append(b);
   });
   for(const c of page.controls.filter(c=>/^(Inside|Outside) View$/.test(c.properties.text||''))){const n=screen.querySelector(`[data-source-control="${c.controlID}"]`);n.hidden=true;const f=c.properties.text.startsWith('Inside')?'I':'O',b=button(c.properties.text,()=>owner(shell,f));b.className='live-side';b.dataset.face=f;position(b,[+c.x-8,+c.y-2,+c.w+24,30]);sideButtons.push(b);screen.append(b);}
   for(let cell=1;cell<=288;cell++){const b=button(String(cell),e=>choose(target(shell,face,'facet',cell),e));b.dataset.cell=cell;b.setAttribute('aria-label','Facet '+cell);grid.append(b);}

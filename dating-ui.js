@@ -1,12 +1,12 @@
-import {framePoint} from './frame-display.js?v=0.4.13';
-import {make,button,header,download} from './local-tools.js?v=0.4.13';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.13';
-import {DATING_CHAPTERS,LOVE_LANGUAGES,DAYS,DAY_PARTS,datingProfile,listValue,loveValue,chapterProgress,fieldAnswered,saveDatingProfile,numericRange} from './dating-data.js?v=0.4.13';
+import {framePoint} from './frame-display.js?v=0.4.14';
+import {make,button,header,download} from './local-tools.js?v=0.4.14';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.14';
+import {DATING_CHAPTERS,LOVE_LANGUAGES,DAYS,DAY_PARTS,datingProfile,listValue,loveValue,chapterProgress,fieldAnswered,saveDatingProfile,numericRange} from './dating-data.js?v=0.4.14';
 
-import {FRIENDSHIP_CHAPTERS,friendshipProfile,saveFriendshipProfile} from './friendship-data.js?v=0.4.13';
-import {suggestionsFor,relatedSuggestions,answerParts,answerPatch,ownNote,notePatch,focusValue,focusPatch,rankPatch} from './connection-inputs.js?v=0.4.13';
+import {FRIENDSHIP_CHAPTERS,friendshipProfile,saveFriendshipProfile} from './friendship-data.js?v=0.4.14';
+import {suggestionsFor,relatedSuggestions,answerParts,answerPatch,ownNote,notePatch,focusValue,focusPatch,rankPatch} from './connection-inputs.js?v=0.4.14';
 
-import {AUDIENCES,audienceFor,disclosurePatch,disclosurePreview,disclosurePacket} from './connection-sharing.js?v=0.4.13';
+import {AUDIENCES,audienceFor,disclosurePatch,disclosurePreview,disclosurePacket} from './connection-sharing.js?v=0.4.14';
 
 const paths={
  heart:'M12 21S2 15 2 8a5 5 0 0 1 10-2A5 5 0 0 1 22 8c0 7-10 13-10 13Z',

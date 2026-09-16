@@ -1,6 +1,6 @@
-import {LIFE_SECTIONS,SOCIAL_HOME,KINSHIP_TERMS,FAMILY_STARTERS,familyLinks,familyNeighbours,entriesFor,categoryFor,birthdayFor,rowRef,progressOf,saveLife,importLifePreview,importLife} from './life-data.js?v=0.4.13';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.13';
-import {framePoint} from './frame-display.js?v=0.4.13';
+import {LIFE_SECTIONS,SOCIAL_HOME,KINSHIP_TERMS,FAMILY_STARTERS,familyLinks,familyNeighbours,entriesFor,categoryFor,birthdayFor,rowRef,progressOf,saveLife,importLifePreview,importLife} from './life-data.js?v=0.4.14';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.14';
+import {framePoint} from './frame-display.js?v=0.4.14';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const n=make('button',cls,text);n.type='button';n.onclick=fn;return n;};
 const paths={people:'M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M1 22v-3a7 7 0 0 1 14 0v3M17 5a3 3 0 0 1 0 6M18 15a5 5 0 0 1 5 5v2',heart:'M12 21S1 14 1 7a6 6 0 0 1 11-3A6 6 0 0 1 23 7c0 7-11 14-11 14Z',compass:'M12 1a11 11 0 1 0 0 22 11 11 0 0 0 0-22M16 7l-3 7-6 3 3-7Z',spark:'M12 1l3 7 8 4-8 3-3 8-4-8-7-3 7-4Z',sun:'M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12M12 0v3M12 21v3M0 12h3M21 12h3M3 3l2 2M19 19l2 2M3 21l2-2M19 5l2-2',celebrate:'M2 22l5-15 10 10ZM13 2l1 4M19 4l-2 3M21 10l-4 1M8 2l2 2',book:'M12 5C7 1 1 3 1 3v17s6-2 11 2c5-4 11-2 11-2V3S17 1 12 5v17',place:'M12 23S3 13 3 9a9 9 0 0 1 18 0c0 4-9 14-9 14ZM12 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8',build:'M2 7l10-5 10 5v12l-10 4-10-4ZM2 7l10 5 10-5M12 12v11',home:'M1 11L12 1l11 10M4 9v14h16V9M9 23v-8h6v8',steps:'M1 23v-7h7V9h7V2h8M18 7l5-5M18 2h5v5',talk:'M3 3h18v14H9l-6 5ZM7 7h10M7 12h7',plus:'M12 3v18M3 12h18'};

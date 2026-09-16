@@ -1,6 +1,6 @@
-import {make,button,rows,saveRow,removeRow,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.13';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.13';
-import {pageIcon} from './page-icons.js?v=0.4.13';
+import {make,button,rows,saveRow,removeRow,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.14';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.14';
+import {pageIcon} from './page-icons.js?v=0.4.14';
 export const PALACE='F9CE754E-27BE-49C3-AD43-F39BCEC0B3E8',SAMPLE_PALACE='B80C2D52-3C95-4E1F-94C5-9D214348D2E0';
 export const PALACE_PAGES=new Set([PALACE,SAMPLE_PALACE,'DFB43FEB-2BDF-422E-BCBF-0F4021E82F32','D34C877A-6E49-43C4-88E5-D033C8B7E02E','3B9E03CA-EF05-4B0B-B004-E95AFCA1C713','C490FE96-B734-4273-9256-DD9088241222']);
 export function saveRoom(project,fields,id=crypto.randomUUID()){

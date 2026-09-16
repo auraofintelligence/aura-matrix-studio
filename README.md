@@ -57,24 +57,26 @@ Existing QuickStart answers retain their row identities. Family birthdays update
 
 ## System Preferences
 
-[System Preferences](https://auraofintelligence.github.io/aura-matrix-studio/?page=3F0068AA-FE6A-4C6F-B9ED-F7B62B407790) retains Advertising Options, Memory, Network Devices and Algorithms with visual menus and working local editors.
+[System Preferences](https://auraofintelligence.github.io/aura-matrix-studio/?page=3F0068AA-FE6A-4C6F-B9ED-F7B62B407790) retains Advertising Options, Memory, Network Devices and Algorithms. Its intended role is the connection layer for hardware and software extensions, data, and the memory or storage those extensions use. The current local editors are preparatory; the live extension runtime remains to be built. [Connected Aura direction](CONNECTED-AURA.md) records the intended relationship between devices, software, data and memory.
 
 - Advertising pages collect topics, boundaries, sponsorship or crowdfunding plans. Public Wish Lists exports only the selected wish titles and categories; it does not publish them.
 - Memory shows actual project size, tables, rows, facet records, stacks and programs. Tables and full backups can be downloaded.
 - Devices and services form an editable manual inventory. Live capacity, pairing and device control are not connected.
-- All 17 original algorithm pages let you configure inputs, a saved device, trigger, conditions, limits, review and output. Specifications can be exported with their selected dataset for an agent or developer. Saving a configuration does not install or execute an algorithm.
+- Algorithms and Nearby Opportunities now show their original content and navigation. The generic input/rule/output forms have been withdrawn while the actual tools are designed. Existing saved configurations remain in Aura backups.
 
 ## Mind Palaces
 
 [Mind Palaces](https://auraofintelligence.github.io/aura-matrix-studio/?page=F9CE754E-27BE-49C3-AD43-F39BCEC0B3E8) retains the five original pathways: sample palace, home and office, public buildings, real estate, and resorts and nature.
 
-Create named spaces with width and length, then tap their 2D plans to place information pins. Drag a pin to move it. Pins hold meaning, data, instructions, an asset URL, an Aura table reference and an optional fixed-lattice facet address. A recall walkthrough visits the saved pins in room order, showing a cue before revealing the memory. The optional sample creates three clearly labelled rooms only when requested. Room deletion also removes its pins. This version does not scan buildings, produce a 3D model or provide VR.
+Start with a captured place, not room dimensions. Add photos, walk-through video or scan/model files; review photos and playable videos; and keep source captures separate from reconstruction results. Places can link to an Aura table and memory instructions. Scan/model files are retained for an external reconstruction tool, not rendered as a fake floor plan.
+
+Media is stored locally in IndexedDB. Project JSON backups contain media references, not the binary files; retain your originals or use Download original for individual files. An exportable reconstruction brief describes the place, source files, table reference and instructions. No media is uploaded, and no AI reconstruction runs yet. The intended next step is a connected reconstruction extension which produces a realistic navigable environment with spatial memory anchors. Previously saved room plans and pins remain in project backups.
 
 ## Affinity and visual timing
 
 [Aura Affinity](https://auraofintelligence.github.io/aura-matrix-studio/?page=6421758D-777D-4139-8ECE-4183D8677670) retains Vision, Search, Marketplace, Public Ledger and Membership. Category pages preserve their original search actions. The extra Open market map button has been removed. Map and discovery results scroll continuously, loading more as you browse. Membership and ledger entries are local planning drafts, with no submission or transaction service connected.
 
-Timing & signals keeps starting ideas and saved entries together in illustrated cards, with the working editors retained. The Crown's Celestial Cycles diagram supports wheel or pinch zoom, drag panning, double-tap reset and keyboard controls. Physical celestial calculations are unchanged; zoom affects only the view.
+The Timing & Signals landing page now fits its ten visual sections, saved-entry counts, QuickStart, celestial cycles, travel timeline and AI context into the phone frame. Its sections keep starting ideas and saved entries together in illustrated cards, with the working editors retained. The Crown's Celestial Cycles diagram supports wheel or pinch zoom, drag panning, double-tap reset and keyboard controls. Physical celestial calculations are unchanged; zoom affects only the view.
 
 All of these records stay in this browser and are included in the Aura project backup. Stored reminders do not deliver background notifications.
 

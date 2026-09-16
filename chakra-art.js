@@ -1,0 +1,6 @@
+import {PROGRAMMER,COLOUR_PAGES,CROWN,canonicalPage} from './original-routes.js?v=0.4.14';
+// The same source artwork and colour order as Luke's original Aura menu.
+export const CHAKRA_ART=['2FC66D24A7DB3DFDAADE9F12BAF542DA.jpg','8AF6EDCB02DB7C0BAFC8CF272C6B642A.jpg','65E3262E54DE6043A23E44777A7D0548.jpg','2BDE46FB74CDFCE26ED4C5EDDE027204.jpg','A7B7B1C79F928B8450EA77B3AB7C9031.jpg','339BCD9C880E1AA9003CB7D0D5AD9536.jpg','C2B0E1551216218DABC588533789B156.png'];
+export const CROWN_ART='439A2368A0181898732B7053F34EED64.jpg';
+export function chakraImage(shell){const img=document.createElement('img');img.src='assets/mockplus/'+CHAKRA_ART[shell];img.alt='';img.draggable=false;return img;}
+export function mountMatrixSymbols(page,screen){if(canonicalPage(page.id)!==PROGRAMMER)return;for(const c of page.controls.filter(c=>c.controlTypeID==='AlarmIcon2')){const id=c.links[0]?.target,shell=COLOUR_PAGES.indexOf(id),node=screen.querySelector(`[data-source-control="${c.controlID}"]`);if(!node||shell<0&&id!==CROWN)continue;node.classList.add('matrix-chakra-symbol');for(const child of [...node.children])if(!child.matches('a'))child.remove();const img=document.createElement('img');img.src='assets/mockplus/'+(id===CROWN?CROWN_ART:CHAKRA_ART[shell]);img.alt='';node.prepend(img);}}

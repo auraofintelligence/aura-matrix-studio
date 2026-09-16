@@ -1,7 +1,7 @@
-import {rows,saveRow} from './local-tools.js?v=0.4.13';
-import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.13';
-import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.13';
-import {validateDisclosure} from './connection-sharing.js?v=0.4.13';
+import {rows,saveRow} from './local-tools.js?v=0.4.14';
+import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.14';
+import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.14';
+import {validateDisclosure} from './connection-sharing.js?v=0.4.14';
 
 export const RHYTHM_FIELDS=[
  {key:'Planning style',label:'How planned or spontaneous?',type:'scale',options:['Fully planned','Mostly planned','A mix','Mostly spontaneous','In the moment'],hint:'Choose how much advance planning feels right. You can add exceptions in your own words.'},

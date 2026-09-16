@@ -1,6 +1,6 @@
-import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceDiagram,personalTorusPoint,savePersonalSpace} from './personal-space-data.js?v=0.4.13';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.13';
-import {AVATAR_HOME} from './avatar-data.js?v=0.4.13';
+import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceDiagram,personalTorusPoint,savePersonalSpace} from './personal-space-data.js?v=0.4.14';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.14';
+import {AVATAR_HOME} from './avatar-data.js?v=0.4.14';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const b=make('button',cls,text);b.type='button';b.onclick=fn;return b;};
 const svgNode=(tag,attrs={},text)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n;};

@@ -1,26 +1,28 @@
-import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.13';
-import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.13';
-import {mountPalace,PALACE_PAGES} from './palace-ui.js?v=0.4.13';
-import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.13';
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.13';
-import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.13';
-import {mountLife} from './life-ui.js?v=0.4.13';
-import {mountAvatar} from './avatar-ui.js?v=0.4.13';
-import {mountEarth} from './earth-map.js?v=0.4.13';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.13';
-import {mountTiming,mountTimingBadges} from './timing-ui.js?v=0.4.13';
-import {TIMING_PAGES} from './timing-data.js?v=0.4.13';
-import {mountTravel,mountTravelTimeline} from './travel-ui.js?v=0.4.13';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.13';
-import {mountCelestial} from './celestial-clock.js?v=0.4.13';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.13';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.13';
-import {mountMenuCamera} from './menu-camera.js?v=0.4.13';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.13';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.13';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.13';
-import {mountLiveMatrix} from './original-live.js?v=0.4.13';
-import {frameOrientation} from './frame-display.js?v=0.4.13';
+import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.14';
+import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.14';
+import {PALACE_PAGES} from './palace-ui.js?v=0.4.14';
+import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.14';
+import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.14';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.14';
+import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.14';
+import {mountLife} from './life-ui.js?v=0.4.14';
+import {mountAvatar} from './avatar-ui.js?v=0.4.14';
+import {mountEarth} from './earth-map.js?v=0.4.14';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.14';
+import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.14';
+import {mountMatrixSymbols} from './chakra-art.js?v=0.4.14';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.14';
+import {mountTravel} from './travel-ui.js?v=0.4.14';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.14';
+import {mountCelestial} from './celestial-clock.js?v=0.4.14';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.14';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.14';
+import {mountMenuCamera} from './menu-camera.js?v=0.4.14';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.14';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.14';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.14';
+import {mountLiveMatrix} from './original-live.js?v=0.4.14';
+import {frameOrientation} from './frame-display.js?v=0.4.14';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -123,18 +125,19 @@ export async function startOriginal(){
     live?.dispose();live=null;menuCamera?.dispose();menuCamera=null;if(canonicalPage(id)!==id){id=canonicalPage(id);const u=new URL(location.href);u.searchParams.set('page',id);history.replaceState(history.state,'',u);}current=pages.get(openingPage(id,pages));document.title=(LIFE_PAGES[current.id]?.title||current.name)+' | Aura of Intelligence';$('original-screen').replaceChildren();$('original-screen').style.backgroundColor=colour(current.background);
     Object.assign($('original-screen').style,{width:current.width+'px',height:current.height+'px'});
     for(const control of current.controls)draw(control,$('original-screen'));
+    mountMatrixSymbols(current,$('original-screen'));
     $('page-name').textContent=current.name;$('original-page').value=current.id;
     $('live-matrix').href=`matrix.html?face=${MATRIX_PAGES[current.id]||'O'}&shell=0&kind=facet&index=1&from=${current.id}`;
     const advanced=/\d+ by \d+ Torus/.test(current.name);
     warn(advanced?'Original screen artwork. The working model stays 12 × 24.':'Original screen layouts and links. Live tools are available in the matrix.');
     const config=livePage(current.id,new URLSearchParams(location.search));if(config)live=mountLiveMatrix({page:current,screen:$('original-screen'),config,go});
     if(AFFINITY_PAGES.has(current.id))live=mountAffinity({page:current,screen:$('original-screen'),go});
-    if(underPage(current,pages,PREFERENCES))live=mountPreferences({page:current,screen:$('original-screen'),pages,go});
-    if(PALACE_PAGES.has(current.id))live=mountPalace({page:current,screen:$('original-screen'),pages,go});
+    if(underPage(current,pages,PREFERENCES)&&!underPage(current,pages,'7059638E-B7C3-4EC9-85CE-21FDD8A5E87A'))live=mountPreferences({page:current,screen:$('original-screen'),pages,go});
+    if(PALACE_PAGES.has(current.id))live=mountPalaceCapture({page:current,screen:$('original-screen'),pages,go});
     if(isSocialPage(current))live=mountSocial({page:current,screen:$('original-screen'),pages,go});
     if(current.id===TRAVEL)live=mountTravel({page:current,screen:$('original-screen'),go});
     if(LIFE_PAGES[current.id])live=mountLife({screen:$('original-screen'),section:LIFE_PAGES[current.id],go});
-    if(current.id===TIMELINES){live=mountTravelTimeline({screen:$('original-screen'),go});mountTimingBadges({page:current,screen:$('original-screen')});}
+    if(current.id===TIMELINES){live=mountTimingHome({screen:$('original-screen'),go});document.title='Timing and Signals | Aura of Intelligence';}
     if(current.id===AVATAR_HOME||current.id===AVATAR_CREATION||AVATAR_PAGES[current.id])live=mountAvatar({page:current,screen:$('original-screen'),go});
     if(TIMING_PAGES[current.id])live=mountTiming({page:current,screen:$('original-screen'),go});
     if([EARTH,EARTH_WIDE].includes(current.id)){live=mountEarth({page:current,screen:$('original-screen'),go});document.title='Earth map | Aura of Intelligence';}

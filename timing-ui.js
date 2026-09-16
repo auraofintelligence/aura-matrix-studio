@@ -1,7 +1,9 @@
-import {TIMING_IDEAS,ideaDraft,originalTimingNotes} from './timing-ideas.js?v=0.4.13';
-import {TIMING_PAGES,timingEntries,timingRows,timingDate,repeatOf,saveTiming,nextOccurrences,conditionResult,timingRule} from './timing-data.js?v=0.4.13';
-import {readTravelProject,writeTravelProject,TIMELINES} from './travel-data.js?v=0.4.13';
-import {QUICKSTART} from './quickstart.js?v=0.4.13';
+import {TIMING_IDEAS,ideaDraft,originalTimingNotes} from './timing-ideas.js?v=0.4.14';
+import {TIMING_PAGES,timingEntries,timingRows,timingDate,repeatOf,saveTiming,nextOccurrences,conditionResult,timingRule} from './timing-data.js?v=0.4.14';
+import {readTravelProject,writeTravelProject,TIMELINES} from './travel-data.js?v=0.4.14';
+import {QUICKSTART} from './quickstart.js?v=0.4.14';
+import {mountTravelTimeline} from './travel-ui.js?v=0.4.14';
+import {CELESTIAL} from './travel-data.js?v=0.4.14';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
 const names={birthdays:'Birthdays',milestones:'Milestones & goals',counters:'Counters',schedules:'Schedules',reminders:'Reminders',ceremonies:'Ceremonies',learning:'Learning & skills',work:'Work',weather:'Weather signals',community:'Community'};
@@ -30,6 +32,24 @@ export function mountTimingBadges({page,screen}){
  for(const c of page.controls){const target=c.links?.find(l=>TIMING_PAGES[l.target]);if(!target)continue;const count=timingEntries(readTravelProject(),TIMING_PAGES[target.target]).length;
   const n=make('span','timing-badge',String(count));n.title=`${count} saved entries`;Object.assign(n.style,{left:(+c.x + +c.w-24)+'px',top:(+c.y+3)+'px'});screen.append(n);
  }return {resize(){},dispose(){}};
+}
+export function mountTimingHome({screen,go}){
+ for(const node of screen.children)node.hidden=true;
+ const panel=make('section','timing-home tool-panel'),head=make('header','tool-header');
+ const back=button('‹',()=>go('command:back'));back.setAttribute('aria-label','Back');
+ head.append(back,make('h1','','Timing and Signals'));panel.append(head);screen.append(panel);
+ const project=readTravelProject(),today=make('div','timing-home-today'),date=make('div');
+ today.append(timingArt('clock'));date.append(make('strong','',new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'})),make('small','','Your dates, rhythms and reminders'));today.append(date);panel.append(today);
+ const menu=make('nav','timing-home-grid');menu.setAttribute('aria-label','Timing and Signals sections');
+ for(const group of ['birthdays','schedules','reminders','counters','milestones','learning','work','community','ceremonies','weather']){
+  const id=Object.keys(TIMING_PAGES).find(id=>TIMING_PAGES[id]===group),entries=timingEntries(project,group),card=button('',()=>go(id));
+  card.style.setProperty('--timing-accent',colours[group][0]);card.style.setProperty('--timing-tint',colours[group][1]);
+  const copy=make('span');copy.append(make('strong','',names[group]),make('small','',entries.length?`${entries.length} saved · explore & edit`:`${TIMING_IDEAS[group].length} ideas to explore`));card.append(timingArt(group),copy);menu.append(card);
+ }
+ panel.append(menu);const related=make('div','timing-home-related');
+ related.append(button('✧ Celestial cycles',()=>go(CELESTIAL)),button('QuickStart',()=>go(QUICKSTART)));panel.append(related);
+ const foot=make('footer','timing-home-related');panel.append(foot);const timeline=mountTravelTimeline({screen:foot,go});
+ return {resize(){},dispose(){timeline.dispose();}};
 }
 export function mountTiming({page,screen,go}){
  const group=TIMING_PAGES[page.id];let offset=0,query='',editing=false;const panel=make('section','timing-panel');panel.setAttribute('aria-label',names[group]);
