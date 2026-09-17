@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {blankProject,validateProject} from '../core.js?v=0.3.3';
 import {allocateTable,allocationPlan} from '../dataset-allocation.js?v=0.3.3';
-import {turnPage,swipeDirection,saveQuickEntry,validBirthday} from '../quickstart.js?v=0.3.3';
+import {turnPage,swipeDirection,saveQuickEntry,validBirthday,birthdayFromParts} from '../quickstart.js?v=0.3.3';
 import {HOME,PROGRAMMER,FINITE,TORUS,COLOUR_PAGES,livePage,parentPage,stageBounds,canonicalPage,CAMERA_VARIANTS} from '../original-routes.js?v=0.3.3';
 const source=JSON.parse(readFileSync(new URL('../assets/mockplus/pages.json',import.meta.url)));
 const catalogue=JSON.parse(readFileSync(new URL('../assets/dataset-catalogue.json',import.meta.url)));
@@ -81,4 +81,12 @@ test('favourites start empty, preserve icons in backups, swap occupied slots and
  delete p.favourites;assert.deepEqual(validateProject(p).favourites,empty);assert.throws(()=>updateFavourite(empty,'favourites',0,{pageId:HOME,icon:'https://bad.example/icon.svg'}));assert.throws(()=>updateFavourite(empty,'favourites',25,null));
  assert.equal(updateFavourite(empty,'favourites',0,{pageId:Object.keys(CAMERA_VARIANTS)[0],icon:''}).menus[0].slots[0].pageId,HOME);
  const menus=emptyFavourites();menus.menus.push({id:'work',name:'Work',slots:Array(25).fill(null)});menus.activeId='work';assert.deepEqual(validateFavourites(menus),menus);
+});
+
+test('birthday picker requires a complete real date and preserves leap days',()=>{
+ assert.equal(birthdayFromParts('29','2','2000'),'2000-02-29');
+ assert.equal(birthdayFromParts('29','2','2001'),'');
+ assert.equal(birthdayFromParts('31','4','1990'),'');
+ for(const parts of [['','',''],['2','3','20'],['2','','2000'],['2','13','2000'],['2','3','0000']])assert.equal(birthdayFromParts(...parts),'');
+ assert.equal(birthdayFromParts('1','12','1980'),'1980-12-01');
 });

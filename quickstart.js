@@ -19,6 +19,7 @@ export function saveQuickEntry(project,dataset,values,rowId){
   return validateProject(next);
 }
 export function validBirthday(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}
+export function birthdayFromParts(day,month,year){if(!/^\d{4}$/.test(String(year))||Number(year)<1)return '';const date=`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;return validBirthday(date)?date:'';}
 const AVATAR_QUESTIONS=AVATAR_FIELDS.map(f=>[f.label,f.options]);
 export function mountQuickStart({page,screen,catalogue}){
   const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
@@ -63,11 +64,11 @@ export function mountQuickStart({page,screen,catalogue}){
   function input(label,value,type='text'){const n=make('input');n.type=type;n.value=value;n.setAttribute('aria-label',label);return n;}
   function open(){safely(()=>{read();tableId='';recId=catalogue.steps[index].datasets[0]||'imports';rowPage=colPage=0;welcome=true;render();dialog.showModal();});}
   function render(){
-    read();const step=catalogue.steps[index];title.textContent=step.title;body.replaceChildren();message.textContent='';preview=null;
+    read();const step=catalogue.steps[index];dialog.dataset.step=String(index);dialog.classList.toggle('is-guided',welcome&&index<9);title.textContent=welcome&&index<9?'QuickStart':step.title;body.replaceChildren();message.textContent='';preview=null;
     if(index===8&&welcome){renderTravel();return;}
     if(index<8&&welcome){renderGuided();return;}
     const top=make('div','quick-actions'),catalogueLink=make('a','','Read full catalogue');catalogueLink.href='DATASET-CATALOGUE.md';catalogueLink.target='_blank';catalogueLink.rel='noopener';
-    top.append(button('← Previous',()=>navigate(-1)),button('Next →',()=>navigate(1)),button('Backup',backup),catalogueLink);body.append(top);
+    const previousStep=button('Back',()=>navigate(-1)),nextStep=button('Next',()=>navigate(1));previousStep.disabled=index===0;nextStep.disabled=index===catalogue.steps.length-1;top.append(previousStep,nextStep,button('Backup',backup),catalogueLink);body.append(top);
     if(step.id==='allocate'){renderAllocation();return;}
     const activeTable=selectedTable();if(activeTable){const tabs=make('div','quick-actions');for(const [key,label] of [['setup','Dataset'],['table','Rows'],['tags','Chakras']]){const b=button(label,()=>{pane=key;render();});b.setAttribute('aria-pressed',String(pane===key));tabs.append(b);}body.append(tabs);if(pane!=='setup'){renderTable(activeTable);return;}}
     const recs=step.datasets.map(id=>catalogue.datasets.find(d=>d.id===id));if(!recs.some(r=>r.id===recId))recId=recs[0].id;
@@ -82,34 +83,49 @@ export function mountQuickStart({page,screen,catalogue}){
     const table=selectedTable();if(table){body.append(button('Edit table rows',()=>{pane='table';render();}));}else body.append(make('p','quick-empty','Start a blank table or import a CSV. You can skip any dataset and return later.'));
   }
   function renderTravel(){
-    const choices=make('div','quick-actions'),form=make('div');
-    function choose(mode){form.replaceChildren();if(mode==='goal')goalForm(form);else tripForm(form,{initialStatus:mode,brief:true});}
-    choices.append(button('Already visited',()=>choose('Visited')),button('Want to visit',()=>choose('Want to go')),button('Travel goal',()=>choose('goal')));body.append(choices,form);choose('Visited');
-    const actions=make('div','quick-actions');actions.append(button('← Previous',()=>navigate(-1)),button('Continue →',()=>navigate(1)),button('Tables and other data',()=>{welcome=false;render();}));body.append(actions);
+    const choices=make('div','quick-answer-choices quick-travel-choices'),form=make('div','quick-travel-entry');
+    function choose(mode){for(const b of choices.children)b.setAttribute('aria-pressed',String(b.dataset.mode===mode));form.replaceChildren();if(mode==='goal')goalForm(form);else tripForm(form,{initialStatus:mode,brief:true});}
+    for(const [mode,label]of [['Visited','Already visited'],['Want to go','Want to visit'],['goal','Travel goal']]){const b=button(label,()=>choose(mode));b.dataset.mode=mode;choices.append(b);}body.append(stepArt(8,'Your world'),choices,form);choose('Visited');
+    const actions=make('div','quick-actions quick-travel-footer');actions.append(button('Back',()=>navigate(-1)),button('Continue',()=>navigate(1)),button('Tables',()=>{welcome=false;render();}));body.append(actions);
+  }
+  function stepArt(step,label){
+    const paths=['M7 3v4m10-4v4M4 10h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z','M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 22v-3a8 8 0 0 1 16 0v3','M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2 21v-3a6 6 0 0 1 12 0v3m1-8a6 6 0 0 1 7 5v3','m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z','M6 10a6 6 0 0 1 12 0v5l2 3H4l2-3v-5Zm4 11h4','M12 21S2 15 2 8a5 5 0 0 1 10-2A5 5 0 0 1 22 8c0 7-10 13-10 13Z','M3 4h6l3 2 3-2h6v15h-6l-3 2-3-2H3V4Zm9 2v15','M5 22V3m0 1h14l-3 5 3 5H5','M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 0c-6 5-6 15 0 20 6-5 6-15 0-20ZM2 12h20','M3 3h6v6H3V3Zm12 0h6v6h-6V3ZM3 15h6v6H3v-6Zm12 0h6v6h-6v-6M9 6h6M6 9v6m12-6v6M9 18h6'];
+    const hero=make('div','quick-step-hero'),art=make('div','quick-step-art');art.setAttribute('aria-hidden','true');
+    art.innerHTML=`<svg viewBox="0 0 160 160"><circle class="step-orbit" cx="80" cy="80" r="70"/><circle class="step-orbit inner" cx="80" cy="80" r="55"/><circle class="step-spark" cx="127" cy="28" r="4"/><circle class="step-spark" cx="25" cy="112" r="2"/><g transform="translate(52 52) scale(2.33)" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="${paths[step]||paths[0]}"/></g></svg>`;
+    hero.append(art,make('h3','',label));return hero;
+  }
+  function birthdayPicker(form,date){
+    const hero=stepArt(0,'Your birthday');hero.classList.add('quick-birthday-hero');const art=hero.querySelector('.quick-step-art');art.querySelector('g').remove();
+    const dayFace=make('strong','quick-birthday-day','?'),monthFace=make('span','quick-birthday-month','YOUR DAY');art.append(dayFace,monthFace);hero.append(make('p','','One date to start your Aura.'));form.append(hero);
+    const parts=date.value.split('-'),group=make('div','quick-birthday-parts'),months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const day=select('Birth day',[['','Day'],...Array.from({length:31},(_,i)=>[String(i+1),String(i+1)])],parts[2]?String(Number(parts[2])):'',update),month=select('Birth month',[['','Month'],...months.map((m,i)=>[String(i+1),m])],parts[1]?String(Number(parts[1])):'',update),year=input('Birth year',parts[0]||'');year.inputMode='numeric';year.maxLength=4;year.placeholder='Year';year.pattern='[0-9]{4}';year.oninput=update;
+    day.required=month.required=year.required=true;group.append(field('Day',day),field('Month',month),field('Year',year));form.append(group);
+    const summary=make('p','quick-birthday-summary','Choose your day, month and year.');summary.setAttribute('role','status');form.append(summary);update();
+    function update(){date.value=birthdayFromParts(day.value,month.value,year.value);dayFace.textContent=day.value||'?';monthFace.textContent=month.value?months[Number(month.value)-1]:'YOUR DAY';summary.textContent=date.value?`${Number(day.value)} ${months[Number(month.value)-1]} ${year.value}`:day.value&&month.value&&year.value.length===4?'Check that date.':'Choose your day, month and year.';}
   }
   function renderGuided(){
     const step=catalogue.steps[index],rec=catalogue.datasets.find(d=>d.id===step.datasets[0]);
-    const bar=make('div','quick-actions');const back=button('← Previous',()=>navigate(-1));back.disabled=index===0;bar.append(back,make('span','',`${index+1} / 10`),button('Skip →',()=>navigate(1)));body.append(bar);
+    const bar=make('nav','quick-step-navigation');bar.setAttribute('aria-label','QuickStart steps');const back=button('Back',()=>navigate(-1));back.disabled=index===0;back.style.visibility=index===0?'hidden':'';const progress=make('span','',`${index+1} of ${catalogue.steps.length}`);bar.append(back,progress,button('Skip',()=>navigate(1)));body.append(bar);
     const form=make('form','quick-welcome'),controls=[];let familyBirthday=null,rowId,defaults={},heading='';
     function entry(column,label,type='text',options){
       const saved=project.tables.find(t=>t.id==='quickstart-'+rec.id),row=rowId&&saved?.rows.find(r=>r.id===rowId),value=row?.values[saved.columns.indexOf(column)]||'';
       if(options&&value&&!options.includes(value))options=[...options,value];
-      const n=options?select(label,[['','Choose'],...options.map(v=>[v,v])],value,()=>{}):input(label,value,type);n.required=true;controls.push([column,n]);form.append(field(label,n));return n;
+      const n=options?select(label,[['','Choose'],...options.map(v=>[v,v])],value,()=>{}):input(label,value,type);n.required=true;controls.push([column,n]);const wrap=field(label,n);form.append(wrap);if(options){n.hidden=true;n.required=false;wrap.classList.add('quick-choice-field');const choices=make('div','quick-answer-choices');for(const option of options){const b=button(option,()=>{n.value=option;for(const child of choices.children)child.setAttribute('aria-pressed',String(child.textContent===option));});b.setAttribute('aria-pressed',String(value===option));choices.append(b);}wrap.append(choices);}return n;
     }
-    if(index===0){rowId='my-birthday';defaults={Title:'My birthday'};heading='Start with your date of birth.';entry('Date','Date of birth','date');}
-    if(index===1){const [question,options]=AVATAR_QUESTIONS[avatarIndex];rowId='avatar-answer-'+avatarIndex;defaults={Title:question};heading=`Avatar questionnaire · ${avatarIndex+1} of 8`;entry('Measurement',question,'text',options);}
+    if(index===0){rowId='my-birthday';defaults={Title:'My birthday'};const date=entry('Date','Date of birth','date');date.parentElement.hidden=true;date.required=false;birthdayPicker(form,date);}
+    if(index===1){const [question,options]=AVATAR_QUESTIONS[avatarIndex];rowId='avatar-answer-'+avatarIndex;defaults={Title:question};heading=`About you · ${avatarIndex+1} of ${AVATAR_QUESTIONS.length}`;entry('Measurement',question,'text',options);}
     if(index===2){rowId=crypto.randomUUID();entry('Title','Family member’s name');entry('Relationship','Relationship to you');familyBirthday=input('Birthday (optional)','','date');form.append(field('Birthday (optional)',familyBirthday));}
     if(index===3){entry('Title','Event or milestone');entry('Date','Date','date');}
     if(index===4){entry('Title','Reminder or scheduled action');entry('Date','Date','date');entry('Time','Time','time');}
     if(index===5){entry('Title','Favourite item');entry('Category','Category','text',['Book','Music','TV','Film','Game','Place','Experience','Value','Virtue','Emotion','Sensation']);}
     if(index===6){entry('Title','Skill');entry('Practice','Current level or practice');}
     if(index===7){entry('Title','Goal');entry('Next action','Next action');}
-    if(heading)form.prepend(make('p','quick-guided-description',heading));
-    const submit=make('button','quick-primary',index===0?'Save birthday and continue':index===1?'Save answer and continue':'Save and continue');submit.type='submit';form.append(submit);
+    if(index!==0){const titles=['','Make it yours','Your people','A date to remember','A little reminder','Something you love','Keep growing','Your next goal'];const hero=stepArt(index,titles[index]);if(heading)hero.append(make('p','quick-guided-description',heading));form.prepend(hero);}
+    const submit=make('button','quick-primary','Save & continue');submit.type='submit';form.append(submit);
     const save=()=>{const values={...defaults};for(const [column,n]of controls){if(!n.value.trim())throw Error('Complete '+n.getAttribute('aria-label')+'.');if(n.type==='date'&&!validBirthday(n.value))throw Error('Enter a valid date.');values[column]=n.value.trim();}mutate(p=>{let next=saveQuickEntry(p,rec,values,rowId);if(familyBirthday?.value){if(!validBirthday(familyBirthday.value))throw Error('Enter a valid birthday.');const birthdays=catalogue.datasets.find(d=>d.id==='life-events');next=saveQuickEntry(next,birthdays,{Title:'Birthday: '+values.Title,'Person or subject':values.Title,Date:familyBirthday.value},rowId+'-birthday');}return next;});};
     form.onsubmit=e=>{e.preventDefault();safely(()=>{save();if(index===1&&avatarIndex<7){avatarIndex++;render();animateBody(1);}else navigate(1);});};body.append(form);
-    const extras=make('div','quick-actions');if(index>=2)extras.append(button('Save and add another',()=>safely(()=>{save();render();message.textContent='Saved. Add the next item.';})));if(index===1&&avatarIndex>0)extras.append(button('← Previous question',()=>{avatarIndex--;render();animateBody(-1);}));
-    extras.append(button(index===4?'Counters and other timing data':'Tables',()=>{welcome=false;render();}));body.append(extras);
+    const extras=make('div','quick-actions quick-step-extras');if(index>=2)extras.append(button('Save and add another',()=>safely(()=>{save();render();message.textContent='Saved. Add the next item.';})));if(index===1&&avatarIndex>0)extras.append(button('← Previous question',()=>{avatarIndex--;render();animateBody(-1);}));
+    extras.append(button(index===4?'More timing':'Tables',()=>{welcome=false;render();}));body.append(extras);
   }
   function renderTable(table){
     const name=input('Table name',table.name);name.onchange=()=>safely(()=>{mutate(p=>{p.tables.find(t=>t.id===table.id).name=name.value;return p;});message.textContent='Table name saved.';});body.append(field('Table name',name));
@@ -125,6 +141,7 @@ export function mountQuickStart({page,screen,catalogue}){
     const footer=make('div','quick-actions');footer.append(button('Allocate this table',()=>{turn(9-index);render();}));body.append(footer);
   }
   function renderAllocation(){
+    body.append(stepArt(9,'Place it in your Aura'));
     const list=select('Table to allocate',[['','Choose a table'],...project.tables.map(t=>[t.id,t.name])],tableId,()=>{tableId=list.value;render();});body.append(field('Table to allocate',list));
     const table=selectedTable();if(!table){body.append(make('p','','Create or import a table on an earlier card first.'));return;}
     const remaining=make('p','quick-reasons');const updateRemaining=()=>{const t=selectedTable();remaining.textContent=`${t.rows.length} rows; ${pendingRows(project,t).length} not yet allocated. Suggested associations: ${t.chakraTags.map(n=>SHELLS[n][0]).join(', ')||'Choose your own'}.`;};updateRemaining();body.append(remaining);

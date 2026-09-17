@@ -90,7 +90,7 @@ The site map is a connected, expandable name tree. Scroll through branches or se
 
 The main menu and matrix programmer can place their controls over a camera feed. Camera use starts only after you request it and grant browser permission; tracks stop when you switch it off, leave the page or hide the tab. Nothing is recorded or uploaded.
 
-Navigation uses consistent, softly glowing Back and Next controls. QuickStart no longer shows the four decorative mini arrows.
+Navigation uses consistent, softly glowing Back and Next controls. QuickStart no longer shows the four decorative mini arrows. Its opened steps use rounded, softly coloured input sheets: a live birthday dial with separate day, month and year controls, tap-to-select avatar answers and favourites, and concise forms for people, dates, reminders, skills, goals and travel. Saved answers continue to feed the same Aura tables. The original QuickStart page and flipbook layout are retained.
 
 ## Enter the matrix
 
