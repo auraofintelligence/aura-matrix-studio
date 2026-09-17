@@ -1,4 +1,4 @@
-import {rows,saveRow} from './local-tools.js?v=0.4.14';
+import {rows,saveRow} from './local-tools.js?v=0.4.15';
 
 export const PLACE_TABLE='aura-palace-places',MEDIA_TABLE='aura-palace-media';
 const kinds={jpg:'Photo',jpeg:'Photo',png:'Photo',webp:'Photo',avif:'Photo',mp4:'Video',webm:'Video',mov:'Video',glb:'Scan / model',gltf:'Scan / model',obj:'Scan / model',ply:'Scan / model',stl:'Scan / model',e57:'Scan / model',las:'Scan / model',laz:'Scan / model',zip:'Scan / model'};

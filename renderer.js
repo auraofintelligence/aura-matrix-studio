@@ -1,6 +1,6 @@
-import {framePoint,frameRotated} from './frame-display.js?v=0.4.14';
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.4.14';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.4.14';
+import {framePoint,frameRotated} from './frame-display.js?v=0.4.15';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.4.15';
+import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.4.15';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
@@ -8,7 +8,7 @@ export class AuraView {
     this.theta=.55;this.phi=.4;this.zoom=1;this.scene=new T.Scene();this.scene.background=new T.Color('#fafaf7');
     this.camera=new T.PerspectiveCamera(36,1,.1,300);
     this.renderer=new T.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true,alpha:false});this.renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-    this.scene.add(new T.HemisphereLight(0xffffff,0x949aa9,1.1));const light=new T.DirectionalLight(0xffffff,.55);light.position.set(4,7,12);this.scene.add(light);
+    this.scene.add(new T.HemisphereLight(0xffffff,0x949aa9,1.1));const light=new T.DirectionalLight(0xffffff,.55);light.position.set(4,7,12);this.scene.add(light);this.keyLight=light;this.shellStyles={};this.skinTextures=new Map();
     this.meshes=[];this.wires=[];this.parameters=[];
     // Triangles only draw the surface. Their cell mapping is fixed and independent of shape.
     for(let row=0;row<ROWS;row++)for(let col=0;col<COLS;col++)for(let y=0;y<3;y++)for(let x=0;x<3;x++){
@@ -19,7 +19,7 @@ export class AuraView {
     for(let r=0;r<=ROWS;r++)for(let c=0;c<COLS*3;c++)this.lineParameters.push([c/(COLS*3),r/ROWS],[(c+1)/(COLS*3),r/ROWS]);
     for(let c=0;c<=COLS;c++)for(let r=0;r<ROWS*3;r++)this.lineParameters.push([c/COLS,r/(ROWS*3)],[c/COLS,(r+1)/(ROWS*3)]);
     for(let s=0;s<7;s++){
-      const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(this.parameters.length*3),3));geometry.setAttribute('color',new T.BufferAttribute(new Float32Array(this.parameters.length*3),3));
+      const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(this.parameters.length*3),3));geometry.setAttribute('uv',new T.Float32BufferAttribute(this.parameters.flatMap(([u,v])=>[u,v]),2));geometry.setAttribute('color',new T.BufferAttribute(new Float32Array(this.parameters.length*3),3));
       const mesh=new T.Mesh(geometry,new T.MeshPhongMaterial({vertexColors:true,side:T.DoubleSide,transparent:true,opacity:.82,shininess:22,depthWrite:true}));mesh.userData.shell=s;this.scene.add(mesh);this.meshes.push(mesh);
       const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(new Float32Array(this.lineParameters.length*3),3));
       const wire=new T.LineSegments(g,new T.LineBasicMaterial({color:'#272e35',transparent:true,opacity:.35,depthWrite:false}));this.scene.add(wire);this.wires.push(wire);
@@ -27,17 +27,18 @@ export class AuraView {
     this.connect=new T.LineSegments(new T.BufferGeometry(),new T.LineBasicMaterial({color:'#11232d',transparent:true,opacity:.9,depthTest:false}));this.connect.renderOrder=3;this.scene.add(this.connect);
     this.marker=new T.Mesh(new T.SphereGeometry(.1,12,8),new T.MeshBasicMaterial({color:0x101b24,depthTest:false}));this.marker.renderOrder=4;this.scene.add(this.marker);
     this.spatialGroup=new T.Group();this.scene.add(this.spatialGroup);this.picking=[];
-    this.raycaster=new T.Raycaster();this.drag=null;this.events=new AbortController();
+    this.raycaster=new T.Raycaster();this.drag=null;this.touchPoints=new Map();this.events=new AbortController();
     const listen=(name,handler,options={})=>canvas.addEventListener(name,handler,{...options,signal:this.events.signal});
-    listen('pointerdown',e=>{if(e.button!==0)return;this.drag={...framePoint(canvas,e),theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
-    listen('pointermove',e=>{if(!this.drag||this.locked)return;const point=framePoint(canvas,e),dx=point.x-this.drag.x,dy=point.y-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
-    listen('pointerup',e=>{if(this.drag&&!this.drag.moved&&!this.locked)this.pick(e);this.drag=null;});
-    listen('pointercancel',()=>this.drag=null);
+    listen('pointerdown',e=>{if(e.button!==0)return;this.touchPoints.set(e.pointerId,framePoint(canvas,e));if(this.touchPoints.size===2){const [a,b]=[...this.touchPoints.values()];this.pinchDistance=Math.hypot(a.x-b.x,a.y-b.y);this.drag=null;canvas.setPointerCapture(e.pointerId);return;}this.drag={...framePoint(canvas,e),theta:this.theta,phi:this.phi,moved:false};canvas.setPointerCapture(e.pointerId);});
+    listen('pointermove',e=>{if(this.touchPoints.has(e.pointerId))this.touchPoints.set(e.pointerId,framePoint(canvas,e));if(this.touchPoints.size===2){const [a,b]=[...this.touchPoints.values()],distance=Math.hypot(a.x-b.x,a.y-b.y);if(this.pinchDistance&&!this.locked)this.zoom=Math.max(.5,Math.min(3,this.zoom*distance/this.pinchDistance));this.pinchDistance=distance;this.render();return;}if(!this.drag||this.locked)return;const point=framePoint(canvas,e),dx=point.x-this.drag.x,dy=point.y-this.drag.y;if(Math.hypot(dx,dy)>5)this.drag.moved=true;this.theta=this.drag.theta-dx*.006;this.phi=Math.max(-1.5,Math.min(1.5,this.drag.phi+dy*.006));this.render();});
+    listen('pointerup',e=>{this.touchPoints.delete(e.pointerId);this.pinchDistance=0;if(this.drag&&!this.drag.moved&&!this.locked)this.pick(e);this.drag=null;});
+    listen('pointercancel',e=>{this.touchPoints.delete(e.pointerId);this.drag=null;this.pinchDistance=0;});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.render();},{signal:this.events.signal});
     listen('wheel',e=>{if(this.locked)return;e.preventDefault();this.zoom=Math.max(.5,Math.min(3,this.zoom*Math.exp(-e.deltaY*.001)));this.render();},{passive:false});
     this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(canvas.parentElement);this.update();
   }
   dispose(){
-    this.observer?.disconnect();this.events?.abort();
+    cancelAnimationFrame(this.animationFrame);this.disposed=true;for(const t of this.skinTextures?.values()||[])t.dispose();this.skinTextures?.clear();this.observer?.disconnect();this.events?.abort();
     const geometries=new Set(),materials=new Set(),textures=new Set();
     this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[]){materials.add(m);if(m.map)textures.add(m.map);}});
     for(const t of textures)t.dispose();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();
@@ -54,7 +55,8 @@ export class AuraView {
       mesh.material.opacity=this.face==='I'?1:p.nest>.001?(s===this.shell?.56:.13):.83;mesh.material.depthWrite=this.face==='I'||p.nest<.001;wire.material.opacity=p.nest>.001?.23:.38;
       const positions=mesh.geometry.attributes.position.array,colors=mesh.geometry.attributes.color.array;
       const groupCells=new Set(this.selectedFacets||[]),groupColour=new T.Color('#ffd267');
-      const base=new T.Color(SHELLS[s][1]),active=new T.Color('#ffe59a'),filled=new T.Color('#214f5a');
+      mesh.userData.baseOpacity=mesh.material.opacity;wire.userData.baseOpacity=wire.material.opacity;
+      const style=this.shellStyles?.[`${s}/${this.face}`],base=new T.Color(style?.skin==='image'&&style.image?'#ffffff':SHELLS[s][1]),active=new T.Color('#ffe59a'),filled=new T.Color('#214f5a');
       for(let i=0;i<this.parameters.length;i++){
         const [u,v,c]=this.parameters[i],xyz=shellPoint(u,v,p,s,this.shell);positions.set(xyz,i*3);
         const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:s===this.shell&&groupCells.has(c)?groupColour:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
@@ -103,7 +105,24 @@ export class AuraView {
     const seq=this.sequence;if(seq?.steps.length){const path=[];for(const step of seq.steps){path.push(targetPoint(step.target,p,this.vectors));if(step.span>1)path.push(targetPoint({...step.target,layer:step.target.layer+step.span-1},p,this.vectors));}const lines=[];for(let i=1;i<path.length;i++)lines.push(path[i-1],path[i]);if(seq.loop&&path.length>1)lines.push(path.at(-1),path[0]);if(lines.length)addLines(lines,'#7b367e',.85);}
   }
   render(){
-    if(!this.renderer)return;const p=this.pose;
+    if(!this.renderer)return;const p=this.pose,now=performance.now()/1000,elapsed=Math.min(.05,now-(this.lastRenderTime||now));this.lastRenderTime=now;let moving=false;this.keyLight.position.set(4,7,12);const activeImages=new Set(Object.values(this.shellStyles||{}).map(s=>s.image).filter(Boolean));for(const [url,texture]of this.skinTextures){if(!activeImages.has(url)){texture.dispose();this.skinTextures.delete(url);}}
+    for(let s=0;s<7;s++){
+      const mesh=this.meshes[s],wire=this.wires[s],style=this.shellStyles?.[`${s}/${this.face}`],material=mesh.material;
+      const image=style?.skin==='image'?style.image:'';let texture=null;
+      if(image){texture=this.skinTextures.get(image);if(!texture){texture=new T.TextureLoader().load(image,()=>{if(!this.disposed)this.render();});texture.wrapS=texture.wrapT=T.RepeatWrapping;this.skinTextures.set(image,texture);}}
+      if(material.map!==texture){material.map=texture;material.needsUpdate=true;}
+      material.opacity=(mesh.userData.baseOpacity??.83)*(style?.skin==='glass'?.35:1);
+      material.emissive.set(SHELLS[s][1]);material.emissiveIntensity=style?.skin==='luminous'?.4:0;
+      wire.material.opacity=wire.userData.baseOpacity??.38;
+      const motion=style?.motion||'still';
+      if(mesh.visible&&motion!=='still'&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!this.locked){
+        moving=true;const t=now*(style.speed||1);
+        if(motion==='breathe')material.emissiveIntensity+=.18+.16*Math.sin(t*2);
+        if(motion==='shimmer'){material.shininess=95;material.emissiveIntensity+=.12+.08*Math.sin(t*3+s);this.keyLight.position.set(Math.sin(t)*7,7,Math.cos(t)*7);if(texture)texture.offset.x=(t*.025)%1;}
+        if(motion==='turn'&&s===this.shell&&!this.drag&&!this.pinchDistance)this.theta+=elapsed*.18*(style.speed||1);
+      }else{material.shininess=22;if(texture)texture.offset.x=0;}
+    }
+    if(moving&&!document.hidden&&!this.animationFrame)this.animationFrame=requestAnimationFrame(()=>{this.animationFrame=0;this.render();});
     const aspect=this.camera.aspect||1,initial=cameraFrame(p,this.shell,this.face,this.theta,this.phi,aspect,this.zoom);
     const frame=this.face==='O'?fitStackFrame(initial,this.stackRadius,aspect,this.zoom):initial;
     this.camera.position.fromArray(frame.eye);this.camera.lookAt(...frame.look);this.camera.near=frame.near;this.camera.fov=frame.fov;this.camera.updateProjectionMatrix();this.renderer.render(this.scene,this.camera);

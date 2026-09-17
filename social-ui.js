@@ -1,10 +1,10 @@
-import {mountDating} from './dating-ui.js?v=0.4.14';
-import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.14';
-import {readTravelProject,writeTravelProject,dateValid} from './travel-data.js?v=0.4.14';
-import {parseCSV,validateProject} from './core.js?v=0.4.14';
-import {saveTiming} from './timing-data.js?v=0.4.14';
-import {LIFE_SECTIONS,SOCIAL_HOME} from './life-data.js?v=0.4.14';
-import {pageIcon} from './page-icons.js?v=0.4.14';
+import {mountDating} from './dating-ui.js?v=0.4.15';
+import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.15';
+import {readTravelProject,writeTravelProject,dateValid} from './travel-data.js?v=0.4.15';
+import {parseCSV,validateProject} from './core.js?v=0.4.15';
+import {saveTiming} from './timing-data.js?v=0.4.15';
+import {LIFE_SECTIONS,SOCIAL_HOME} from './life-data.js?v=0.4.15';
+import {pageIcon} from './page-icons.js?v=0.4.15';
 export const SOCIAL_ACCESS='1D740128-8621-43EE-8D85-E81F0241A569',SOCIAL_IMPORT='7E5774BE-BCC6-4684-8A88-0F8D2A26B1F0',SOCIAL_ANALYSE='C49B4FEE-90BF-499A-AE2C-CDA004D27C57',DATING='1FA4EBEC-3D1A-482A-B3B2-35A1172BECB6',FRIENDS='76172966-3F90-4DB8-A914-4E63AE19A501';
 export const FAMILY_BELONGING='AE87688C-93C9-4AB1-A72D-A447ED56C5E0';
 const DATING_IMPORT='B8FE6EA7-4EC0-4425-905D-E4650DD935E8';

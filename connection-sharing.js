@@ -1,4 +1,4 @@
-import {ownNote} from './connection-inputs.js?v=0.4.14';
+import {ownNote} from './connection-inputs.js?v=0.4.15';
 export const DISCLOSURE='Connection disclosure';
 export const AUDIENCES={private:'Private',permission:'By permission',public:'Public'};
 export function disclosureMap(profile){try{const m=JSON.parse(profile[DISCLOSURE]||'{}');return m&&typeof m==='object'&&!Array.isArray(m)?m:{};}catch{return {};}}

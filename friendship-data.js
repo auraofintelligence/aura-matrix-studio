@@ -1,5 +1,6 @@
-import {rows} from './local-tools.js?v=0.4.14';
-import {savePreferenceProfile,RHYTHM_FIELDS,SIMILARITY_FIELD,CULTURE_FIELDS} from './dating-data.js?v=0.4.14';
+import {resolvedProfile} from './connection-flow.js?v=0.4.15';
+import {rows} from './local-tools.js?v=0.4.15';
+import {savePreferenceProfile,RHYTHM_FIELDS,SIMILARITY_FIELD,CULTURE_FIELDS} from './dating-data.js?v=0.4.15';
 const choices=(key,label,options,hint='')=>({key,label,type:'choices',options:options.split('|'),hint});
 const words=(key,label,hint='')=>({key,label,type:'text',hint});
 export const FRIENDSHIP_CHAPTERS=[
@@ -25,5 +26,5 @@ export const FRIENDSHIP_CHAPTERS=[
 FRIENDSHIP_CHAPTERS.find(c=>c.id==='time').fields.push(...RHYTHM_FIELDS);
 FRIENDSHIP_CHAPTERS.find(c=>c.id==='qualities').fields.push(SIMILARITY_FIELD);
 FRIENDSHIP_CHAPTERS.find(c=>c.id==='openness').fields.push(...CULTURE_FIELDS);
-export const friendshipProfile=project=>rows(project,'aura-preferences').find(r=>r.id==='social-friends')||{};
+export const friendshipProfile=project=>resolvedProfile(project,'social-friends');
 export const saveFriendshipProfile=(project,fields)=>savePreferenceProfile(project,fields,FRIENDSHIP_CHAPTERS,'social-friends','friends');

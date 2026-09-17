@@ -1,7 +1,7 @@
-import {MARKET_PAGES,MARKET_CATEGORIES,filterMarket,mountMarket} from './market-map.js?v=0.4.14';
-import {pageIcon} from './page-icons.js?v=0.4.14';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.14';
-import {validateProject} from './core.js?v=0.4.14';
+import {MARKET_PAGES,MARKET_CATEGORIES,filterMarket,mountMarket} from './market-map.js?v=0.4.15';
+import {pageIcon} from './page-icons.js?v=0.4.15';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
+import {validateProject} from './core.js?v=0.4.15';
 export const AFFINITY_HOME='6421758D-777D-4139-8ECE-4183D8677670';
 const VISION='8FB85C5E-2F15-442C-943C-21EC70C4B06A',SEARCH='9BF63D63-6482-4050-8630-8D632BB10DDF',RESULTS='C62804F4-68A6-4814-AA4E-CA454CE9CF91',MARKET='9635446B-1F60-4AF2-A62C-E40C90E1806E',LEDGER='B3D6AB82-6839-4427-9C86-6AD29EF7476B',MEMBER='C23C161A-2089-4A2C-AE70-B932874E955D';
 export const AFFINITY_PAGES=new Set([AFFINITY_HOME,VISION,SEARCH,RESULTS,LEDGER,MEMBER,...Object.keys(MARKET_PAGES)]);
@@ -64,7 +64,7 @@ export function mountAffinity({page,screen,go}){
   results.onscroll=()=>{if(results.scrollTop+results.clientHeight>=results.scrollHeight-120)more();};
   function draw(){if(!data)return;found=filterMarket(data.records,{category,query});loaded=0;results.replaceChildren();results.scrollTop=0;more();if(!found.length)results.append(make('p','affinity-copy','No matches. Try another name or category.'));status.textContent=`${found.length.toLocaleString()} discovery listings · scroll to browse`;}
   input.oninput=()=>{query=input.value;offset=0;draw();};select.onchange=()=>{category=select.value;offset=0;draw();};
-  try{if(!data){const response=await fetch('assets/market-data.json?v=0.4.14');if(!response.ok)throw Error('Listings could not load. Open Search to retry.');data=await response.json();}if(!disposed&&panel.contains(results))draw();}catch(e){status.textContent=e.message;}
+  try{if(!data){const response=await fetch('assets/market-data.json?v=0.4.15');if(!response.ok)throw Error('Listings could not load. Open Search to retry.');data=await response.json();}if(!disposed&&panel.contains(results))draw();}catch(e){status.textContent=e.message;}
  }
  function detail(r){head(r.name,search);hero(MARKET_CATEGORIES[r.category],r.source==='alliance'?'Original Alliance list':'Filtered Affinity discovery',pageIcon(SEARCH));panel.append(make('p','affinity-copy',r.place),make('p','affinity-copy',r.categoryBasis),make('p','affinity-small','A discovery lead, not a verified membership or endorsement.'));const actions=make('div','affinity-menu');actions.append(card('Search by Map','See this place on the map',()=>map({category:'all',source:r.source,query:r.name})));if(r.url&&/^https?:\/\//.test(r.url)){const a=make('a','affinity-card','Visit source website ↗');a.href=r.url;a.target='_blank';a.rel='noopener';actions.append(a);}panel.append(actions);footer();}
  home();return {resize(){mapTools?.resize();},dispose(){disposed=true;mapTools?.dispose();}};

@@ -1,8 +1,8 @@
-import {AuraView} from './renderer.js?v=0.4.14';
-import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.14';
-import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.14';
-import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.14';
-import {chakraImage} from './chakra-art.js?v=0.4.14';
+import {AuraView} from './renderer.js?v=0.4.15';
+import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.15';
+import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.15';
+import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.15';
+import {chakraImage} from './chakra-art.js?v=0.4.15';
 const KEY='aura-matrix-studio:v4:project',LEGACY='aura-matrix-studio:v3:project';
 export function mountLiveMatrix({page,screen,config,go}){
   let {shell,face,shape}=config,project,selection,view,multi=false,disposed=false,readError=false;
@@ -48,7 +48,7 @@ export function mountLiveMatrix({page,screen,config,go}){
     document.title=`${SHELLS[shell][0]} ${shape==='flat'?'matrix':'torus'} | Aura of Intelligence`;
     status.textContent=`${selection?targetLabel(selection):SHELLS[shell][0]+' '+face+' · Choose a facet'} · 12 × 24`;
     description.textContent=readError?'Stored data could not be read. Open Tools to recover a backup.':selection?(recordsAt(project.records,selection).map(r=>r.title).join(' · ')||'Selected. Open Tools to attach data, instructions, assets or stack steps.'):'Select a facet here. Multi selects a group. Tools opens records, stacks and programs.';
-    if(view){Object.assign(view,{selection,selectedFacets:project.facetSelections[`${shell}/${face}`]||[],records:project.records,links:project.links,vectors:project.vectors,stacks:project.stacks,kind:kind.value});view.set(PRESETS[shape],shell,selection?.index??null,face);}
+    if(view){Object.assign(view,{shellStyles:project.shellStyles,selection,selectedFacets:project.facetSelections[`${shell}/${face}`]||[],records:project.records,links:project.links,vectors:project.vectors,stacks:project.stacks,kind:kind.value});view.set(PRESETS[shape],shell,selection?.index??null,face);}
     const selected=new Set(project.facetSelections[`${shell}/${face}`]||[]);
     for(const b of grid.children){b.setAttribute('aria-pressed',String(selected.has(+b.dataset.cell)));b.style.setProperty('--shell',SHELLS[shell][1]);}
     for(const b of shellButtons)b.setAttribute('aria-pressed',String(+b.dataset.shell===shell));

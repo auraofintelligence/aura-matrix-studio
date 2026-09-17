@@ -1,8 +1,8 @@
-import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.4.14';
-import {AuraView} from './renderer.js?v=0.4.14';
-import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.4.14';
-import {mountSpatial} from './spatial-ui.js?v=0.4.14';
-import {mountWorkspace} from './workspace.js?v=0.4.14';
+import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.4.15';
+import {AuraView} from './renderer.js?v=0.4.15';
+import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.4.15';
+import {mountSpatial} from './spatial-ui.js?v=0.4.15';
+import {mountWorkspace} from './workspace.js?v=0.4.15';
 const $=id=>document.getElementById(id),page=document.body.dataset.page;
 const KEY='aura-matrix-studio:v4:project',LEGACY_KEY='aura-matrix-studio:v3:project';let project=blankProject(),history=[],selectedId=null,shell=0,cell=null,face='O',view=null,shape='horn',time=0,playing=false,shotIndex=0,recording=null,playingLast=0,pendingCSV=null,toastTimer;
 let selection=null,pickKind='facet',spatialUI=null,multipleFacets=false;
@@ -34,7 +34,7 @@ function refresh(){
   if($('address-detail'))$('address-detail').textContent=selection?`${KIND_NAMES[selection.kind]} · ${cell?`Row ${Math.floor((cell-1)/24)+1} · Column ${(cell-1)%24+1}`:'Shared cubic volume'}`:'Select a facet, edge, vertex or volume point to attach information.';
   document.querySelectorAll('[data-shell]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.shell===shell)));
   document.querySelectorAll('[data-face]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.face===face)));
-  if(view){view.selection=selection;view.selectedFacets=pickedFacets().map(t=>t.index);view.kind=pickKind==='stack'?'facet':pickKind;view.vectors=project.vectors;view.stacks=project.stacks;view.records=project.records;view.links=project.links;view.set(page==='story'?poseAt(project.story,time).pose:{...PRESETS[shape]},shell,cell,face);}
+  if(view){view.shellStyles=project.shellStyles;view.selection=selection;view.selectedFacets=pickedFacets().map(t=>t.index);view.kind=pickKind==='stack'?'facet':pickKind;view.vectors=project.vectors;view.stacks=project.stacks;view.records=project.records;view.links=project.links;view.set(page==='story'?poseAt(project.story,time).pose:{...PRESETS[shape]},shell,cell,face);}
   if(page==='matrix'){renderGrid();renderRecords();spatialUI?.refresh();document.dispatchEvent(new CustomEvent('aura-selection-change',{detail:selection}));}
   if(page==='inventory')renderInventory();
   if(page==='story'){renderShots();updateTimeline();}
@@ -116,6 +116,6 @@ async function exportVideo(){
 if(page==='matrix')spatialUI=mountSpatial({project:()=>project,selection:()=>selection,owner:()=>({shell,face}),select:choose,pick,facets:pickedFacets,multiple:()=>multipleFacets,selectAllFacets,setMultiple:value=>{multipleFacets=value;if(selection?.kind==='facet'&&(!value||!facetCells().length))choose(selection);else refresh();},change,notify,export:jsonDownload,setKind:(kind,redraw=true)=>{pickKind=kind;if(view){view.kind=kind==='stack'?'facet':kind;if(redraw){view.update();renderGrid();}}},layers:options=>{if(view){if(options.explode!==undefined){view.explodeStacks=options.explode;view.pose={...view.pose,explodeStacks:options.explode};}if(options.rays!==undefined)view.rayMode=options.rays;if(options.volume!==undefined)view.showVolume=options.volume;view.update();}},sequence:program=>{if(view){view.sequence=program;view.drawSpatial();view.render();}}});
 const params=new URLSearchParams(location.search);if(/^[0-6]$/.test(params.get('shell')||'')&&['I','O'].includes(params.get('face'))){shell=+params.get('shell');face=params.get('face');}if(params.has('cell')||params.has('index'))try{const kind=params.get('kind')||'facet',value=params.get('index')||params.get('cell'),t=target(+params.get('shell'),params.get('face'),kind,kind==='volume'?value:+value,params.has('layer')?+params.get('layer'):undefined);const next={...project,selections:remember(project.selections,t)};project=validateProject(next);shell=t.shell;face=t.face;pickKind=t.kind;}catch{shell=0;cell=null;face='O';}
 refresh();
-if(page==='matrix'){mountWorkspace();if(new URLSearchParams(location.search).has('embedded'))document.body.classList.add('embedded-studio');const back=document.querySelector('.brand');back.title='Return to the Aura app';const from=new URLSearchParams(location.search).get('from');if(from&&/^[A-F0-9-]{36}$/.test(from))back.href='index.html?page='+from;}
+if(page==='matrix'){mountWorkspace();const requestedTool=params.get('tool');if(['records','stacks','matrix','files','select'].includes(requestedTool))document.dispatchEvent(new CustomEvent('aura-open-tool',{detail:requestedTool}));if(new URLSearchParams(location.search).has('embedded'))document.body.classList.add('embedded-studio');const back=document.querySelector('.brand');back.title='Return to the Aura app';const from=new URLSearchParams(location.search).get('from');if(from&&/^[A-F0-9-]{36}$/.test(from))back.href='index.html?page='+from;}
 // Local-only interface: no analytics, upload endpoint, external model or automatic sharing.
 window.addEventListener('storage',e=>{if(e.key===KEY)notify('This project changed in another tab. Download this tab’s backup before reloading if you have unsaved edits.');});

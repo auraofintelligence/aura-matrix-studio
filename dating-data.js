@@ -1,7 +1,8 @@
-import {rows,saveRow} from './local-tools.js?v=0.4.14';
-import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.14';
-import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.14';
-import {validateDisclosure} from './connection-sharing.js?v=0.4.14';
+import {resolvedProfile,prepareReusedAnswers} from './connection-flow.js?v=0.4.15';
+import {rows,saveRow} from './local-tools.js?v=0.4.15';
+import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.15';
+import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.15';
+import {validateDisclosure} from './connection-sharing.js?v=0.4.15';
 
 export const RHYTHM_FIELDS=[
  {key:'Planning style',label:'How planned or spontaneous?',type:'scale',options:['Fully planned','Mostly planned','A mix','Mostly spontaneous','In the moment'],hint:'Choose how much advance planning feels right. You can add exceptions in your own words.'},
@@ -63,13 +64,13 @@ personality.fields.forEach(f=>f.group=f.key==='Personality frameworks'?'Framewor
 personality.fields.push(...FRAMEWORK_FIELDS);
 personality.fields.sort((a,b)=>(a.group==='Frameworks')-(b.group==='Frameworks'));
 export const profileFields=DATING_CHAPTERS.flatMap(c=>c.fields);
-export function datingProfile(project){return rows(project,'aura-preferences').find(r=>r.id==='social-dating')||{};}
+export function datingProfile(project){return resolvedProfile(project,'social-dating');}
 export function listValue(value){if(!value)return [];try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[];}catch{return [];}}
 export function loveValue(value){if(!value)return {};try{const parsed=JSON.parse(value);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{};}catch{return {};}}
 export function fieldAnswered(field,value){if(!value)return false;if(['choices','week'].includes(field.type))return listValue(value).length>0;if(['love','weights'].includes(field.type))return Object.keys(loveValue(value)).length>0;return String(value).trim().length>0;}
 export function chapterProgress(chapter,profile){return chapter.fields.filter(f=>fieldAnswered(f,profile[f.key])||ownNote(profile,f.key).trim()).length;}
 export function savePreferenceProfile(project,fields,chapters,id,title){
- const values={...fields};delete values.id;
+ const values=prepareReusedAnswers(project,id,{...rows(project,'aura-preferences').find(r=>r.id===id),...fields});delete values.id;
  const combined={...rows(project,'aura-preferences').find(r=>r.id===id),...values};
  validateGuidance(combined,chapters);
  validateDisclosure(combined,chapters);

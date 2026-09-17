@@ -25,6 +25,8 @@ You can skip questions and return later. Information becomes editable tables rat
 
 ## Family, friendships, dating and life collections
 
+Friends and Dating combine repeated prompts into one relevant question, with space for extra detail. Earlier answers remain editable under that question. Saved location and availability can be linked between contexts; height can reuse the avatar measurement. Linked values follow their source, while a different answer can be kept for each context. Reuse does not copy disclosure permissions.
+
 [Family & belonging](https://auraofintelligence.github.io/aura-matrix-studio/?page=AE87688C-93C9-4AB1-A72D-A447ED56C5E0) contains the family tree, occasions, support networks, **Friendships** and **Dating**. Family links have no generation limit. People can have multiple connections, including cousins, aunts, uncles, nieces, nephews, ancestors, descendants and chosen kin. Relationship words, reciprocal terms, cultural approaches and meanings are editable. The connection view limits what is drawn at once, not the size of the family.
 
 Wishes and bucket-list experiences now share one collection while retaining their original categories and saved rows. The former bucket-list destination opens **Achievements & memories**, with accomplishments, places lived, places visited, lessons, experiences and contributions. Dates may be exact, approximate or left blank. Life goals remain separate.
@@ -82,15 +84,19 @@ All of these records stay in this browser and are included in the Aura project b
 
 ## Find things and build your own shortcuts
 
-The page finder offers everyday icons, search, category filters and page previews. It includes the original destinations and the new Friendships section. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.
+The site map is a connected, expandable name tree. Scroll through branches or search to reveal a page and its ancestors; tap its icon or title to open it. It follows the original page hierarchy with corrected working destinations, and adds new pages automatically. There is no separate page preview. It includes the original destinations and the new Friendships section. Camera-background variants and the old star-map duplicate resolve to their working destinations rather than becoming extra navigation steps.
 
-**Favourites** retains the original 25-slot layout. Tap an empty square to select a page and its icon. Edit mode replaces, moves or clears a shortcut; moving onto an occupied slot swaps them. The turning book below cycles through page icons and titles. Tap the page to open it, or the star to add it to your favourites. Choices are grouped by their relationships: Start and shortcuts, People and family, Time and routines, Goals and learning, Travel and places, Aura and self, Matrix and tools, Markets and community, and Settings and devices. The picker uses a three-column icon grid with as many rows as fit; search spans every group. The flipbook follows those groups rather than the alphabet. Named shortcut menus can be created and renamed. Old blank or arrow icons are replaced with the destination's artwork.
+**Favourites** retains the original 25-slot layout. Titles wrap onto two lines; longer names use a larger icon with the full name available to assistive technology and in Edit. Tap an empty square to select a page and its icon. Edit mode replaces, moves or clears a shortcut; moving onto an occupied slot swaps them. The turning book below cycles through page icons and titles. Tap the page to open it, or the star to add it to your favourites. Choices are grouped by their relationships: Start and shortcuts, People and family, Time and routines, Goals and learning, Travel and places, Aura and self, Matrix and tools, Markets and community, and Settings and devices. The picker uses a three-column icon grid with as many rows as fit; search spans every group. The flipbook follows those groups rather than the alphabet. Named shortcut menus can be created and renamed. Old blank or arrow icons are replaced with the destination's artwork.
 
 The main menu and matrix programmer can place their controls over a camera feed. Camera use starts only after you request it and grant browser permission; tracks stop when you switch it off, leave the page or hide the tab. Nothing is recorded or uploaded.
+
+Navigation uses consistent, softly glowing Back and Next controls. QuickStart no longer shows the four decorative mini arrows.
 
 ## Enter the matrix
 
 Every shell stays **12 rows x 24 columns**, or 288 facets. The seven shells are Red, Orange, Yellow, Green, Blue, Indigo and Violet. Each has inside and outside addresses, giving 4,032 face addresses. The underlying address does not change when the display transforms between a flat matrix, cylinder, torus, nested shells or body arrangement.
+
+All seven portrait colour pages now open a live torus with an Inside/Outside toggle, multi-facet selection, table placement, record moves and stack editing. Each side can have its own colour, glass, luminous or uploaded image skin, with still, breathe, shimmer or turn animation. Appearance is saved with the same project as its data.
 
 Selections are remembered separately for each shell and side. Select one or several facets, use the numbered map, move inside the chosen torus, or work with edges, vertices and cubic volume points. Rays terminate at actual vertices; the coincident horn registers do not create a ray sticking out of the torus.
 

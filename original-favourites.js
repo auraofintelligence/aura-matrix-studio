@@ -1,9 +1,9 @@
-import {framePoint} from './frame-display.js?v=0.4.14';
-import {favouriteGroups} from './favourite-groups.js?v=0.4.14';
-import {pageIcon,favouriteIcon} from './page-icons.js?v=0.4.14';
-import {blankProject,validateProject} from './core.js?v=0.4.14';
-import {updateFavourite} from './favourites-data.js?v=0.4.14';
-import {mapPages,pageTitle} from './original-sitemap.js?v=0.4.14';
+import {framePoint} from './frame-display.js?v=0.4.15';
+import {favouriteGroups} from './favourite-groups.js?v=0.4.15';
+import {pageIcon,favouriteIcon} from './page-icons.js?v=0.4.15';
+import {blankProject,validateProject} from './core.js?v=0.4.15';
+import {updateFavourite} from './favourites-data.js?v=0.4.15';
+import {mapPages,pageTitle} from './original-sitemap.js?v=0.4.15';
 export const FAVOURITES='B47A9839-38E6-49D8-B255-0D9E428E521C';
 const KEY='aura-matrix-studio:v4:project';
 export function mountFavourites({page,screen,pages,go}){
@@ -21,7 +21,7 @@ export function mountFavourites({page,screen,pages,go}){
  for(const c of page.controls)if(c.controlTypeID==='Label'&&+c.y===374)screen.querySelector(`[data-source-control="${c.controlID}"] .original-text`).textContent='Browse pages · tap ☆ to add';
  const title=button('Favourite pages',()=>openMenu(false));title.className='favourites-title';const edit=button('Edit',()=>{editing=!editing;draw();});edit.className='favourites-edit';screen.append(title,edit);
  const hint=make('p','favourites-hint');screen.append(hint);
- const slotButtons=sourceSlots.map((c,i)=>{const b=button('',()=>{read();const slot=active().slots[i];if(slot&&!editing&&pages.has(slot.pageId))go(slot.pageId);else openSlot(i);});b.className='favourite-slot';Object.assign(b.style,{left:(+c.x-10)+'px',top:(+c.y-10)+'px'});screen.append(b);return b;});
+ const slotButtons=sourceSlots.map((c,i)=>{const b=button('',()=>{read();const slot=active().slots[i];if(slot&&!editing&&pages.has(slot.pageId))go(slot.pageId);else openSlot(i);});b.className='favourite-slot';Object.assign(b.style,{left:(+c.x-16)+'px',top:(+c.y-10)+'px'});screen.append(b);return b;});
  const menuBook=button('',()=>{if(!swiped&&!turning)go(browse[bookIndex].id);});menuBook.className='favourite-menu-book';
  const prev=button('‹',()=>cycle(-1)),next=button('›',()=>cycle(1));prev.className='favourite-menu-prev';next.className='favourite-menu-next';prev.setAttribute('aria-label','Previous page');next.setAttribute('aria-label','Next page');
  const add=button('☆',()=>{const free=active().slots.findIndex(s=>!s);if(free<0){editing=true;draw();return;}openSlot(free);chosenPage=browse[bookIndex].id;chosenIcon=pageIcon(chosenPage);stage='details';renderPicker();});add.className='favourite-book-add';add.title='Add this page to favourites';add.setAttribute('aria-label',add.title);screen.append(menuBook,prev,next,add);
@@ -36,7 +36,7 @@ export function mountFavourites({page,screen,pages,go}){
  const image=(file,alt='')=>{const img=make('img');img.src='assets/mockplus/'+file;img.alt=alt;return img;};
  function draw(){
   const menu=active();title.textContent=menu.name;edit.textContent=editing?'Done':'Edit';edit.setAttribute('aria-pressed',String(editing));hint.textContent=editing?'Tap an icon to replace, move or clear it.':'Tap a square to add a favourite.';
-  slotButtons.forEach((b,i)=>{const slot=menu.slots[i],target=slot&&pages.get(slot.pageId);b.replaceChildren();b.classList.toggle('is-filled',!!target);b.classList.toggle('is-editing',editing);b.title=target?pageTitle(target):'Add favourite '+(i+1);b.setAttribute('aria-label',(target?(editing?'Edit ':'Open ')+pageTitle(target):'Add favourite')+' · slot '+(i+1));if(target){const file=favouriteIcon(slot);if(file)b.append(image(file));else b.append(make('span','',pageTitle(target).slice(0,1)));b.append(make('small','',pageTitle(target)));}else b.append(make('span','empty-favourite'));});
+  slotButtons.forEach((b,i)=>{const slot=menu.slots[i],target=slot&&pages.get(slot.pageId);b.replaceChildren();b.classList.remove('icon-only');b.classList.toggle('is-filled',!!target);b.classList.toggle('is-editing',editing);b.title=target?pageTitle(target):'Add favourite '+(i+1);b.setAttribute('aria-label',(target?(editing?'Edit ':'Open ')+pageTitle(target):'Add favourite')+' · slot '+(i+1));if(target){const file=favouriteIcon(slot);if(file)b.append(image(file));else b.append(make('span','',pageTitle(target).slice(0,1)));const label=make('small','',pageTitle(target));b.append(label);requestAnimationFrame(()=>{if(label.isConnected&&label.offsetHeight>22)b.classList.add('icon-only');});}else b.append(make('span','empty-favourite'));});
   drawBook();title.title='Switch or rename shortcut menus';title.setAttribute('aria-label','Manage shortcut menus');
  }
  function drawBook(){const p=browse[bookIndex],group=groups.find(g=>g.pages.includes(p));menuBook.replaceChildren(image(pageIcon(p.id)),make('strong','',pageTitle(p)),make('small','',group.label),make('small','',`${bookIndex+1} / ${browse.length} · Tap to open`));menuBook.setAttribute('aria-label','Open '+pageTitle(p));}

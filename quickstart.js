@@ -1,11 +1,11 @@
-import {AVATAR_QUESTIONS as AVATAR_FIELDS} from './avatar-data.js?v=0.4.14';
-import {framePoint} from './frame-display.js?v=0.4.14';
-import {tripForm,goalForm} from './travel-ui.js?v=0.4.14';
-import {pageIcon} from './page-icons.js?v=0.4.14';
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.4.14';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.14';
-import {targetLabel} from './spatial.js?v=0.4.14';
-import {TORUS} from './original-routes.js?v=0.4.14';
+import {AVATAR_QUESTIONS as AVATAR_FIELDS} from './avatar-data.js?v=0.4.15';
+import {framePoint} from './frame-display.js?v=0.4.15';
+import {tripForm,goalForm} from './travel-ui.js?v=0.4.15';
+import {pageIcon} from './page-icons.js?v=0.4.15';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.4.15';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.15';
+import {targetLabel} from './spatial.js?v=0.4.15';
+import {TORUS} from './original-routes.js?v=0.4.15';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
 export const turnPage=(index,delta,count)=>Math.max(0,Math.min(count-1,index+delta));
@@ -28,7 +28,7 @@ export function mountQuickStart({page,screen,catalogue}){
   function mutate(fn){read();const next=fn(structuredClone(project));project=validateProject(next);localStorage.setItem(KEY,JSON.stringify(project));}
   function safely(fn){try{fn();}catch(e){message.textContent=e.message;}}
   read();index=project.quickStart.step;const requestedStep=new URLSearchParams(location.search).get('step'),requestedIndex=catalogue.steps.findIndex(s=>s.id===requestedStep);if(requestedIndex>=0)index=requestedIndex;
-  for(const c of page.controls){if(['CoverFlow','ProgressBar'].includes(c.controlTypeID)||c.controlTypeID==='Shape'&&/Step|Constructer/.test(c.properties.text||''))screen.querySelector(`[data-source-control="${c.controlID}"]`).hidden=true;}
+  for(const c of page.controls){if(c.controlTypeID==='Icon'&&!c.links.length&&+c.w===24&&+c.h===24||['CoverFlow','ProgressBar'].includes(c.controlTypeID)||c.controlTypeID==='Shape'&&/Step|Constructer/.test(c.properties.text||''))screen.querySelector(`[data-source-control="${c.controlID}"]`).hidden=true;}
   const book=make('section','quick-book');book.setAttribute('aria-label','QuickStart swipe reader');book.tabIndex=0;
   const card=button('',()=>{if(!swiped)open();});card.className='quick-card';const prev=button('Previous\nStep',()=>turn(-1)),next=button('Next\nStep',()=>turn(1));prev.className='quick-prev';next.className='quick-next';book.append(prev,card,next);screen.append(book);
   const progress=make('div','quick-progress');progress.setAttribute('role','status');screen.append(progress);
