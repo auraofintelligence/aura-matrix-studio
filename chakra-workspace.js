@@ -1,4 +1,5 @@
-import {AuraView} from './renderer.js?v=0.4.17';
+import {fitFrameDialog} from './frame-dialog.js?v=0.4.18';
+import {AuraView} from './renderer.js?v=0.4.18';
 import {blankProject,validateProject,SHELLS,PRESETS} from './core.js?v=0.4.17';
 import {target,remember,remembered,selectFacetGroup,targetLabel,KIND_NAMES,rayTargets,rayDescriptor,recordsAt,setFacetStacks} from './spatial.js?v=0.4.17';
 import {allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.17';
@@ -32,7 +33,7 @@ export function mountChakra({page,screen,go}){
   function open(name){title.textContent=name;body.replaceChildren();message.textContent='';if(!dialog.open)dialog.showModal();}
   function field(label,input){const row=make('label','chakra-field');row.append(make('span','',label),input);body.append(row);return input;}
   function select(label,items,value){const n=make('select');for(const [v,l]of items){const o=make('option','',l);o.value=v;n.append(o);}if(value!==undefined)n.value=value;return field(label,n);}
-  function edit(tool='records'){dialog.close();const params=new URLSearchParams({shell,face,from:page.id,embedded:'1',tool});if(selection)for(const [k,v]of Object.entries(selection))params.set(k,v);frame.src='matrix.html?'+params;editor.showModal();}
+  function edit(tool='records'){dialog.close();const params=new URLSearchParams({shell,face,from:page.id,embedded:'1',tool});if(selection)for(const [k,v]of Object.entries(selection))params.set(k,v);frame.src='matrix.html?'+params;fitFrameDialog(editor,screen);editor.showModal();}
   editor.addEventListener('close',()=>{frame.src='about:blank';refresh();},{signal:abort.signal});
   function selectPane(){
     open('Selection and rays');
@@ -63,5 +64,5 @@ export function mountChakra({page,screen,go}){
     body.append(button('Remove image',()=>{style.image='';skin.value='colour';commit();}),make('p','','Inside and outside have separate skins. These choices do not publish your data.'));
   }
   try{view=new AuraView(canvas,choose);view.zoom=2;view.cameraViews.I={theta:.55,phi:.2,zoom:1};}catch{canvas.hidden=true;stage.append(make('p','','3D is unavailable. Use Data to choose a numbered facet and keep editing.'));}
-  window.addEventListener('storage',e=>{if(e.key===KEY&&!dialog.open&&!editor.open)refresh();},{signal:abort.signal});refresh();view?.resize();return {resize:()=>view?.resize(),dispose(){disposed=true;abort.abort();view?.dispose();dialog.remove();editor.remove();}};
+  window.addEventListener('storage',e=>{if(e.key===KEY&&!dialog.open&&!editor.open)refresh();},{signal:abort.signal});refresh();view?.resize();return {resize:()=>{view?.resize();if(editor.open)fitFrameDialog(editor,screen);},dispose(){disposed=true;abort.abort();view?.dispose();dialog.remove();editor.remove();}};
 }

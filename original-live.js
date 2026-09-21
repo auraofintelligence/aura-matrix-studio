@@ -1,4 +1,5 @@
-import {AuraView} from './renderer.js?v=0.4.17';
+import {fitFrameDialog} from './frame-dialog.js?v=0.4.18';
+import {AuraView} from './renderer.js?v=0.4.18';
 import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.17';
 import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.17';
 import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.15';
@@ -34,7 +35,7 @@ export function mountLiveMatrix({page,screen,config,go}){
   row.append(kind,multiple,rays,cube,explode,edit,reset);
   const editor=make('dialog','live-editor'),editorBar=make('header'),editorTitle=make('strong','','Facet tools'),done=button('Done · return to torus',()=>editor.close());
   const frame=make('iframe');frame.title='Matrix records, stacks and program tools';editorBar.append(editorTitle,done);editor.append(editorBar,frame);document.body.append(editor);
-  function openEditor(){editorTitle.textContent=selection?targetLabel(selection):`${SHELLS[shell][0]} ${face} tools`;const params=new URLSearchParams({shell:String(shell),face,from:page.id,embedded:'1'});if(selection){for(const [key,value] of Object.entries(selection))params.set(key,String(value));}frame.src='matrix.html?'+params;editor.showModal();}
+  function openEditor(){editorTitle.textContent=selection?targetLabel(selection):`${SHELLS[shell][0]} ${face} tools`;const params=new URLSearchParams({shell:String(shell),face,from:page.id,embedded:'1'});if(selection){for(const [key,value] of Object.entries(selection))params.set(key,String(value));}frame.src='matrix.html?'+params;fitFrameDialog(editor,screen);editor.showModal();}
   editor.addEventListener('close',()=>{frame.src='about:blank';read();refresh();edit.focus();},{signal:abort.signal});
   function persist(){if(readError)return;try{localStorage.setItem(KEY,JSON.stringify(validateProject(project)));}catch{description.textContent='Selection is in this tab only. Open Tools to save a backup.';}}
   function choose(t,event={}){
@@ -71,5 +72,5 @@ export function mountLiveMatrix({page,screen,config,go}){
   if(!view)for(const b of [kind,rays,cube,explode,reset])b.disabled=true;
   window.addEventListener('storage',e=>{if(e.key===KEY&&!editor.open){read();refresh();}},{signal:abort.signal});
   refresh();view?.resize();
-  return {resize:()=>view?.resize(),dispose(){disposed=true;abort.abort();view?.dispose();editor.remove();}};
+  return {resize:()=>{view?.resize();if(editor.open)fitFrameDialog(editor,screen);},dispose(){disposed=true;abort.abort();view?.dispose();editor.remove();}};
 }

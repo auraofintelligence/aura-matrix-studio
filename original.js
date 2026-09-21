@@ -3,7 +3,7 @@ import {addExtraPages} from './extra-pages.js?v=0.4.17';
 import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.17';
 import {mountMerch,MERCH} from './merch-ui.js?v=0.4.17';
 import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.15';
-import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.17';
+import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.18';
 import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.17';
 import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.17';
 import {PALACE_PAGES} from './palace-ui.js?v=0.4.17';
@@ -27,7 +27,7 @@ import {mountMenuCamera} from './menu-camera.js?v=0.4.15';
 import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.17';
 import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.17';
 import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.15';
-import {mountLiveMatrix} from './original-live.js?v=0.4.17';
+import {mountLiveMatrix} from './original-live.js?v=0.4.18';
 import {frameOrientation} from './frame-display.js?v=0.4.15';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={

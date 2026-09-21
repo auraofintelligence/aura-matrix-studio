@@ -59,7 +59,7 @@ export class AuraView {
       const style=this.shellStyles?.[`${s}/${this.face}`],base=new T.Color(style?.skin==='image'&&style.image?'#ffffff':SHELLS[s][1]),active=new T.Color('#ffe59a'),filled=new T.Color('#214f5a');
       for(let i=0;i<this.parameters.length;i++){
         const [u,v,c]=this.parameters[i],xyz=shellPoint(u,v,p,s,this.shell);positions.set(xyz,i*3);
-        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:s===this.shell&&this.kind==='facet'&&groupCells.has(c)?groupColour:occupied.has(`${s}/${c}`)?filled:base;const shade=(Math.floor((c-1)/24)+(c-1)%24)%2?.88:1;colors.set([colour.r*shade,colour.g*shade,colour.b*shade],i*3);
+        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:s===this.shell&&this.kind==='facet'&&groupCells.has(c)?groupColour:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
       }
       mesh.geometry.attributes.position.needsUpdate=mesh.geometry.attributes.color.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingSphere();
       const lines=wire.geometry.attributes.position.array;this.lineParameters.forEach(([u,v],i)=>lines.set(shellPoint(u,v,p,s,this.shell),i*3));wire.geometry.attributes.position.needsUpdate=true;wire.geometry.computeBoundingSphere();

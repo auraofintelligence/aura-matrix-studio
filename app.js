@@ -1,6 +1,6 @@
 import {makeBackup,parseBackup,restoreBackup} from './backup-data.js?v=0.4.17';
 import {ROWS,COLS,CELLS,FORMAT,LATTICE,SHELLS,PRESETS,CAMERAS,address,neighbours,blankProject,validateProject,poseAt,parseCSV,recordsFromCSV,exampleRecords} from './core.js?v=0.4.17';
-import {AuraView} from './renderer.js?v=0.4.17';
+import {AuraView} from './renderer.js?v=0.4.18';
 import {target,validateTarget,targetKey,targetLabel,remembered,remember,recordTarget,recordsAt,KIND_NAMES,stackColour,selectFacetGroup} from './spatial.js?v=0.4.17';
 import {mountSpatial} from './spatial-ui.js?v=0.4.17';
 import {mountWorkspace} from './workspace.js?v=0.4.15';
