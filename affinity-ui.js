@@ -1,7 +1,7 @@
 import {MARKET_PAGES,MARKET_CATEGORIES,filterMarket,mountMarket} from './market-map.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {validateProject} from './core.js?v=0.4.15';
+import {pageIcon} from './page-icons.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {validateProject} from './core.js?v=0.4.17';
 export const AFFINITY_HOME='6421758D-777D-4139-8ECE-4183D8677670';
 const VISION='8FB85C5E-2F15-442C-943C-21EC70C4B06A',SEARCH='9BF63D63-6482-4050-8630-8D632BB10DDF',RESULTS='C62804F4-68A6-4814-AA4E-CA454CE9CF91',MARKET='9635446B-1F60-4AF2-A62C-E40C90E1806E',LEDGER='B3D6AB82-6839-4427-9C86-6AD29EF7476B',MEMBER='C23C161A-2089-4A2C-AE70-B932874E955D';
 export const AFFINITY_PAGES=new Set([AFFINITY_HOME,VISION,SEARCH,RESULTS,LEDGER,MEMBER,...Object.keys(MARKET_PAGES)]);
@@ -26,7 +26,7 @@ export function mountAffinity({page,screen,go}){
  for(const c of screen.children)c.hidden=true;
  const panel=make('section','affinity-panel');screen.append(panel);let mapTools=null,disposed=false,data=null,query='',category=MARKET_PAGES[page.id]||'all',offset=0;
  const art=file=>{const img=make('img');img.src='assets/mockplus/'+file;img.alt='';return img;};
- function head(title,back=()=>go(page.id===AFFINITY_HOME?'command:back':AFFINITY_HOME)){panel.replaceChildren();const h=make('header','affinity-header'),b=button('‹',back);b.setAttribute('aria-label','Back');h.append(b,make('h1','',title));panel.append(h);}
+ function head(title,back=()=>go('command:back')){panel.replaceChildren();const h=make('header','affinity-header'),b=button('‹',back);b.setAttribute('aria-label','Back');h.append(b,make('h1','',title));panel.append(h);}
  function hero(title,subtitle,file=pageIcon(page.id)){const h=make('div','affinity-hero');if(file)h.append(art(file));const copy=make('div');copy.append(make('strong','',title),make('p','',subtitle));h.append(copy);panel.append(h);}
  function card(label,subtitle,fn,file=null){const b=button('',fn);b.className='affinity-card';b.append(file?art(file):make('span','affinity-symbol',glyphs[label]||'✧'));const c=make('span');c.append(make('strong','',label),make('small','',subtitle));b.append(c,make('span','affinity-chevron','›'));return b;}
  function map(filters={}){if(!mapTools)mapTools=mountMarket({page,screen,headless:true});mapTools.open('Map',{category,...filters});}
@@ -37,7 +37,7 @@ export function mountAffinity({page,screen,go}){
   head(title);const image=page.controls.find(c=>c.controlTypeID==='Image'&&!c.links.length)?.properties.URL;
   hero(page.id===AFFINITY_HOME?'An Internet of Good Things':page.id===MARKET?'Explore the marketplace':title,page.id===AFFINITY_HOME?'Members, customers, partners and supporters.':page.id===MARKET?'Choose an area, then search within it.':page.id===MEMBER?'Explore participation and keep your own plans.':page.id===LEDGER?'A proposed ledger. No blockchain or transaction service is connected.':'Explore the original Aura Affinity pathways.',image);
   if(page.id===VISION){const mission=page.controls.find(c=>c.controlTypeID==='TextArea')?.properties.text||'';panel.append(make('blockquote','affinity-mission',mission));const roles=make('div','affinity-roles');for(const word of ['Members','Customers','Partners','Supporters'])roles.append(make('span','',word));panel.append(roles,card('Search','Explore discovery listings',()=>go(SEARCH),pageIcon(SEARCH)),card('Membership','Explore ways to participate',()=>go(MEMBER),pageIcon(MEMBER)));footer();return;}
-  const menu=make('nav','affinity-menu');for(const c of page.controls.filter(c=>c.controlTypeID==='Button').sort((a,b)=>+a.y-+b.y)){const label=c.properties.text,link=c.links[0];menu.append(card(label,descriptions[label]||'Explore this part of Aura Affinity',()=>link?go(link.target):action(label),link?pageIcon(link.target):null));}panel.append(menu);footer();
+  const menu=make('nav','affinity-menu');for(const c of page.controls.filter(c=>c.controlTypeID==='Button').sort((a,b)=>+a.y-+b.y)){const label=c.properties.text,link=c.links[0];menu.append(card(label,descriptions[label]||'Explore this part of Aura Affinity',()=>link?go(link.target):action(label),link?pageIcon(link.target):null));}if(page.id===MARKET)menu.append(card('Merch','Aura merchandise · Coming later',()=>go('aura-merch-store'),'aura-merch.svg'));panel.append(menu);footer();
  }
  function action(label){
   if(label==='Search by Map'){map();return;}

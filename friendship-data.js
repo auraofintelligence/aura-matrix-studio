@@ -1,6 +1,6 @@
-import {resolvedProfile} from './connection-flow.js?v=0.4.15';
-import {rows} from './local-tools.js?v=0.4.15';
-import {savePreferenceProfile,RHYTHM_FIELDS,SIMILARITY_FIELD,CULTURE_FIELDS} from './dating-data.js?v=0.4.15';
+import {resolvedProfile} from './connection-flow.js?v=0.4.17';
+import {rows} from './local-tools.js?v=0.4.17';
+import {savePreferenceProfile,RHYTHM_FIELDS,SIMILARITY_FIELD,CULTURE_FIELDS} from './dating-data.js?v=0.4.17';
 const choices=(key,label,options,hint='')=>({key,label,type:'choices',options:options.split('|'),hint});
 const words=(key,label,hint='')=>({key,label,type:'text',hint});
 export const FRIENDSHIP_CHAPTERS=[

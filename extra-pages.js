@@ -1,0 +1,2 @@
+export const DATA_TRANSFER='aura-data-transfer',MERCH='aura-merch-store';
+export function addExtraPages(source){for(const [id,name,parent]of [[DATA_TRANSFER,'Your Aura data','3F0068AA-FE6A-4C6F-B9ED-F7B62B407790'],[MERCH,'Merch','9635446B-1F60-4AF2-A62C-E40C90E1806E']])if(!source.pages.some(p=>p.id===id))source.pages.push({id,name,parent,width:360,height:640,orientation:'MoPortrait',background:'4294967295',controls:[],fontSize:14});return source;}

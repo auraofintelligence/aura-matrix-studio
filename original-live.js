@@ -1,6 +1,6 @@
-import {AuraView} from './renderer.js?v=0.4.15';
-import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.15';
-import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.15';
+import {AuraView} from './renderer.js?v=0.4.17';
+import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.17';
+import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.17';
 import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.15';
 import {chakraImage} from './chakra-art.js?v=0.4.15';
 const KEY='aura-matrix-studio:v4:project',LEGACY='aura-matrix-studio:v3:project';

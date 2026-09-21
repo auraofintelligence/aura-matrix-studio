@@ -1,6 +1,6 @@
-import {LIFE_PAGES} from './life-data.js?v=0.4.15';
+import {LIFE_PAGES} from './life-data.js?v=0.4.17';
 import {navigationTree,treeSearch,layoutTree,TREE_ROOT} from './navigation-tree.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
+import {pageIcon} from './page-icons.js?v=0.4.17';
 import {HOME,livePage,canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.4.15';
 export const SITEMAP='E3222692-1B76-4EAF-9517-C5E94323947C';
 const LABELS={'Aura Menu':'Main menu','QuickStart Aura':'QuickStart','We Are Family':'Family','Schedules':'Calendar','Public Life Goals':'Goals','Favorites Lists':'Favourites','Learning':'Skills & learning','Timelines':'Timing & signals','Private Wish Lists':'Hopes & wishes','Matrix Programmer':'Enter the matrix','System Preferences':'Settings','SiteMap':'Find your way'};

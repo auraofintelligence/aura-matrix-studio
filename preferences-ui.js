@@ -1,6 +1,6 @@
-import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
+import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {pageIcon} from './page-icons.js?v=0.4.17';
 export const PREFERENCES='3F0068AA-FE6A-4C6F-B9ED-F7B62B407790';
 const ADS='BE2F4956-CAE7-4CF3-9088-A62B7EA190C8',MEMORY='2C355653-BAA4-4BC3-A9B8-7567A12F3962',DEVICES='EC64984C-1A60-42E1-BEFF-E849B2778AB9',ALGORITHMS='7059638E-B7C3-4EC9-85CE-21FDD8A5E87A',DRONES='4970BEC1-052E-432E-B7F0-45E42C762623';
 export function underPage(page,pages,root){const seen=new Set();while(page&&!seen.has(page.id)){if(page.id===root)return true;seen.add(page.id);page=pages.get(page.parent);}return false;}
@@ -16,21 +16,21 @@ const algorithmHints={
  'Personal Assistant':['Your selected tables and goals','When you request help','Prepare a useful next step']};
 export function saveAlgorithm(project,id,fields){if(fields.Dataset&&!project.tables.some(t=>t.id===fields.Dataset))throw Error('Choose an available dataset.');if(fields.Device&&!rows(project,'aura-devices').some(r=>r.id===fields.Device))throw Error('Choose a saved device.');if(!fields.Title?.trim())throw Error('Give the configuration a name.');return saveRow(project,'aura-algorithms','Algorithm configurations',{...fields,Status:'Configuration only'},id,'intent');}
 export function mountPreferences({page,screen,pages,go}){
- const panel=panelFor(screen,'preferences-panel'),back=()=>go(page.id===PREFERENCES?'command:back':page.parent||PREFERENCES),icon=pageIcon(page.id)||'⚙';
+ const panel=panelFor(screen,'preferences-panel'),back=()=>go('command:back'),icon=pageIcon(page.id)||'⚙';
  const start=()=>{header(panel,page.name,back);};
  function home(){start();
   if(page.id===MEMORY){memory();return;}if(page.id===DEVICES||page.id===DRONES){devices();return;}
   if(page.parent===ALGORITHMS){algorithm();return;}
   if(page.parent===ADS){advertising();return;}
   hero(panel,page.id===PREFERENCES?'Extensions & connections':page.name,page.id===PREFERENCES?'Connect hardware, software and data through Aura. Memory supports the tools that use it.':descriptions[page.name]||'Choose a tool to explore its role in Aura.',icon);
-  const order=page.controls.slice().sort((a,b)=>+a.y-+b.y||+a.x-+b.x).flatMap(c=>c.links.map(l=>l.target)),children=[...pages.values()].filter(p=>p.parent===page.id).sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));grid(panel,children.map(p=>()=>tile(p.name,descriptions[p.name]||(rows(readTravelProject(),'aura-algorithms').some(r=>r.id===p.id)?'Configuration saved':'Open this section'),pageIcon(p.id),()=>go(p.id))),page.id===ALGORITHMS?8:6);
-  if(page.id===PREFERENCES){const foot=make('footer','tool-footer');foot.append(button('Backup Aura',()=>download('aura-backup.json',readTravelProject())));panel.append(foot);}
+  const order=page.controls.slice().sort((a,b)=>+a.y-+b.y||+a.x-+b.x).flatMap(c=>c.links.map(l=>l.target)),children=[...pages.values()].filter(p=>p.parent===page.id).sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));grid(panel,children.map(p=>()=>tile(p.name,(p.id==='aura-data-transfer'?'Export or restore all saved inputs':descriptions[p.name])||(rows(readTravelProject(),'aura-algorithms').some(r=>r.id===p.id)?'Configuration saved':'Open this section'),pageIcon(p.id),()=>go(p.id))),page.id===ALGORITHMS?8:6);
+
  }
  function memory(){const p=readTravelProject(),bytes=new TextEncoder().encode(JSON.stringify(p)).length,total=p.tables.reduce((n,t)=>n+t.rows.length,0);hero(panel,'Your saved Aura',`${p.tables.length} tables · ${total} rows · ${(bytes/1024).toFixed(1)} KB in the project backup`,icon);
   const stats=make('div','memory-stats');for(const [n,label]of [[p.records.length,'Facet records'],[p.stacks.length,'Stacks'],[p.programs.length,'Programs']]){const box=make('div');box.append(make('strong','',n),make('span','',label));stats.append(box);}panel.append(stats);
   grid(panel,p.tables.map(t=>()=>tile(t.name,`${t.rows.length} rows · ${t.columns.length} fields`,'▤',()=>table(t))),4);
   if(!p.tables.length)panel.append(make('p','tool-help','QuickStart and the other Aura tools create tables here as you save.'));
-  const f=make('footer','tool-footer');f.append(button('Download backup',()=>download('aura-backup.json',readTravelProject())),button('Import & allocate',()=>{location.href='matrix.html?from='+page.id;}));panel.append(f,make('p','tool-help','Project size is measured locally. Device capacity and cloud storage are not connected.'));
+  const f=make('footer','tool-footer');f.append(button('Export / import data',()=>go('aura-data-transfer')),button('Allocate data',()=>{location.href='matrix.html?from='+page.id;}));panel.append(f,make('p','tool-help','Project size is measured locally. Device capacity and cloud storage are not connected.'));
  }
  function table(t){header(panel,t.name,home);hero(panel,'Table contents',`${t.rows.length} saved rows. Included in your Aura backup.`,'▤');grid(panel,t.rows.map(r=>()=>tile(r.values[0]||'Untitled',`${t.columns.length} fields`,'▤',()=>{header(panel,r.values[0]||t.name,()=>table(t));const fields=t.columns.map((c,i)=>[c,r.values[i]]);grid(panel,fields.map(([k,v])=>()=>tile(k,v||'Not entered','',()=>{header(panel,k,()=>table(t));const text=make('textarea','tool-read');text.readOnly=true;text.value=v;panel.append(text);})),6);})),6);panel.append(button('Export this table',()=>download(t.name+'.json',t),'tool-primary'));}
  function devices(){hero(panel,page.id===DRONES?'Services & drones':'Your device network','Hardware and software extensions belong here. Saved entries are currently connection notes; live extension support is still to be built.',icon);const list=rows(readTravelProject(),'aura-devices').filter(r=>(r.Kind==='Drone / service')===(page.id===DRONES));grid(panel,[()=>tile('Add '+(page.id===DRONES?'service':'device'),'Name it and choose its role','+',()=>device()),...list.map(r=>()=>tile(r.Title,r.Role||r.Kind,'▣',()=>device(r)))],6);if(page.id===DEVICES)panel.append(button('Services & drones',()=>go(DRONES),'tool-primary'));}

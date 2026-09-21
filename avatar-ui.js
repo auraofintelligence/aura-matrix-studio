@@ -1,7 +1,7 @@
-import {mountPersonalSpace} from './personal-space-ui.js?v=0.4.15';
-import {mountMeasurements} from './measurement-ui.js?v=0.4.15';
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_SECTIONS,AVATAR_PAGES,avatarValues,avatarProgress,saveAvatar,avatarRatios} from './avatar-data.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
+import {mountPersonalSpace} from './personal-space-ui.js?v=0.4.17';
+import {mountMeasurements} from './measurement-ui.js?v=0.4.17';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_SECTIONS,AVATAR_PAGES,avatarValues,avatarProgress,saveAvatar,avatarRatios} from './avatar-data.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const n=make('button',cls,text);n.type='button';n.onclick=fn;return n;};
 const paths={person:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M4 22v-3a8 8 0 0 1 16 0v3',space:'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14M8 2h8M8 22h8',eyes:'M1 12s4-6 11-6 11 6 11 6-4 6-11 6S1 12 1 12M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6',reach:'M12 7v14M8 22l4-7 4 7M5 2l7 9 7-9M12 2v1',shoulders:'M2 12h20M12 10v12M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6'};
@@ -14,7 +14,7 @@ export function mountAvatar({page,screen,go}){
  const panel=make('section','avatar-panel');screen.append(panel);const section=AVATAR_PAGES[page.id];let project,values,index=0,dirty=false;
  const status=make('p','avatar-status');status.setAttribute('role','status');
  try{project=readTravelProject();values=section?avatarValues(project,section):{};}catch(e){panel.append(make('h1','','Avatar data could not be opened'),make('p','',e.message),button('Back',()=>go('command:back')));return {resize(){},dispose(){}};}
- const header=title=>{const head=make('header','avatar-header');head.append(button('‹',()=>go(section?AVATAR_HOME:'command:back'),'avatar-back'),make('h1','',title));head.firstChild.setAttribute('aria-label',section?'Back to avatar setup':'Back');panel.append(head);};
+ const header=title=>{const head=make('header','avatar-header');head.append(button('‹',()=>go('command:back'),'avatar-back'),make('h1','',title));head.firstChild.setAttribute('aria-label','Back');panel.append(head);};
  function home(){panel.classList.add('avatar-home');panel.replaceChildren();header('Your avatar');
   const hero=make('div','avatar-hero'),image=make('img');image.src='assets/mockplus/D52CE30DEF548874D92448790837F294.jpg';image.alt='Original Aura body and colour rings';const copy=make('div');copy.append(make('h2','','Make Aura fit you'),make('p','','Your preferences, personal space and body proportions. Start anywhere.'));hero.append(copy,image);panel.append(hero);
   const menu=make('nav','avatar-menu');menu.setAttribute('aria-label','Avatar setup sections');for(const s of AVATAR_SECTIONS){const count=avatarProgress(project,s),b=button('',()=>go(s.id),'avatar-card'),symbol=make('span','avatar-symbol'),copy=make('span','avatar-card-copy');symbol.append(icon(s.icon));copy.append(make('strong','',s.title),make('small','',s.summary));const progress=make('span','avatar-count',count.filled?`${count.filled}/${count.total}`:'›');progress.setAttribute('aria-label',count.filled?`${count.filled} of ${count.total} answered`:'Open section');b.append(symbol,copy,progress);menu.append(b);}panel.append(menu);

@@ -1,13 +1,13 @@
-import {make,button,rows,panelFor,header,hero,tile,grid,download} from './local-tools.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
-import {PLACE_TABLE,MEDIA_TABLE,CAPTURE_ACCEPT,savePlace,attachMedia,reconstructionBrief,storeMedia,loadMedia,deleteMedia} from './palace-media.js?v=0.4.15';
+import {make,button,rows,panelFor,header,hero,tile,grid,download} from './local-tools.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {pageIcon} from './page-icons.js?v=0.4.17';
+import {PLACE_TABLE,MEDIA_TABLE,CAPTURE_ACCEPT,savePlace,attachMedia,reconstructionBrief,storeMedia,loadMedia,deleteMedia} from './palace-media.js?v=0.4.17';
 const PALACE='F9CE754E-27BE-49C3-AD43-F39BCEC0B3E8';
 export function mountPalaceCapture({page,screen,pages,go}){
  const panel=panelFor(screen,'palace-capture');let generation=0,disposed=false,urls=[];
  function clear(title,back){generation++;urls.forEach(URL.revokeObjectURL);urls=[];header(panel,title,back);}
  const places=()=>rows(readTravelProject(),PLACE_TABLE).filter(p=>p.Section===page.id);
- function home(){clear(page.id===PALACE?'Mind Palaces':page.name,()=>go(page.id===PALACE?'command:back':PALACE));
+ function home(){clear(page.id===PALACE?'Mind Palaces':page.name,()=>go('command:back'));
   hero(panel,'Begin with a real place','Use photos, a walk-through video or a scan as the basis for a realistic memory environment.',pageIcon(page.id)||'⌂');
   const flow=make('div','palace-capture-flow');for(const [icon,title] of [['◎','Capture'],['◇','Reconstruct'],['✧','Attach memories']]){const item=make('div');item.append(make('b','',icon),make('span','',title));flow.append(item);}panel.append(flow);
   if(page.id===PALACE){const children=[...pages.values()].filter(p=>p.parent===PALACE);grid(panel,children.map(p=>()=>tile(p.name,`${rows(readTravelProject(),PLACE_TABLE).filter(r=>r.Section===p.id).length} captured places`,pageIcon(p.id),()=>go(p.id))),6);}

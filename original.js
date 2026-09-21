@@ -1,29 +1,33 @@
+import {visitHistory} from './visit-history.js?v=0.4.17';
+import {addExtraPages} from './extra-pages.js?v=0.4.17';
+import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.17';
+import {mountMerch,MERCH} from './merch-ui.js?v=0.4.17';
 import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.15';
-import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.15';
-import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.15';
-import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.15';
-import {PALACE_PAGES} from './palace-ui.js?v=0.4.15';
-import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.15';
-import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.15';
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.15';
-import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.15';
-import {mountLife} from './life-ui.js?v=0.4.15';
-import {mountAvatar} from './avatar-ui.js?v=0.4.15';
-import {mountEarth} from './earth-map.js?v=0.4.15';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.15';
-import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.15';
+import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.17';
+import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.17';
+import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.17';
+import {PALACE_PAGES} from './palace-ui.js?v=0.4.17';
+import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.17';
+import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.17';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.17';
+import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.17';
+import {mountLife} from './life-ui.js?v=0.4.17';
+import {mountAvatar} from './avatar-ui.js?v=0.4.17';
+import {mountEarth} from './earth-map.js?v=0.4.17';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.17';
+import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.17';
 import {mountMatrixSymbols} from './chakra-art.js?v=0.4.15';
-import {TIMING_PAGES} from './timing-data.js?v=0.4.15';
-import {mountTravel} from './travel-ui.js?v=0.4.15';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.15';
-import {mountCelestial} from './celestial-clock.js?v=0.4.15';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.17';
+import {mountTravel} from './travel-ui.js?v=0.4.17';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.17';
+import {mountCelestial} from './celestial-clock.js?v=0.4.17';
 import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.15';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.15';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.17';
 import {mountMenuCamera} from './menu-camera.js?v=0.4.15';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.16';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.15';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.17';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.17';
 import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.15';
-import {mountLiveMatrix} from './original-live.js?v=0.4.15';
+import {mountLiveMatrix} from './original-live.js?v=0.4.17';
 import {frameOrientation} from './frame-display.js?v=0.4.15';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
@@ -53,16 +57,17 @@ export function screenLayout(page,availableWidth,availableHeight){
 export async function startOriginal(){
   if(new URLSearchParams(location.search).has('inspect'))document.body.dataset.inspect='true';
   const [response,catalogueResponse]=await Promise.all([fetch('assets/mockplus/pages.json'),fetch('assets/dataset-catalogue.json')]);if(!response.ok)throw Error('Original layouts could not be loaded.');
-  const catalogue=await catalogueResponse.json(),source=addSocialPages(await response.json()),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live,menuCamera;
+  const catalogue=await catalogueResponse.json(),source=addExtraPages(addSocialPages(await response.json())),pages=new Map(source.pages.map(p=>[p.id,p]));let current,live,menuCamera;
   const make=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
   const warn=text=>{$('original-status').textContent=text;};
+  const visits=visitHistory(history,location.href,{previousDocument:!!document.referrer&&new URL(document.referrer).origin===location.origin&&new URL(document.referrer).pathname.startsWith(new URL('.',location.href).pathname)});
   function go(id,extra={}){
-    if(id==='command:back')id=parentPage(current,pages);
+    if(id==='command:back'){if(visits.back())return;if(current?.id===HOME)return;const homeURL=new URL(location.href);homeURL.search='?page='+HOME;history.replaceState(history.state,'',homeURL);show(HOME);return;}
     if(CAMERA_VARIANTS[id]===current.id){menuCamera?.toggle();return;}id=canonicalPage(id);
     if(!pages.has(id)){warn('This control has no destination in the original Mockplus file.');return;}
     if(id===current.id)return;
     const query=new URLSearchParams({page:id,...extra});if(document.body.dataset.inspect)query.set('inspect','1');
-    history.pushState({auraOriginal:true},'',`?${query}`);show(id);
+    visits.push(`?${query}`);show(id);
   }
   function position(node,box){Object.assign(node.style,{left:box[0]+'px',top:box[1]+'px',width:box[2]+'px',height:box[3]+'px'});}
   function textStyle(node,c){
@@ -70,13 +75,12 @@ export async function startOriginal(){
     Object.assign(node.style,{fontFamily:`"${font.family||'Segoe UI'}",sans-serif`,fontSize:size+'px',fontWeight:p.textStyles?.includes('fsBold')||font.isBold==='True'?'700':font.weight||'400',fontStyle:font.isItalic==='True'?'italic':'normal',color:p.textColor?colour(p.textColor):'#000',textAlign:({HaCenter:'center',HaRight:'right'})[p.textAlign]||'left'});
   }
   function draw(c,parent){
+    if(c.controlTypeID==='StatusBar(Android)')return;
     const p=c.properties,type=c.controlTypeID,node=make('div','original-control '+type.replace(/[^a-z0-9]/gi,'-'));
     node.dataset.sourceControl=c.controlID;position(node,bounds(c));node.style.zIndex=c.zOrder||0;textStyle(node,c);
     if(p.isVisible==='False'||p.visible==='False')node.hidden=true;
     if(p.color)node.style.backgroundColor=colour(p.color);
-    if(type==='StatusBar(Android)'){
-      node.classList.add('original-phone-status');node.append(make('span',null,'◉ ▰  02:18 PM'));
-    }else if(p.URL){
+    if(p.URL){
       const lifeDestination=LIFE_PAGES[c.links[0]?.target],img=make('img');img.src='assets/mockplus/'+(lifeDestination?.image||p.URL);img.alt=CAMERA_VARIANTS[c.links[0]?.target]?'Camera background':c.links[0]?.title||'';img.draggable=false;node.append(img);if(current.id===SOCIAL_HOME&&lifeDestination)node.append(make('span','life-source-caption',lifeDestination.title));
     }else if(type==='AlarmIcon2'){
       node.classList.add('original-alarm');const alarm=c.children.find(child=>child.properties.alias==='alarm');
@@ -121,7 +125,7 @@ export async function startOriginal(){
       node.replaceChildren();node.classList.add('original-nav-control');
       const width=navLabel==='Previous'?82:70;position(node,[Math.max(4,Math.min(current.width-width-4,+c.x+(+c.w-width)/2)),+c.y+(+c.h-34)/2,width,34]);
       if(livePage(current.id)&&navLabel==='Back')position(node,[8,324,70,30]);
-      const a=make('a','original-link ethereal-nav',navLabel);a.dataset.navDirection=navLabel==='Next'?'next':'back';a.href='?page='+destination;a.title=navLabel+' to '+name;a.setAttribute('aria-label',a.title);position(a,[0,0,width,34]);a.onclick=e=>{e.preventDefault();go(originalTarget);};node.append(a);
+      const a=make('a','original-link ethereal-nav',navLabel);a.dataset.navDirection=navLabel==='Next'?'next':'back';a.href='?page='+destination;a.title=navLabel+' to '+name;a.setAttribute('aria-label',a.title);position(a,[0,0,width,34]);if(navLabel==='Back'){a.href='#back';a.title='Back';a.setAttribute('aria-label','Back');}a.onclick=e=>{e.preventDefault();go(navLabel==='Back'?'command:back':originalTarget);};node.append(a);
     }
   }
 
@@ -146,11 +150,13 @@ export async function startOriginal(){
     if(TIMING_PAGES[current.id])live=mountTiming({page:current,screen:$('original-screen'),go});
     if([EARTH,EARTH_WIDE].includes(current.id)){live=mountEarth({page:current,screen:$('original-screen'),go});document.title='Earth map | Aura of Intelligence';}
     if(current.id===CELESTIAL)live=mountCelestial({page:current,screen:$('original-screen'),go});
-    if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue});
+    if(current.id===QUICKSTART)live=mountQuickStart({page:current,screen:$('original-screen'),catalogue,go});
     if(current.id===FAVOURITES)live=mountFavourites({page:current,screen:$('original-screen'),pages,go});
     if(CHAKRA_PAGES.includes(current.id))live=mountChakra({page:current,screen:$('original-screen'),go});
     if(current.id===SITEMAP)live=mountSiteMap({page:current,screen:$('original-screen'),pages,go});
     if([HOME,PROGRAMMER].includes(current.id))menuCamera=mountMenuCamera($('original-screen'));
+    if(current.id===DATA_TRANSFER)live=mountDataTransfer({screen:$('original-screen'),go});
+    if(current.id===MERCH)live=mountMerch({screen:$('original-screen'),go});
     fit();
   }
   function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}
@@ -158,6 +164,7 @@ export async function startOriginal(){
   $('original-page').onchange=()=>go($('original-page').value);$('original-back').onclick=()=>go('command:back');$('original-home').onclick=()=>go(source.home);
   $('original-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{warn('Fullscreen is unavailable in this browser.');}};
   window.addEventListener('popstate',()=>show(new URLSearchParams(location.search).get('page')));new ResizeObserver(fit).observe($('original-viewport'));
+  document.addEventListener('click',event=>{if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;const a=event.target.closest('a[href]');if(!a||a.target||a.download)return;const u=new URL(a.href,location.href);if(u.origin!==location.origin||u.pathname!==location.pathname||!u.searchParams.has('page'))return;event.preventDefault();const extra=Object.fromEntries(u.searchParams);const id=extra.page;delete extra.page;go(id,extra);});
   enhanceNavigation();show(new URLSearchParams(location.search).get('page'));
 }
 if(typeof document!=='undefined'&&document.body.dataset.page==='original')startOriginal().catch(error=>{document.body.dataset.inspect='true';$('original-status').textContent=error.message;});

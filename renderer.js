@@ -1,6 +1,6 @@
 import {framePoint,frameRotated} from './frame-display.js?v=0.4.15';
-import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.4.15';
-import {target,targetPoint,edgePoints,rayEnd,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.4.15';
+import {SHELLS,ROWS,COLS,shellPoint,PRESETS,address} from './core.js?v=0.4.17';
+import {target,targetPoint,edgePoints,rayEnd,rayTargets,recordTarget,targetLabel,cameraFrame,stackPoint,stackColour,stackSamples,STACK_DRAW_LIMIT,fitStackFrame} from './spatial.js?v=0.4.17';
 const T=globalThis.THREE;
 export class AuraView {
   constructor(canvas,onSelect){
@@ -20,9 +20,9 @@ export class AuraView {
     for(let c=0;c<=COLS;c++)for(let r=0;r<ROWS*3;r++)this.lineParameters.push([c/COLS,r/(ROWS*3)],[c/COLS,(r+1)/(ROWS*3)]);
     for(let s=0;s<7;s++){
       const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(this.parameters.length*3),3));geometry.setAttribute('uv',new T.Float32BufferAttribute(this.parameters.flatMap(([u,v])=>[u,v]),2));geometry.setAttribute('color',new T.BufferAttribute(new Float32Array(this.parameters.length*3),3));
-      const mesh=new T.Mesh(geometry,new T.MeshPhongMaterial({vertexColors:true,side:T.DoubleSide,transparent:true,opacity:.82,shininess:22,depthWrite:true}));mesh.userData.shell=s;this.scene.add(mesh);this.meshes.push(mesh);
+      const mesh=new T.Mesh(geometry,new T.MeshPhongMaterial({vertexColors:true,side:T.DoubleSide,transparent:true,opacity:.82,shininess:22,depthWrite:true,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));mesh.userData.shell=s;this.scene.add(mesh);this.meshes.push(mesh);
       const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(new Float32Array(this.lineParameters.length*3),3));
-      const wire=new T.LineSegments(g,new T.LineBasicMaterial({color:'#272e35',transparent:true,opacity:.35,depthWrite:false}));this.scene.add(wire);this.wires.push(wire);
+      const wire=new T.LineSegments(g,new T.LineBasicMaterial({color:'#e4f5ff',transparent:true,opacity:.85,depthWrite:false}));this.scene.add(wire);this.wires.push(wire);
     }
     this.connect=new T.LineSegments(new T.BufferGeometry(),new T.LineBasicMaterial({color:'#11232d',transparent:true,opacity:.9,depthTest:false}));this.connect.renderOrder=3;this.scene.add(this.connect);
     this.marker=new T.Mesh(new T.SphereGeometry(.1,12,8),new T.MeshBasicMaterial({color:0x101b24,depthTest:false}));this.marker.renderOrder=4;this.scene.add(this.marker);
@@ -52,14 +52,14 @@ export class AuraView {
     const p=this.pose,occupied=new Set(this.records.filter(r=>r.face===this.face&&recordTarget(r).kind==='facet').map(r=>`${r.shell}/${r.cell}`));
     for(let s=0;s<7;s++){
       const mesh=this.meshes[s],wire=this.wires[s];mesh.visible=wire.visible=((p.nest>.001&&this.face==='O')||s===this.shell);if(!mesh.visible)continue;
-      mesh.material.opacity=this.face==='I'?1:p.nest>.001?(s===this.shell?.56:.13):.83;mesh.material.depthWrite=this.face==='I'||p.nest<.001;wire.material.opacity=p.nest>.001?.23:.38;
+      mesh.material.opacity=this.face==='I'?1:p.nest>.001?(s===this.shell?.56:.13):.83;mesh.material.depthWrite=this.face==='I'||p.nest<.001;wire.material.opacity=p.nest>.001?.5:.88;
       const positions=mesh.geometry.attributes.position.array,colors=mesh.geometry.attributes.color.array;
       const groupCells=new Set(this.selectedFacets||[]),groupColour=new T.Color('#ffd267');
       mesh.userData.baseOpacity=mesh.material.opacity;wire.userData.baseOpacity=wire.material.opacity;
       const style=this.shellStyles?.[`${s}/${this.face}`],base=new T.Color(style?.skin==='image'&&style.image?'#ffffff':SHELLS[s][1]),active=new T.Color('#ffe59a'),filled=new T.Color('#214f5a');
       for(let i=0;i<this.parameters.length;i++){
         const [u,v,c]=this.parameters[i],xyz=shellPoint(u,v,p,s,this.shell);positions.set(xyz,i*3);
-        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:s===this.shell&&groupCells.has(c)?groupColour:occupied.has(`${s}/${c}`)?filled:base;colors.set([colour.r,colour.g,colour.b],i*3);
+        const colour=s===this.shell&&c===this.cell&&this.selection?.kind==='facet'?active:s===this.shell&&this.kind==='facet'&&groupCells.has(c)?groupColour:occupied.has(`${s}/${c}`)?filled:base;const shade=(Math.floor((c-1)/24)+(c-1)%24)%2?.88:1;colors.set([colour.r*shade,colour.g*shade,colour.b*shade],i*3);
       }
       mesh.geometry.attributes.position.needsUpdate=mesh.geometry.attributes.color.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingSphere();
       const lines=wire.geometry.attributes.position.array;this.lineParameters.forEach(([u,v],i)=>lines.set(shellPoint(u,v,p,s,this.shell),i*3));wire.geometry.attributes.position.needsUpdate=true;wire.geometry.computeBoundingSphere();
@@ -92,10 +92,13 @@ export class AuraView {
       const lines=[];for(const t of targets){const ps=edgePoints(t,p);for(let i=1;i<ps.length;i++)lines.push(ps[i-1],ps[i]);}addLines(lines,'#267c94',.65);
     }
     if(this.selection?.kind.startsWith('edge-')){const ps=edgePoints(this.selection,p),lines=[];for(let i=1;i<ps.length;i++)lines.push(ps[i-1],ps[i]);addLines(lines,'#fff1a2');}
-    const rays=[];let targets=[];
-    if(this.rayMode==='selected'&&this.selection)targets=[this.selection];
-    if(['vertices','centres'].includes(this.rayMode))targets=Array.from({length:288},(_,i)=>target(s,f,this.rayMode==='vertices'?'vertex':'facet',i+1));
-    for(const t of targets){const end=rayEnd(t,p,this.vectors);if(end)rays.push([0,0,0],end);}if(rays.length)addLines(rays,'#ae8630',this.rayMode==='selected'?1:.18);
+    const rays=[],targets=rayTargets(s,f,this.rayMode,this.selection);
+    for(const t of targets){const end=rayEnd(t,p,this.vectors);if(end)rays.push([0,0,0],end);}
+    if(rays.length)addLines(rays,'#ffd583',this.rayMode==='selected'?1:.45);
+    if(this.kind.startsWith('ray-')&&this.rayMode!=='off')addPoints(targets.filter(t=>t.kind===this.kind),'#ffedaa',7);
+    if(this.selection?.kind.startsWith('ray-')&&this.rayMode!=='off'){
+      const end=rayEnd(this.selection,p,this.vectors);if(end)addLines([[0,0,0],end],'#fff1a2',1);
+    }
     if(this.showVolume){
       const box=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(8.8,8.8,8.8)),new T.LineBasicMaterial({color:'#568688',transparent:true,opacity:.4,depthTest:false}));this.spatialGroup.add(box);
       addLines([[-4.4,0,0],[4.4,0,0],[0,-4.4,0],[0,4.4,0],[0,0,-4.4],[0,0,4.4]],'#568688',.3);
@@ -129,7 +132,8 @@ export class AuraView {
   }
   pick(e){const point=framePoint(this.canvas,e);this.raycaster.setFromCamera(new T.Vector2(point.u*2-1,1-point.v*2),this.camera);this.raycaster.params.Points.threshold=.12;
     const stacked=this.raycaster.intersectObjects(this.stackPicking||[])[0];if(stacked){this.onSelect(stacked.object.userData.target,e);return;}
-    const pointHit=this.raycaster.intersectObjects(this.picking)[0];if(pointHit){this.onSelect(pointHit.object.userData.targets[pointHit.index],e);return;}
+    if(this.kind==='volume'){const pointHit=this.raycaster.intersectObjects(this.picking)[0];if(pointHit)this.onSelect(pointHit.object.userData.targets[pointHit.index],e);return;}
+    if(this.kind.startsWith('ray-')&&this.rayMode==='off')return;
     const hit=this.raycaster.intersectObjects(this.meshes.filter(m=>m.visible))[0];if(!hit||this.kind==='volume')return;
     const s=hit.object.userData.shell;
     if(this.kind==='facet'){this.onSelect(target(s,this.face,'facet',Math.floor(hit.faceIndex/18)+1),e);return;}

@@ -1,5 +1,5 @@
-import {AVATAR_SECTIONS,avatarValues,saveAvatar} from './avatar-data.js?v=0.4.15';
-import {validateProject} from './core.js?v=0.4.15';
+import {AVATAR_SECTIONS,avatarValues,saveAvatar} from './avatar-data.js?v=0.4.17';
+import {validateProject} from './core.js?v=0.4.17';
 export const SPACE_LAYERS=[
  {id:'space-close',name:'Red',colour:'#e84b49',colourName:'Red',example:45},
  {id:'space-conversation',name:'Orange',colour:'#ed902e',colourName:'Orange',example:60},

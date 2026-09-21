@@ -1,10 +1,10 @@
-import {AVATAR_QUESTIONS as AVATAR_FIELDS} from './avatar-data.js?v=0.4.15';
+import {AVATAR_QUESTIONS as AVATAR_FIELDS} from './avatar-data.js?v=0.4.17';
 import {framePoint} from './frame-display.js?v=0.4.15';
-import {tripForm,goalForm} from './travel-ui.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
-import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.4.15';
-import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.15';
-import {targetLabel} from './spatial.js?v=0.4.15';
+import {tripForm,goalForm} from './travel-ui.js?v=0.4.17';
+import {pageIcon} from './page-icons.js?v=0.4.17';
+import {blankProject,validateProject,parseCSV,SHELLS} from './core.js?v=0.4.17';
+import {allocationPlan,allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.17';
+import {targetLabel} from './spatial.js?v=0.4.17';
 import {TORUS} from './original-routes.js?v=0.4.15';
 export const QUICKSTART='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 const KEY='aura-matrix-studio:v4:project';
@@ -21,7 +21,7 @@ export function saveQuickEntry(project,dataset,values,rowId){
 export function validBirthday(value){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}
 export function birthdayFromParts(day,month,year){if(!/^\d{4}$/.test(String(year))||Number(year)<1)return '';const date=`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;return validBirthday(date)?date:'';}
 const AVATAR_QUESTIONS=AVATAR_FIELDS.map(f=>[f.label,f.options]);
-export function mountQuickStart({page,screen,catalogue}){
+export function mountQuickStart({page,screen,catalogue,go}){
   const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
   const button=(text,fn)=>{const b=make('button','',text);b.type='button';b.onclick=fn;return b;};
   let project,index=0,tableId='',recId='',rowPage=0,colPage=0,preview=null,pane='setup',flipping=false,flipAnimation=null,welcome=true,avatarIndex=0;
@@ -33,7 +33,7 @@ export function mountQuickStart({page,screen,catalogue}){
   const book=make('section','quick-book');book.setAttribute('aria-label','QuickStart swipe reader');book.tabIndex=0;
   const card=button('',()=>{if(!swiped)open();});card.className='quick-card';const prev=button('Previous\nStep',()=>turn(-1)),next=button('Next\nStep',()=>turn(1));prev.className='quick-prev';next.className='quick-next';book.append(prev,card,next);screen.append(book);
   const progress=make('div','quick-progress');progress.setAttribute('role','status');screen.append(progress);
-  const dialog=make('dialog','quick-dialog'),head=make('header'),title=make('h2'),close=button('Done',()=>dialog.close()),body=make('div','quick-body'),message=make('p','quick-message');message.setAttribute('role','status');head.append(title,close);dialog.append(head,body,message);document.body.append(dialog);
+  const dialog=make('dialog','quick-dialog'),head=make('header'),title=make('h2'),close=button('Done',()=>dialog.close()),body=make('div','quick-body'),message=make('p','quick-message');message.setAttribute('role','status');head.append(title,button('Your data',()=>{dialog.close();go('aura-data-transfer');}),close);dialog.append(head,body,message);document.body.append(dialog);
   const selectedTable=()=>project.tables.find(t=>t.id===tableId);
   const stepPages=['DC827E51-FDDD-49EC-BB9D-7FFAE33159BC','3A178076-5EF1-41A0-8229-62636BE4F256','AE87688C-93C9-4AB1-A72D-A447ED56C5E0','951AAB58-F4AE-41E2-A790-4F204A0EC475','2E5320C1-E2FE-4EE5-B62E-3CB9013D4010','82791921-1F9A-4056-A0FE-B4385FD5377A','02B0EE12-8186-4347-BFC7-06657FAC52D8','E933DDB8-9FDE-445A-97A0-686C17B77380','DAFCEEE9-7303-415D-975B-AB7176A59010','1FE14FC9-F981-4E27-B038-BDF3FF404838'];
   function redrawCard(){const step=catalogue.steps[index],icon=make('img');icon.src='assets/mockplus/'+pageIcon(stepPages[index]);icon.alt='';card.replaceChildren(make('small','',`${index+1} / ${catalogue.steps.length}`),icon,make('strong','',step.title),make('span','','Tap to open'));prev.disabled=index===0;next.disabled=index===catalogue.steps.length-1;progress.textContent=`Step ${index+1} of 10`;card.setAttribute('aria-label','Open '+step.title);}
@@ -159,7 +159,7 @@ export function mountQuickStart({page,screen,catalogue}){
     const actions=make('div','quick-actions');actions.append(previewButton,commit);body.append(actions,previewText);
   }
   function download(name,type,text){const url=URL.createObjectURL(new Blob([text],{type})),a=make('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-  function backup(){safely(()=>{read();download('aura-project-backup.json','application/json',JSON.stringify(project,null,2));});}
+  function backup(){dialog.close();go('aura-data-transfer');}
   function csvText(table){const esc=v=>'"'+String(v).replaceAll('"','""')+'"';return [table.columns,...table.rows.map(r=>r.values)].map(r=>r.map(esc).join(',')).join('\r\n');}
   dialog.addEventListener('close',()=>{safely(read);redrawCard();card.focus();});
   redrawCard();return {resize(){},dispose(){flipAnimation?.cancel();dialog.remove();}};

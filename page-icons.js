@@ -1,6 +1,8 @@
 import {canonicalPage} from './original-routes.js?v=0.4.15';
 // Explicit destination artwork. Navigation arrows are never destination icons.
 export const PAGE_ICONS={
+  'aura-merch-store':'aura-merch.svg',
+  'aura-data-transfer':'aura-data.svg',
   "76172966-3F90-4DB8-A914-4E63AE19A501": "761729663F904DB8A9144E63AE19A501.svg",
   "D203ACAB-C2D1-4433-8EE2-3522C47CC3D0": "2F4718B8F8FE47B565BB55847DA63B34.jpg",
   "E3222692-1B76-4EAF-9517-C5E94323947C": "08DFE210FF63CF04C04003C08DF14CE9.png",

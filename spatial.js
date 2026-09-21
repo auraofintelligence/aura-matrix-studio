@@ -1,7 +1,7 @@
-import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.4.15';
+import {SHELLS,address,shellPoint,PRESETS} from './core.js?v=0.4.17';
 
-export const KINDS=['facet','edge-u','edge-v','vertex','volume','stack'];
-export const KIND_NAMES={'facet':'Facet','edge-u':'Edge along row','edge-v':'Edge along column','vertex':'Vertex','volume':'Volume point','stack':'Stack layer'};
+export const KINDS=['facet','edge-u','edge-v','vertex','volume','stack','ray-facet','ray-vertex','ray-edge-u','ray-edge-v'];
+export const KIND_NAMES={'facet':'Facet','edge-u':'Edge along row','edge-v':'Edge along column','vertex':'Vertex','volume':'Volume point','stack':'Stack layer','ray-facet':'Ray to facet centre','ray-vertex':'Ray to vertex','ray-edge-u':'Ray to row-edge centre','ray-edge-v':'Ray to column-edge centre'};
 export function target(shell,face,kind,index,layer){return validateTarget({shell,face,kind,index,...(layer?{layer}:{})});}
 export function validateTarget(t){
   if(!t||!KINDS.includes(t.kind))throw Error('Choose a facet, edge, vertex or volume point.');
@@ -13,6 +13,7 @@ export function validateTarget(t){
 export function targetKey(t){return `${t.shell}/${t.face}/${t.kind}/${t.index}${t.kind==='stack'?'/'+t.layer:''}`;}
 export function targetLabel(t){
   if(!t)return 'Nothing selected';
+  if(t.kind.startsWith('ray-'))return `${KIND_NAMES[t.kind]} · ${targetLabel({...t,kind:t.kind.slice(4)})}`;
   if(t.kind==='facet')return address(t.shell,t.index,t.face);
   if(t.kind==='stack')return `${address(t.shell,t.index,t.face)} · Layer ${t.layer} · ${stackColour(t.shell,t.layer)}`;
   if(t.kind==='volume')return `${SHELLS[t.shell][0]} ${t.face} · Volume point`;
@@ -40,6 +41,7 @@ export function setFacetStacks(stacks,facets,count){
 export function recordTarget(r){return r.anchor||target(r.shell,r.face,'facet',r.cell);}
 export function recordsAt(records,t){return t?records.filter(r=>targetKey(recordTarget(r))===targetKey(t)):[];}
 export function parameters(t){
+  if(t.kind.startsWith('ray-'))t={...t,kind:t.kind.slice(4)};
   const r=Math.floor((t.index-1)/24),c=(t.index-1)%24;
   if(t.kind==='facet'||t.kind==='stack')return [(c+.5)/24,(r+.5)/12];
   if(t.kind==='vertex')return [c/24,r/12];
@@ -58,6 +60,17 @@ export function rayEnd(t,pose,vectors=[]){
   const p=targetPoint(t,pose,vectors);
   // Coincident horn registers retain their IDs but have no visible ray length.
   return Math.hypot(...p)<1e-9?null:p;
+}
+// Stable ray addresses are independent of camera, skin and animation.
+export function rayTargets(shell,face,mode,selection=null){
+  if(mode==='selected')return selection?[selection]:[];
+  const kinds=({centres:['facet'],vertices:['vertex'],edges:['edge-u','edge-v'],all:['facet','vertex','edge-u','edge-v']})[mode]||[];
+  return kinds.flatMap(kind=>Array.from({length:288},(_,i)=>target(shell,face,'ray-'+kind,i+1)));
+}
+export function rayDescriptor(t,pose=PRESETS.horn){
+  validateTarget(t);if(!t.kind.startsWith('ray-'))throw Error('Choose a ray.');
+  const end=targetPoint(t,pose);
+  return {id:targetKey(t),target:{...t},origin:[0,0,0],end,length:Math.hypot(...end),endpoint:{...t,kind:t.kind.slice(4)}};
 }
 export function parseValues(text){
   if(!text.trim())return [];
@@ -146,7 +159,7 @@ export function sequenceStep(program,index,project){
 }
 export function agentPackage(program,project){
   const included=t=>program.steps.some(s=>s.target.kind==='stack'?t.kind==='stack'&&s.target.shell===t.shell&&s.target.face===t.face&&s.target.index===t.index&&t.layer>=s.target.layer&&t.layer<s.target.layer+(s.span||1):targetKey(s.target)===targetKey(t));
-  return {format:'aura-agent-program/1',lattice:project.lattice,rows:12,columns:24,operations:{visit:'Focus the address. No external action.',recall:'Read the attached records as context. Do not execute asset contents automatically.',pause:'Wait for the step duration.'},program:structuredClone(program),records:project.records.filter(r=>included(recordTarget(r))),vectors:project.vectors.filter(v=>included(target(v.shell,v.face,'volume',v.id))||(v.anchor&&included(v.anchor))),stacks:project.stacks.filter(s=>program.steps.some(p=>p.target.kind==='stack'&&p.target.shell===s.shell&&p.target.face===s.face&&p.target.index===s.cell))};
+  return {format:'aura-agent-program/1',lattice:project.lattice,rows:12,columns:24,operations:{visit:'Focus the address. No external action.',recall:'Read the attached records as context. Do not execute asset contents automatically.',pause:'Wait for the step duration.'},geometry:{rayOrigin:[0,0,0],rayKinds:['ray-facet','ray-vertex','ray-edge-u','ray-edge-v'],rayEndpoints:'Resolve the matching facet centre, vertex or edge centre on the addressed torus.'},program:structuredClone(program),records:project.records.filter(r=>included(recordTarget(r))),vectors:project.vectors.filter(v=>included(target(v.shell,v.face,'volume',v.id))||(v.anchor&&included(v.anchor))),stacks:project.stacks.filter(s=>program.steps.some(p=>p.target.kind==='stack'&&p.target.shell===s.shell&&p.target.face===s.face&&p.target.index===s.cell))};
 }
 export function cameraFrame(p,shell,face,theta,phi,aspect,zoom=1){
   const closed=p.curl>.99&&p.ring>.99;
@@ -156,7 +169,7 @@ export function cameraFrame(p,shell,face,theta,phi,aspect,zoom=1){
     const radius=(24-12*p.pinch)/(2*Math.PI)*scale;
     const eye=[0,(shell-3)*2.3*p.arrange*p.nest,radius];
     const direction=[Math.sin(theta)*Math.cos(phi),Math.sin(phi),Math.cos(theta)*Math.cos(phi)];
-    return {eye,look:eye.map((n,i)=>n+direction[i]),near:Math.max(.001,.01*scale),fov:Math.max(35,Math.min(105,75/zoom)),inside:true};
+    return {eye,look:eye.map((n,i)=>n+direction[i]),near:Math.max(.001,.01*scale),fov:Math.max(35,Math.min(115,105/zoom)),inside:true};
   }
   const distance=Math.max(size/Math.min(aspect,1.65)*1.85,31*p.arrange)/zoom;
   const sign=face==='I'?-1:1;

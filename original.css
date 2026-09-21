@@ -257,6 +257,7 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid #226
 .connection-reuse{padding:12px;border-radius:16px;background:#eeebf7;display:grid;gap:8px}.connection-reuse p{margin:0;white-space:pre-wrap}.connection-reuse button{min-height:38px}.connection-earlier{margin-top:10px}.connection-earlier summary{cursor:pointer;padding:8px}.connection-earlier>div{padding:12px;border-top:1px solid #ddd}.connection-earlier small{display:block}
 
 .favourite-slot.icon-only small{display:none}.favourite-slot.icon-only img{width:40px;height:40px}
+.data-transfer-panel .tool-hero{flex-shrink:0}.transfer-actions{display:grid;gap:12px}.transfer-actions button,.transfer-review button{min-height:44px;padding:10px 16px;border-radius:24px;border:1px solid #d8cbe8;background:linear-gradient(#fff,#e9e0f4);color:#5e477d;font:inherit}.transfer-actions .tool-primary{background:linear-gradient(135deg,#9674b9,#735398);color:white}.transfer-review{padding:16px;border:1px solid #d8cbe8;background:white;border-radius:20px}.transfer-review h2{margin:0 0 8px;font-size:19px}.transfer-review p{font-size:13px;line-height:1.45}.transfer-review button{margin:4px 4px 0 0}.data-transfer-panel{overflow-y:auto!important}.merch-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse,#eee1fa,transparent 65%);padding:24px;gap:14px}.merch-empty img{width:160px;height:160px}.merch-empty h2{font-size:30px;font-weight:500;margin:0}.merch-empty p{font-size:15px;line-height:1.5;color:#786585;max-width:230px;margin:0}
 
 /* QuickStart input sheets. The original page and flipbook retain their layout. */
 .quick-dialog .quick-travel-entry{flex:1;min-height:min-content}.quick-dialog .travel-form{gap:12px}.quick-dialog .travel-form label{display:flex;flex-direction:column;gap:7px;font-size:13px;color:#685774}.quick-dialog .travel-form input,.quick-dialog .travel-form select,.quick-dialog:not(.is-guided) input,.quick-dialog:not(.is-guided) select{min-height:40px;border:1px solid #dfd5e9;border-radius:14px;background:#ffffffc9;padding:8px 10px;max-width:100%}.quick-dialog .travel-form input,.quick-dialog .travel-form select{font-size:16px;width:100%}.quick-dialog .travel-primary{min-height:44px;border-radius:24px;border-color:#9275b0;background:linear-gradient(135deg,#9274b8,#72529a);color:white}.quick-dialog .quick-travel-choices button{flex:1;min-height:42px;font-size:12px;padding:8px}.quick-dialog:not(.is-guided) .quick-actions button{border-color:#ded5e9;border-radius:18px;padding:8px 12px;background:#ffffffb8}.quick-dialog:not(.is-guided) .quick-step-art{width:70px;height:70px}.quick-dialog:not(.is-guided) .quick-step-hero h3{font-size:21px}
@@ -275,3 +276,24 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid #226
 @media(max-height:650px){.quick-dialog[data-step="5"] .quick-answer-choices{gap:6px}.quick-dialog[data-step="5"] .quick-answer-choices button{min-height:34px;padding:5px}.quick-dialog[data-step="5"] .quick-welcome{gap:8px}}
 
 .quick-dialog .quick-travel-footer{justify-content:space-between;flex-shrink:0}.quick-dialog .quick-travel-footer button{border:1px solid #ded5e9;border-radius:22px;min-height:36px;padding:8px 14px;background:#ffffffb8;color:#6d567e}
+
+/* The torus is the workspace; controls stay compact at its edges. */
+.chakra-workspace{gap:6px;padding:8px}
+.chakra-workspace>header{height:36px;flex-shrink:0;gap:9px}
+.chakra-workspace>header img{height:32px;width:32px}
+.chakra-workspace h1{font-size:21px}
+.chakra-workspace .aura-nav-button{min-height:34px;padding:6px 15px;font-size:12px}
+.chakra-sides{gap:4px;flex-shrink:0}
+.chakra-sides button{min-height:34px;font-size:12px}
+.chakra-sides .chakra-ray-switch{flex:0 0 76px;display:flex;align-items:center;justify-content:center;gap:5px}
+.chakra-ray-switch:before{content:'';height:10px;width:10px;border-radius:50%;background:#b0a9bc}
+.chakra-ray-switch[aria-checked=true]:before{background:var(--chakra);box-shadow:0 0 8px var(--chakra)}
+.chakra-stage{border-radius:18px;min-height:200px}
+.chakra-summary{display:none}
+.chakra-address{font-size:11px;min-height:14px;white-space:normal}
+.chakra-tools{flex-shrink:0}
+.chakra-tools button{min-height:38px;flex-direction:row;gap:5px;font-size:11px;border-radius:13px}
+.chakra-tools svg{height:20px;width:20px}
+.chakra-workspace>footer{min-height:30px;flex-shrink:0}
+.chakra-field:has(input[type=checkbox]){flex-direction:row;align-items:center;justify-content:space-between}
+.chakra-field input[type=checkbox]{width:22px;min-height:22px;padding:0;accent-color:#7959b0}

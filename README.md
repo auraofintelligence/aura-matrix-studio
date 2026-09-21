@@ -222,3 +222,17 @@ Eyes and spacing, Height and reach, and Shoulders and arm span now use the same 
 The original nine eye-photo positions are restored in order: camera, eyes wide open, left, right, up, down, ahead again, gently closed and tightly closed. Each shows the ruler placement and can hold its own photo. Compressed local photo copies are saved in the `avatar-eye-photos` table and included in the existing project backup. The three numerical eye measurements remain available from the same page. Photo references show how to measure; the app does not infer dimensions from photographs.
 
 Avatar creation now has an illustrated menu linking to its five original sections. Shoulder width uses arms-relaxed references; the eye-photo ruler shows numbered centimetres and millimetre subdivisions along its bottom edge.
+
+## Your data, navigation and Merch
+
+Open **System preferences > Your Aura data**, or **Your data** in QuickStart, to export a complete JSON backup. This includes all saved tables, personal inputs, favourites, matrix records, stacks, programs, skins and locally uploaded mind-palace files. Linked external files remain links. Import reviews the backup before replacing this browser's Aura; export your current data first. Earlier table-only backups still import, but cannot restore media they never contained.
+
+Back follows the pages you actually visited, including after a reload. A page opened directly falls back to the main Aura menu. The mock phone time, battery and status header has been removed. Marketplace includes a Merch placeholder for a later store.
+
+## Chakra geometry and rays
+
+Each colour workspace keeps the torus as the main surface, with clearer facet borders and a compact Inside/Outside choice. **Select** opens facet, row-edge, column-edge and vertex selection, multiple-facet selection and numbered addresses. Touch rotates the view; pinch or the mouse wheel zooms.
+
+**Rays** switches the infinity-point rays on or off. Choose facet centres, vertices, edge centres or all three under Select. The 12 x 24 lattice supplies 288 facet-centre rays, 288 vertex addresses and 576 edge-centre rays per torus side. Coincident horn addresses remain valid but draw no zero-length ray or upward spike.
+
+Advanced users can select rays as separate addresses, attach records and instructions, add them to sequences, or export their origins, endpoints and lengths. Ray kinds are `ray-facet`, `ray-vertex`, `ray-edge-u` and `ray-edge-v`; their surface endpoint retains its own separate data. Coordinates use the existing Aura geometry units.

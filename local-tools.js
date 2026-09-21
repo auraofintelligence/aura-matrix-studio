@@ -1,4 +1,4 @@
-import {validateProject} from './core.js?v=0.4.15';
+import {validateProject} from './core.js?v=0.4.17';
 export const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export const button=(text,fn,cls='')=>{const b=make('button',cls,text);b.type='button';b.onclick=fn;return b;};
 export function rows(project,id){const t=project.tables.find(t=>t.id===id);return t?t.rows.map(r=>({id:r.id,...Object.fromEntries(t.columns.map((c,i)=>[c,r.values[i]]))})):[];}

@@ -1,16 +1,16 @@
-import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceDiagram,personalTorusPoint,savePersonalSpace} from './personal-space-data.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {AVATAR_HOME} from './avatar-data.js?v=0.4.15';
+import {SPACE_LAYERS,readPersonalSpace,changeSpaceRadius,spaceDiagram,personalTorusPoint,savePersonalSpace} from './personal-space-data.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {AVATAR_HOME} from './avatar-data.js?v=0.4.17';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const b=make('button',cls,text);b.type='button';b.onclick=fn;return b;};
 const svgNode=(tag,attrs={},text)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n;};
 export function mountPersonalSpace({screen,go}){
  for(const child of screen.children)child.hidden=true;
  const panel=make('section','avatar-panel personal-space');screen.append(panel);let state;
- try{state=readPersonalSpace(readTravelProject());}catch(e){panel.append(make('p','',e.message),button('Back',()=>go(AVATAR_HOME)));return {resize(){},dispose(){}};}
+ try{state=readPersonalSpace(readTravelProject());}catch(e){panel.append(make('p','',e.message),button('Back',()=>go('command:back')));return {resize(){},dispose(){}};}
  let selected=0,view='side',framing='person',zoom=1,mist=true,dirty=false,maxRadius=Math.max(200,Math.ceil(state.radii[6]/100)*100),maxHeight=Math.max(250,Math.ceil(state.height/10)*10);
  const status=make('p','space-status');status.setAttribute('role','status');
- const head=make('header','avatar-header');head.append(button('‹',()=>go(AVATAR_HOME),'avatar-back'),make('h1','','Personal space'));head.firstChild.setAttribute('aria-label','Back to avatar setup');panel.append(head);
+ const head=make('header','avatar-header');head.append(button('‹',()=>go('command:back'),'avatar-back'),make('h1','','Personal space'));head.firstChild.setAttribute('aria-label','Back');panel.append(head);
  const figure=make('figure','space-figure'),svg=svgNode('svg',{viewBox:'0 0 336 218',role:'img','aria-label':'Person surrounded by seven personal-space Aura shells'}),caption=make('figcaption');
  caption.textContent='Pinch to zoom · drag to move · double-tap to reset. Tap person to turn · hold to change figure.';
  svg.setAttribute('tabindex','0');svg.setAttribute('aria-description','Pinch or mouse wheel to zoom. Drag to move. Double tap resets. Tap the person to switch top and side; hold the person to switch male and female. Keyboard: plus or minus zooms, arrows move, zero resets, V turns, F selects female, M selects male, S toggles mist.');

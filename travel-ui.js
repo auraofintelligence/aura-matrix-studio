@@ -1,5 +1,5 @@
-import {mountTimeContext} from './time-context.js?v=0.4.15';
-import {TRAVEL,TIMELINES,CELESTIAL,readTravelProject,writeTravelProject,travelEntries,travelProgress,travelGoal,saveTrip,saveTravelGoal,normaliseDestination,travelTimeline} from './travel-data.js?v=0.4.15';
+import {mountTimeContext} from './time-context.js?v=0.4.17';
+import {TRAVEL,TIMELINES,CELESTIAL,readTravelProject,writeTravelProject,travelEntries,travelProgress,travelGoal,saveTrip,saveTravelGoal,normaliseDestination,travelTimeline} from './travel-data.js?v=0.4.17';
 const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn)=>{const n=make('button','',text);n.type='button';n.onclick=fn;return n;};
 const field=(form,label,type,value='')=>{const n=make('input');n.type=type;n.value=value;n.setAttribute('aria-label',label);const l=make('label');l.append(make('span','',label),n);form.append(l);return n;};

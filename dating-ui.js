@@ -1,10 +1,10 @@
-import {conciseChapters,reuseCandidate,reuseMap,reusePatch,detachAnswer} from './connection-flow.js?v=0.4.15';
+import {conciseChapters,reuseCandidate,reuseMap,reusePatch,detachAnswer} from './connection-flow.js?v=0.4.17';
 import {framePoint} from './frame-display.js?v=0.4.15';
-import {make,button,header,download} from './local-tools.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {DATING_CHAPTERS,LOVE_LANGUAGES,DAYS,DAY_PARTS,datingProfile,listValue,loveValue,chapterProgress,fieldAnswered,saveDatingProfile,numericRange} from './dating-data.js?v=0.4.15';
+import {make,button,header,download} from './local-tools.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {DATING_CHAPTERS,LOVE_LANGUAGES,DAYS,DAY_PARTS,datingProfile,listValue,loveValue,chapterProgress,fieldAnswered,saveDatingProfile,numericRange} from './dating-data.js?v=0.4.17';
 
-import {FRIENDSHIP_CHAPTERS,friendshipProfile,saveFriendshipProfile} from './friendship-data.js?v=0.4.15';
+import {FRIENDSHIP_CHAPTERS,friendshipProfile,saveFriendshipProfile} from './friendship-data.js?v=0.4.17';
 import {suggestionsFor,relatedSuggestions,answerParts,answerPatch,ownNote,notePatch,focusValue,focusPatch,rankPatch} from './connection-inputs.js?v=0.4.15';
 
 import {AUDIENCES,audienceFor,disclosurePatch,disclosurePreview,disclosurePacket} from './connection-sharing.js?v=0.4.15';

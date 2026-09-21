@@ -1,7 +1,7 @@
-import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.15';
-import {readPersonalSpace} from './personal-space-data.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.15';
+import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.17';
+import {readPersonalSpace} from './personal-space-data.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.17';
 
 // Landmarks are artwork coordinates, not inferred measurements of the user.
 const guides={
@@ -58,13 +58,13 @@ export function mountMeasurements({screen,go,section}){
  for(const child of screen.children)child.hidden=true;
  const panel=make('section','avatar-panel measurement-panel');screen.append(panel);
  let project,values,figure,index=0,dirty=false,holdTimer,pointer,disposed=false,photos={},pendingPhoto=false;
- try{project=readTravelProject();values=avatarValues(project,section);figure=readPersonalSpace(project).figure;}catch(e){panel.append(make('p','',e.message),button('Back',()=>go(AVATAR_HOME)));return {resize(){},dispose(){}};}
+ try{project=readTravelProject();values=avatarValues(project,section);figure=readPersonalSpace(project).figure;}catch(e){panel.append(make('p','',e.message),button('Back',()=>go('command:back')));return {resize(){},dispose(){}};}
  photos=eyePhotos(project);
  const fields=[...(section.key==='eyes'?EYE_POSES:[]),...fieldsFor(section)],status=make('p','avatar-status');status.setAttribute('role','status');
  const move=delta=>{const next=Math.max(0,Math.min(fields.length-1,index+delta));if(next!==index){index=next;draw();}};
  function draw(){
   clearTimeout(holdTimer);pointer=null;panel.replaceChildren();const field=fields[index],guide=guides[field.id];
-  const head=make('header','avatar-header'),back=button('‹',()=>go(AVATAR_HOME),'avatar-back');back.setAttribute('aria-label','Back to avatar setup');head.append(back,make('h1','',section.title));panel.append(head);
+  const head=make('header','avatar-header'),back=button('‹',()=>go('command:back'),'avatar-back');back.setAttribute('aria-label','Back');head.append(back,make('h1','',section.title));panel.append(head);
   const progress=make('nav','measurement-progress');progress.setAttribute('aria-label','Measurements');
   if(section.key==='eyes'){
    const jump=button(field.kind==='photo'?'Measurements':'Look positions',()=>{index=field.kind==='photo'?9:0;draw();},'measurement-jump');progress.append(jump,make('span','',field.kind==='photo'?`Photo ${index+1} / 9`:`Measurement ${index-8} / 3`));

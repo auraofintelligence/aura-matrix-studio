@@ -1,6 +1,6 @@
-import {make,button,rows,saveRow,removeRow,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.15';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
+import {make,button,rows,saveRow,removeRow,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.17';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {pageIcon} from './page-icons.js?v=0.4.17';
 export const PALACE='F9CE754E-27BE-49C3-AD43-F39BCEC0B3E8',SAMPLE_PALACE='B80C2D52-3C95-4E1F-94C5-9D214348D2E0';
 export const PALACE_PAGES=new Set([PALACE,SAMPLE_PALACE,'DFB43FEB-2BDF-422E-BCBF-0F4021E82F32','D34C877A-6E49-43C4-88E5-D033C8B7E02E','3B9E03CA-EF05-4B0B-B004-E95AFCA1C713','C490FE96-B734-4273-9256-DD9088241222']);
 export function saveRoom(project,fields,id=crypto.randomUUID()){
@@ -23,7 +23,7 @@ const svgNode=(tag,attrs={})=>{const n=document.createElementNS(ns,tag);for(cons
 export function mountPalace({page,screen,pages,go}){
  const panel=panelFor(screen,'palace-panel');let placing=false;
  const getRooms=()=>rows(readTravelProject(),'aura-palace-rooms').filter(r=>r.Section===page.id),getPins=room=>rows(readTravelProject(),'aura-palace-pins').filter(p=>p.Room===room.id);
- function home(){header(panel,page.id===PALACE?'Mind Palaces':page.name,()=>go(page.id===PALACE?'command:back':PALACE));
+ function home(){header(panel,page.id===PALACE?'Mind Palaces':page.name,()=>go('command:back'));
   hero(panel,'Give information a place',page.id===PALACE?'Rooms, objects and familiar places become anchors for your memories and ideas.':'Tap a room to place or revisit information. Plans are 2D and saved locally.',pageIcon(page.id)||'⌂');
   if(page.id===PALACE){grid(panel,[...pages.values()].filter(p=>p.parent===PALACE).map(p=>()=>tile(p.name,`${rows(readTravelProject(),'aura-palace-rooms').filter(r=>r.Section===p.id).length} spaces`,pageIcon(p.id),()=>go(p.id))),6);return;}
   const rooms=getRooms();grid(panel,[()=>tile('New room or space','Name it and set its dimensions','+',()=>editRoom()),...rooms.map(r=>()=>tile(r.Title,`${r.Width} × ${r.Length} m · ${getPins(r).length} pins`,'⌂',()=>room(r)))],6);

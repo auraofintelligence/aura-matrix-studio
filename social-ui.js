@@ -1,10 +1,10 @@
-import {mountDating} from './dating-ui.js?v=0.4.15';
-import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.15';
-import {readTravelProject,writeTravelProject,dateValid} from './travel-data.js?v=0.4.15';
-import {parseCSV,validateProject} from './core.js?v=0.4.15';
-import {saveTiming} from './timing-data.js?v=0.4.15';
-import {LIFE_SECTIONS,SOCIAL_HOME} from './life-data.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.15';
+import {mountDating} from './dating-ui.js?v=0.4.17';
+import {make,button,rows,saveRow,removeRow,download,panelFor,header,hero,tile,grid,editor} from './local-tools.js?v=0.4.17';
+import {readTravelProject,writeTravelProject,dateValid} from './travel-data.js?v=0.4.17';
+import {parseCSV,validateProject} from './core.js?v=0.4.17';
+import {saveTiming} from './timing-data.js?v=0.4.17';
+import {LIFE_SECTIONS,SOCIAL_HOME} from './life-data.js?v=0.4.17';
+import {pageIcon} from './page-icons.js?v=0.4.17';
 export const SOCIAL_ACCESS='1D740128-8621-43EE-8D85-E81F0241A569',SOCIAL_IMPORT='7E5774BE-BCC6-4684-8A88-0F8D2A26B1F0',SOCIAL_ANALYSE='C49B4FEE-90BF-499A-AE2C-CDA004D27C57',DATING='1FA4EBEC-3D1A-482A-B3B2-35A1172BECB6',FRIENDS='76172966-3F90-4DB8-A914-4E63AE19A501';
 export const FAMILY_BELONGING='AE87688C-93C9-4AB1-A72D-A447ED56C5E0';
 const DATING_IMPORT='B8FE6EA7-4EC0-4425-905D-E4650DD935E8';
@@ -14,7 +14,7 @@ export function importSocial(project,name,text){const csv=parseCSV(text);if(!csv
 export function socialSummary(project){return project.tables.filter(t=>t.recommendation==='social-import').map(t=>({id:t.id,name:t.name,rows:t.rows.length,columns:t.columns.length,filled:t.rows.reduce((sum,r)=>sum+r.values.filter(v=>v.trim()).length,0),cells:t.rows.length*t.columns.length}));}
 export function saveConnection(project,kind,fields,id){if(!['dating','friends'].includes(kind))throw Error('Unknown connection type.');if(!fields.Title?.trim())throw Error('Enter a name or group.');if(!dateValid(fields['Last catch-up']||'')||!dateValid(fields['Next catch-up']||''))throw Error('Enter a valid catch-up date.');return saveRow(project,'aura-'+kind,kind==='dating'?'Dating and relationships':'Friendships and circles',fields,id,'people');}
 export function mountSocial({page,screen,pages,go}){
- const panel=panelFor(screen,'social-panel'),kind=[DATING,DATING_IMPORT].includes(page.id)?'dating':'friends',back=()=>go(page.id===SOCIAL_HOME?'command:back':[DATING,DATING_IMPORT,FRIENDS].includes(page.id)?FAMILY_BELONGING:SOCIAL_HOME);
+ const panel=panelFor(screen,'social-panel'),kind=[DATING,DATING_IMPORT].includes(page.id)?'dating':'friends',back=()=>go('command:back');
  function home(){header(panel,page.id===SOCIAL_HOME?'Social Web':page.id===SOCIAL_ACCESS?'Social media':page.id===SOCIAL_IMPORT?'Import social data':page.id===SOCIAL_ANALYSE?'Explore your social data':page.name,back);
   if([DATING,DATING_IMPORT,FRIENDS].includes(page.id)){mountDating({panel,back,people:connectionList,catchup,kind});return;}
   if(page.id===SOCIAL_HOME){hero(panel,'Your people & possibilities','Keep connections, wishes, memories and plans together.','♡');const actions=make('div','tool-tabs');for(const [label,id]of [['Profiles',SOCIAL_ACCESS],['Import',SOCIAL_IMPORT],['Explore',SOCIAL_ANALYSE]])actions.append(button(label,()=>go(id)));panel.append(actions);
@@ -22,7 +22,7 @@ export function mountSocial({page,screen,pages,go}){
   if(page.id===SOCIAL_ANALYSE){analyse();return;}
   if(page.id===SOCIAL_IMPORT||page.parent===SOCIAL_IMPORT){importView();return;}
   if(page.id===SOCIAL_ACCESS){hero(panel,'Your profiles, in one place','Keep profile links and interests together. No platform account is connected.',pageIcon(page.id)||'◎');const platforms=[...pages.values()].filter(p=>p.parent===SOCIAL_ACCESS&&p.id!==DATING);grid(panel,platforms.map(p=>()=>tile(p.name,rows(readTravelProject(),'aura-social-profiles').some(r=>r.id===p.id)?'Profile saved':'Add a profile or plan',pageIcon(p.id)||'◎',()=>go(p.id))),8);return;}
-  if(page.id==='17ACD7EE-5D4E-4DC8-812F-9B0CE2916511'){editor(panel,{title:'Plan a service connection',back:()=>go(SOCIAL_ACCESS),values:rows(readTravelProject(),'aura-preferences').find(r=>r.id===page.id)||{},copy:'Keep a request ready for development. This does not submit it or connect an account.',pages:[['Service',[['Title','Service or platform name'],['URL','Documentation or service URL','url'],['Data','Data you would like to bring in','textarea'],['Purpose','What would it help you do?','textarea']]]],save:v=>{if(!v.Title?.trim())throw Error('Name the service.');writeTravelProject(p=>saveRow(p,'aura-preferences','System preferences',v,page.id));}});return;}
+  if(page.id==='17ACD7EE-5D4E-4DC8-812F-9B0CE2916511'){editor(panel,{title:'Plan a service connection',back:()=>go('command:back'),values:rows(readTravelProject(),'aura-preferences').find(r=>r.id===page.id)||{},copy:'Keep a request ready for development. This does not submit it or connect an account.',pages:[['Service',[['Title','Service or platform name'],['URL','Documentation or service URL','url'],['Data','Data you would like to bring in','textarea'],['Purpose','What would it help you do?','textarea']]]],save:v=>{if(!v.Title?.trim())throw Error('Name the service.');writeTravelProject(p=>saveRow(p,'aura-preferences','System preferences',v,page.id));}});return;}
   profile();
  }
  function profile(){const existing=rows(readTravelProject(),'aura-social-profiles').find(r=>r.id===page.id)||{};hero(panel,page.name,existing.Title||'Bring the useful parts of this service into Aura.',pageIcon(page.id)||'◎');grid(panel,[()=>tile('Profile & purpose',existing.Title||'Add a profile and what matters to you','◎',configure),()=>tile('Import an export','Review a CSV before adding it to Aura','↓',()=>go(SOCIAL_IMPORT)),()=>tile('Explore your data','See fields, counts and completeness','▤',()=>go(SOCIAL_ANALYSE))],4);if(existing.URL&&/^https?:\/\//i.test(existing.URL)){const link=make('a','tool-external','Open saved profile ↗');link.href=existing.URL;link.target='_blank';link.rel='noopener';panel.append(link);}function configure(){editor(panel,{title:page.name,back:home,values:existing,copy:'Save links and intentions here. Aura does not request passwords or log into this service.',pages:[['Profile',[['Title','Display name or account'],['URL','Public profile or service URL','url'],['Purpose','What do you use it for?','textarea']]],['Interests',[['Topics','Topics, groups and interests','textarea'],['Keep','What would you like to bring into Aura?','textarea'],['Review date','Next review date','date']]]],save:v=>{if(!v.Title?.trim())throw Error('Enter a display name or account.');if(v.URL&&!/^https?:\/\//i.test(v.URL))throw Error('Use a full http:// or https:// URL.');writeTravelProject(p=>saveRow(p,'aura-social-profiles','Social media profiles',{Platform:page.name,...v},page.id,'people'));}});}}

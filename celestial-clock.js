@@ -1,6 +1,6 @@
 import {framePoint} from './frame-display.js?v=0.4.15';
-import {timingRows,timingDate,TIMING_GROUPS} from './timing-data.js?v=0.4.15';
-import {travelEntries,readTravelProject,writeTravelProject,saveTrip,dateValid,TIMELINES} from './travel-data.js?v=0.4.15';
+import {timingRows,timingDate,TIMING_GROUPS} from './timing-data.js?v=0.4.17';
+import {travelEntries,readTravelProject,writeTravelProject,saveTrip,dateValid,TIMELINES} from './travel-data.js?v=0.4.17';
 import {PLANETS,solarSystemState,orbitTracks,solarSystemSvg,zoomSolarView} from './solar-system.js?v=0.4.15';
 export const ZODIAC=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 export function clockState(A,date,hemisphere='south'){
