@@ -69,6 +69,7 @@ export function validateLab(raw){
   for(const r of raw.records){
     if(typeof r.id!=='string'||ids.has(r.id)||typeof r.text!=='string'||typeof r.title!=='string'||!r.source||typeof r.source!=='object'||!triple(r.position,1)||!triple(r.direction,1)||!Number.isFinite(r.charge)||Math.abs(r.charge)>1||!Number.isFinite(r.frequency)||r.frequency<0||r.frequency>2||!/^#[0-9a-f]{6}$/i.test(r.colour)||typeof r.pinned!=='boolean'||!Array.isArray(r.values)||r.values.length>768||!r.values.every(Number.isFinite)||!Array.isArray(r.anchors))throw Error('Invalid memory record in backup.');
     for(const a of r.anchors)if(!a||!((['facet','edge-u','edge-v','vertex','stack'].includes(a.kind)&&Number.isInteger(a.shell)&&a.shell>=0&&a.shell<7&&Number.isInteger(a.index)&&a.index>=1&&a.index<=288&&['I','O'].includes(a.side)&&(a.kind!=='stack'||Number.isInteger(a.layer)&&a.layer>=1&&a.layer<=16777215))||(a.kind==='geosphere'&&Number.isInteger(a.index)&&a.index>=1&&a.index<=80&&['I','O'].includes(a.side))))throw Error('Invalid geometry address.');
+    for(const a of r.anchors)if(a.kind==='geosphere'&&(a.lat!==undefined||a.lon!==undefined||a.body!==undefined)&&!(a.body==='Earth'&&Number.isFinite(a.lat)&&Math.abs(a.lat)<=90&&Number.isFinite(a.lon)&&Math.abs(a.lon)<=180))throw Error('Invalid geographic coordinates.');
     ids.add(r.id);
   }
   for(const e of raw.events)if(!e||typeof e.at!=='string'||typeof e.kind!=='string'||(e.recordId!==undefined&&typeof e.recordId!=='string'))throw Error('Invalid activity log.');

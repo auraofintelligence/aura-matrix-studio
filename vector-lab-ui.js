@@ -1,10 +1,11 @@
 import {make,button,download} from './local-tools.js?v=0.4.17';
-import {emptyLab,parseImport,mergeImport,record,exampleRecords,validateLab,nearest,ALGORITHMS,COLOURS} from './vector-lab-data.js?v=0.4.20';
-import {VectorLabScene} from './vector-lab-scene.js?v=0.4.20';
-import {openLabStore} from './vector-lab-store.js?v=0.4.20';
+import {emptyLab,parseImport,mergeImport,record,exampleRecords,validateLab,nearest,ALGORITHMS,COLOURS} from './vector-lab-data.js?v=0.4.21';
+import {VectorLabScene} from './vector-lab-scene.js?v=0.4.21';
+import {openLabStore} from './vector-lab-store.js?v=0.4.21';
 import {SHELLS} from './core.js?v=0.4.17';
 export const VECTOR_LAB='aura-vector-space';
-const addressLabel=a=>a.kind==='geosphere'?`Geosphere ${a.side}${a.index}`:`${SHELLS[a.shell][0]} ${a.side}${a.index}${a.kind==='facet'?'':' · '+a.kind}${a.kind==='stack'?' '+a.layer:''}`;
+const coordinateLabel=a=>`${Math.abs(a.lat).toFixed(2)}°${a.lat<0?'S':'N'} · ${Math.abs(a.lon).toFixed(2)}°${a.lon<0?'W':'E'}`;
+const addressLabel=a=>a.kind==='geosphere'&&Number.isFinite(a.lat)?'Earth '+coordinateLabel(a):a.kind==='geosphere'?`Geosphere ${a.side}${a.index}`:`${SHELLS[a.shell][0]} ${a.side}${a.index}${a.kind==='facet'?'':' · '+a.kind}${a.kind==='stack'?' '+a.layer:''}`;
 export function mountProgrammerTools({page,screen,go}){
   const targets=page.controls.filter(c=>c.controlTypeID==='Button').sort((a,b)=>+a.x-+b.x);
   for(const c of targets)screen.querySelector(`[data-source-control="${c.controlID}"]`)?.setAttribute('hidden','');
@@ -22,7 +23,7 @@ export function mountVectorLab({screen,go}){
   const head=make('header','vl-header'),back=button('Back',()=>go('command:back'),'ethereal-nav'),title=make('h1','','Vector Space'),label=make('span','vl-badge','Experimental');head.append(back,title,label);panel.append(head);
   const stage=make('div','vl-stage'),canvas=make('canvas');canvas.setAttribute('aria-label','Shared torus, geosphere and memory volume. Drag to rotate; pinch to zoom.');stage.append(canvas);
   const toolbar=make('div','vl-scene-tools'),side=button('Outside',()=>{if(!scene)return;scene.inside=!scene.inside;side.textContent=scene.inside?'Inside':'Outside';scene.render();}),mode=make('select');mode.setAttribute('aria-label','Pick in the volume');
-  for(const [v,t]of [['memories','Memories'],...SHELLS.map(([n],i)=>[String(i),n+' facets']),['geosphere','Geosphere']]){const o=make('option','',t);o.value=v;mode.append(o);}mode.onchange=()=>{if(scene)scene.target=mode.value;};
+  for(const [v,t]of [['memories','Memories'],...SHELLS.map(([n],i)=>[String(i),n+' facets']),['geosphere','Earth map']]){const o=make('option','',t);o.value=v;mode.append(o);}mode.onchange=()=>{if(scene){scene.target=mode.value;scene.render();}drawScene();};
   const rays=button('Rays',()=>{if(!scene)return;scene.rays=!scene.rays;rays.setAttribute('aria-pressed',String(scene.rays));drawScene();});rays.setAttribute('aria-pressed','false');
   const play=button('Pulse',()=>{if(!scene)return;scene.playing=!scene.playing;play.setAttribute('aria-pressed',String(scene.playing));scene.render();});play.setAttribute('aria-pressed','false');
   const fit=button('Fit',()=>{if(scene){scene.zoom=1;scene.theta=.7;scene.phi=.35;scene.render();}});toolbar.append(side,mode,rays,play,fit);stage.append(toolbar);
@@ -33,7 +34,7 @@ export function mountVectorLab({screen,go}){
   function event(kind,details={}){state.events.push({at:new Date().toISOString(),kind,...details});}
   function persist(){if(!store){report('In this tab only. Export the lab to keep your work.');return;}const snapshot=structuredClone(state),priorMessage=status.textContent;saving=saving.then(()=>store.write(snapshot)).then(()=>{if(!disposed && status.textContent===priorMessage)report('Saved in this browser · separate from your Aura records.');}).catch(()=>{if(!disposed)report('Storage could not be saved. Export the lab now to keep your work.');});}
   function current(){return state.records.find(r=>r.id===selectedId);}
-  function drawScene(){const r=current();scene?.update(state.records,r,nearest(state.records,r));overlay.textContent=address?addressLabel(address):r?r.title:state.records.length?`${state.records.length} memories · ${state.records.some(r=>r.values.length)?'word-pattern space':'awaiting analysis'}`:'Seven tori · geosphere · empty memory volume';hint.textContent=state.records.length>600?'Showing first 600 points + selection · find every record in Inspect':'Drag to orbit · pinch to zoom · tap to select';}
+  function drawScene(){const r=current();scene?.update(state.records,r,nearest(state.records,r));overlay.textContent=address?addressLabel(address):r?r.title:state.records.length?`${state.records.length} memories · ${state.records.some(r=>r.values.length)?'word-pattern space':'awaiting analysis'}`:'Seven tori · geosphere · empty memory volume';hint.textContent=mode.value==='geosphere'?'Earth · Natural Earth land map · tap for latitude / longitude':state.records.length>600?'Showing first 600 points + selection · find every record in Inspect':'Drag to orbit · pinch to zoom · tap to select';}
   function select(id){selectedId=id;address=null;if(scene)scene.address=null;event('recall',{recordId:id});persist();tab='inspect';drawPanel();drawScene();}
   function stop(){worker?.terminate();worker=null;}
   function changed(){stop();state.projection=null;state.records.forEach(r=>r.values=[]);event('data-changed');persist();drawPanel();drawScene();}
@@ -52,7 +53,7 @@ export function mountVectorLab({screen,go}){
       body.append(make('p','vl-copy','Local mathematical word patterns, not a neural language model. Cosine scores measure shared vocabulary. PCA places the vectors in this volume.'));
       const algorithm=selectField(body,'Algorithm',Object.entries(ALGORITHMS),state.algorithm);algorithm.disabled=!!worker;algorithm.onchange=()=>{state.algorithm=algorithm.value;persist();};
       const row=make('div','vl-row'),run=button(worker?'Analysing…':'Analyse '+state.records.length+' memories',()=>{
-        if(!state.records.length)return;stop();worker=new Worker(new URL('./vector-lab-worker.js?v=0.4.20',import.meta.url),{type:'module'});const job=worker;report('Calculating vectors and positions on this device…');drawPanel();
+        if(!state.records.length)return;stop();worker=new Worker(new URL('./vector-lab-worker.js?v=0.4.21',import.meta.url),{type:'module'});const job=worker;report('Calculating vectors and positions on this device…');drawPanel();
         job.onmessage=({data})=>{if(worker!==job||disposed)return;stop();if(data.error){report(data.error);drawPanel();return;}state.records=data.result.records;state.projection=data.result.projection;state.runs.push(data.result.run);event('analysis',{runId:data.result.run.id});persist();drawPanel();drawScene();};
         job.onerror=()=>{stop();report('Analysis could not run. Your input is unchanged.');drawPanel();};job.postMessage({records:state.records,algorithm:state.algorithm});
       },'vl-primary');run.disabled=!!worker||!state.records.length;row.append(run);if(worker)row.append(button('Cancel',()=>{stop();drawPanel();report('Analysis cancelled.');}));body.append(row);
@@ -89,6 +90,7 @@ export function mountVectorLab({screen,go}){
     }
   }
   try{scene=new VectorLabScene(canvas,pick=>{if(pick.record)select(pick.record);else{address=pick.address;scene.address=address;tab='inspect';drawPanel();drawScene();}});}catch(e){canvas.hidden=true;stage.append(make('p','vl-no-webgl','3D is unavailable on this device. Import, analysis and the searchable inspector still work.'));for(const b of [side,mode,rays,play,fit])b.disabled=true;}
+  canvas.addEventListener('map-error',()=>report('Earth map could not load. The coordinate grid remains available.'));
   drawPanel();
   (async()=>{try{store=await openLabStore();const saved=await store.read();if(disposed){store.close();return;}if(saved)state=validateLab(saved);report('Separate lab · saved on this browser.');}catch(e){store?.close();store=null;report('Lab storage unavailable or unreadable. Use Export to keep this session.');}ready=true;if(!disposed){drawPanel();drawScene();}})();
   return {resize(){scene?.resize();},dispose(){disposed=true;stop();scene?.dispose();saving.finally(()=>store?.close());panel.remove();}};

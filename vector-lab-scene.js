@@ -1,6 +1,8 @@
 import {shellPoint,PRESETS,SHELLS} from './core.js?v=0.4.17';
 import {framePoint} from './frame-display.js?v=0.4.15';
 import {targetPoint} from './spatial.js?v=0.4.17';
+export const geoPoint=(lat,lon,radius=4.35)=>{const a=lat*Math.PI/180,b=lon*Math.PI/180;return [radius*Math.cos(a)*Math.cos(b),radius*Math.sin(a),-radius*Math.cos(a)*Math.sin(b)];};
+export const geoCoordinates=p=>{const r=Math.hypot(...p);return {lat:Math.asin(Math.max(-1,Math.min(1,p[1]/r)))*180/Math.PI,lon:Math.atan2(-p[2],p[0])*180/Math.PI};};
 // Curve each original facet onto the sphere without renumbering saved addresses.
 export function roundGeosphere(base,radius,steps=8){
   const positions=[],edges=[],centres=[],unit=p=>{const n=Math.hypot(...p);return p.map(x=>x*radius/n);};
@@ -36,8 +38,18 @@ export class VectorLabScene{
     }
     const baseSphere=new T.IcosahedronGeometry(4.35,1);this.globe=roundGeosphere(baseSphere.attributes.position.array,4.35);baseSphere.dispose();
     const globeGeometry=new T.BufferGeometry();globeGeometry.setAttribute('position',new T.Float32BufferAttribute(this.globe.positions,3));globeGeometry.computeVertexNormals();
-    this.sphere=new T.Mesh(globeGeometry,new T.MeshBasicMaterial({color:'#c9dbeb',side:T.DoubleSide,transparent:true,opacity:.035,depthWrite:false}));this.scene.add(this.sphere);
-    this.lines(this.globe.edges,'#9eb4cd',.22,this.scene);
+    const uv=[];for(let i=0;i<this.globe.positions.length;i+=9){const tri=[];for(let j=0;j<9;j+=3){const {lat,lon}=geoCoordinates(this.globe.positions.slice(i+j,i+j+3));tri.push([(lon+180)/360,(lat+90)/180]);}if(Math.max(...tri.map(p=>p[0]))-Math.min(...tri.map(p=>p[0]))>.5)for(const p of tri)if(p[0]<.5)p[0]++;uv.push(...tri.flat());}
+    globeGeometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
+    this.sphere=new T.Mesh(globeGeometry,new T.MeshBasicMaterial({color:'#567f9e',side:T.DoubleSide,transparent:true,opacity:.08,depthWrite:false}));this.scene.add(this.sphere);
+    const grid=[];for(let lat=-75;lat<=75;lat+=15)for(let lon=-180;lon<180;lon+=3)grid.push(geoPoint(lat,lon,4.355),geoPoint(lat,lon+3,4.355));
+    for(let lon=-180;lon<180;lon+=30)for(let lat=-90;lat<90;lat+=3)grid.push(geoPoint(lat,lon,4.355),geoPoint(lat+3,lon,4.355));
+    this.graticule=this.lines(grid,'#9ec5db',.24,this.scene);
+    this.mapReady=false;this.mapFailed=false;
+    fetch('assets/earth/ne_110m_land.geojson?v=0.4.21').then(r=>{if(!r.ok)throw Error('Map unavailable');return r.json();}).then(data=>{
+      if(this.disposed)return;const image=document.createElement('canvas');image.width=2048;image.height=1024;const ctx=image.getContext('2d');ctx.fillStyle='#163850';ctx.fillRect(0,0,2048,1024);ctx.fillStyle='#739b88';
+      for(const feature of data.features){const polygons=feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.coordinates;for(const polygon of polygons){ctx.beginPath();for(const ring of polygon){ring.forEach(([lon,lat],i)=>{const x=(lon+180)/360*2048,y=(90-lat)/180*1024;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.closePath();}ctx.fill('evenodd');}}
+      this.mapTexture=new T.CanvasTexture(image);this.mapTexture.wrapS=T.RepeatWrapping;this.sphere.material.map=this.mapTexture;this.sphere.material.color.set('#ffffff');this.sphere.material.needsUpdate=true;this.mapReady=true;this.render();
+    }).catch(()=>{this.mapFailed=true;this.canvas.dispatchEvent(new CustomEvent('map-error'));});
     this.scene.add(new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(9,9,9)),new T.LineBasicMaterial({color:'#76949c',transparent:true,opacity:.14})));
     this.raycaster=new T.Raycaster();this.raycaster.params.Points.threshold=.19;
     this.events=new AbortController();const listen=(n,fn)=>canvas.addEventListener(n,fn,{signal:this.events.signal});this.pointers=new Map();
@@ -51,7 +63,7 @@ export class VectorLabScene{
   }
   pinch(){const [a,b]=[...this.pointers.values()];return Math.hypot(a.x-b.x,a.y-b.y);}
   lines(points,colour,opacity=.5,parent=this.group){const T=this.T,g=new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p))),o=new T.LineSegments(g,new T.LineBasicMaterial({color:colour,transparent:true,opacity,depthWrite:false}));parent.add(o);return o;}
-  anchorPoint(a){if(a.kind==='geosphere')return this.globe.centres[a.index-1];return targetPoint({...a,face:a.side},PRESETS.nested);}
+  anchorPoint(a){if(a.kind==='geosphere')return Number.isFinite(a.lat)&&Number.isFinite(a.lon)?geoPoint(a.lat,a.lon):this.globe.centres[a.index-1];return targetPoint({...a,face:a.side},PRESETS.nested);}
   clearGroup(){this.group.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});this.group.clear();}
   update(records,selected,related=[]){
     this.records=records;this.selected=selected;this.clearGroup();const T=this.T;
@@ -71,6 +83,7 @@ export class VectorLabScene{
   resize(){const w=this.canvas.clientWidth,h=this.canvas.clientHeight;if(!w||!h)return;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();this.render();}
   render(){
     if(this.disposed)return;cancelAnimationFrame(this.frame);const radius=this.inside?1.3/this.zoom:15/this.zoom;
+    const mapView=this.target==='geosphere';this.sphere.material.opacity=mapView?1:.10;this.sphere.material.depthWrite=mapView;this.graticule.material.opacity=mapView?.48:.24;
     this.camera.position.set(radius*Math.sin(this.theta)*Math.cos(this.phi),radius*Math.sin(this.phi),radius*Math.cos(this.theta)*Math.cos(this.phi));
     if(this.inside){const d=this.camera.position.clone().normalize();this.camera.lookAt(this.camera.position.clone().add(d));}else this.camera.lookAt(0,0,0);
     if(this.marker){const hz=this.selected?.frequency||0,t=performance.now()/1000,pulse=this.playing&&hz&&!matchMedia('(prefers-reduced-motion: reduce)').matches?1+.35*Math.sin(t*2*Math.PI*hz):1;this.marker.scale.setScalar(pulse);}
@@ -79,7 +92,7 @@ export class VectorLabScene{
   }
   pick(e){const T=this.T,p=framePoint(this.canvas,e);this.raycaster.setFromCamera(new T.Vector2(p.u*2-1,1-p.v*2),this.camera);
     if(this.target==='memories'){const hit=this.points&&this.raycaster.intersectObject(this.points)[0];if(hit)this.onPick({record:this.visible[hit.index].id});}
-    else{const globe=this.target==='geosphere',mesh=globe?this.sphere:this.shells[Number(this.target)],hit=this.raycaster.intersectObject(mesh)[0];if(hit)this.onPick({address:globe?{kind:'geosphere',index:Math.floor(hit.faceIndex/this.globe.trianglesPerFacet)+1,side:this.inside?'I':'O'}:{kind:'facet',shell:Number(this.target),index:Math.floor(hit.faceIndex/2)+1,side:this.inside?'I':'O'}});}
+    else{const globe=this.target==='geosphere',mesh=globe?this.sphere:this.shells[Number(this.target)],hit=this.raycaster.intersectObject(mesh)[0];if(hit)this.onPick({address:globe?{kind:'geosphere',index:Math.floor(hit.faceIndex/this.globe.trianglesPerFacet)+1,side:this.inside?'I':'O',body:'Earth',...geoCoordinates(hit.point.toArray())}:{kind:'facet',shell:Number(this.target),index:Math.floor(hit.faceIndex/2)+1,side:this.inside?'I':'O'}});}
   }
-  dispose(){this.disposed=true;cancelAnimationFrame(this.frame);this.events.abort();this.observer.disconnect();this.scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});this.renderer.dispose();this.renderer.forceContextLoss();}
+  dispose(){this.disposed=true;cancelAnimationFrame(this.frame);this.events.abort();this.observer.disconnect();this.scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});this.mapTexture?.dispose();this.renderer.dispose();this.renderer.forceContextLoss();}
 }
