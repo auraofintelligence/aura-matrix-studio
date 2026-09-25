@@ -1,5 +1,7 @@
 # Earth and celestial research direction
 
+For the broader agent architecture, development cycle and security model, see the [agent and data development plan](DEVELOPMENT-PLAN.md). It includes cross-chakra collaboration, data location, encryption, permissions and optional zero-knowledge proofs.
+
 Luke clarified on 10 September 2026 that the current build should stay focused on Aura. Later in the same session he brought market maps, travel planning and a Crown celestial clock into the current scope. Satellite pattern research remains future scope.
 
 The current market map uses filtered Alliance and Affinity snapshots from Aura Horn Torus. Other map datasets, imported geographic data and placed pins remain later additions. An optional Google Maps provider could supplement a map that works without a key. Provider billing, quotas and website restrictions should be checked at implementation time.

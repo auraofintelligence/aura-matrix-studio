@@ -195,6 +195,8 @@ The public repository does not contain your personal project data. GitHub Pages 
 
 ## What remains to build
 
+The [agent and data development plan](DEVELOPMENT-PLAN.md) sets out the design cycle for small agents working within and across chakras, including data location, encryption, adaptable permissions, optional zero-knowledge proofs and staged Travel Oracle prototypes. It describes proposed work, not capabilities already implemented.
+
 Calendar synchronisation, dependable scheduled notifications, an external agent runner, learned associations, richer avatar features, desktop packaging and a dedicated local data store remain future work. Existing forms collect their relevant data but do not yet provide all those services.
 
 Earth, space-weather and satellite pattern research is a longer-term direction. No satellite feed, forecasting system, predictive astrology service, hardware controller or external automation is enabled. The fixed 12 x 24 address model remains the foundation across implementations.
