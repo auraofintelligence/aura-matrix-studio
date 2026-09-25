@@ -1,6 +1,23 @@
 import {shellPoint,PRESETS,SHELLS} from './core.js?v=0.4.17';
 import {framePoint} from './frame-display.js?v=0.4.15';
 import {targetPoint} from './spatial.js?v=0.4.17';
+// Curve each original facet onto the sphere without renumbering saved addresses.
+export function roundGeosphere(base,radius,steps=8){
+  const positions=[],edges=[],centres=[],unit=p=>{const n=Math.hypot(...p);return p.map(x=>x*radius/n);};
+  for(let f=0;f<base.length;f+=9){
+    const a=Array.from(base.slice(f,f+3)),b=Array.from(base.slice(f+3,f+6)),c=Array.from(base.slice(f+6,f+9));
+    const point=(i,j)=>unit(a.map((x,k)=>x+(b[k]-x)*i/steps+(c[k]-x)*j/steps));
+    centres.push(unit(a.map((x,k)=>(x+b[k]+c[k])/3)));
+    for(let i=0;i<steps;i++)for(let j=0;j<steps-i;j++){
+      positions.push(...point(i,j),...point(i+1,j),...point(i,j+1));
+      if(i+j<steps-1)positions.push(...point(i+1,j),...point(i+1,j+1),...point(i,j+1));
+    }
+    for(const [p,q]of [[a,b],[b,c],[c,a]])for(let i=0;i<steps*2;i++){
+      const at=t=>unit(p.map((x,k)=>x+(q[k]-x)*t));edges.push(at(i/(steps*2)),at((i+1)/(steps*2)));
+    }
+  }
+  return {positions,edges,centres,trianglesPerFacet:steps*steps};
+}
 export class VectorLabScene{
   constructor(canvas,onPick){
     const T=globalThis.THREE;this.T=T;this.canvas=canvas;this.onPick=onPick;this.theta=.7;this.phi=.35;this.zoom=1;this.inside=false;this.target='memories';this.selected=null;this.records=[];this.rays=false;this.playing=false;this.disposed=false;
@@ -17,8 +34,10 @@ export class VectorLabScene{
       const mesh=new T.Mesh(geometry,new T.MeshBasicMaterial({color:SHELLS[s][1],transparent:true,opacity:.025,side:T.DoubleSide,depthWrite:false}));mesh.userData.shell=s;this.scene.add(mesh);this.shells.push(mesh);
       this.lines(edges,SHELLS[s][1],.20,this.scene);
     }
-    this.sphere=new T.Mesh(new T.IcosahedronGeometry(4.35,1),new T.MeshBasicMaterial({color:'#c9dbeb',side:T.DoubleSide,transparent:true,opacity:.018,depthWrite:false}));this.scene.add(this.sphere);
-    this.scene.add(new T.LineSegments(new T.WireframeGeometry(this.sphere.geometry),new T.LineBasicMaterial({color:'#9eb4cd',transparent:true,opacity:.18})));
+    const baseSphere=new T.IcosahedronGeometry(4.35,1);this.globe=roundGeosphere(baseSphere.attributes.position.array,4.35);baseSphere.dispose();
+    const globeGeometry=new T.BufferGeometry();globeGeometry.setAttribute('position',new T.Float32BufferAttribute(this.globe.positions,3));globeGeometry.computeVertexNormals();
+    this.sphere=new T.Mesh(globeGeometry,new T.MeshBasicMaterial({color:'#c9dbeb',side:T.DoubleSide,transparent:true,opacity:.035,depthWrite:false}));this.scene.add(this.sphere);
+    this.lines(this.globe.edges,'#9eb4cd',.22,this.scene);
     this.scene.add(new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(9,9,9)),new T.LineBasicMaterial({color:'#76949c',transparent:true,opacity:.14})));
     this.raycaster=new T.Raycaster();this.raycaster.params.Points.threshold=.19;
     this.events=new AbortController();const listen=(n,fn)=>canvas.addEventListener(n,fn,{signal:this.events.signal});this.pointers=new Map();
@@ -32,7 +51,7 @@ export class VectorLabScene{
   }
   pinch(){const [a,b]=[...this.pointers.values()];return Math.hypot(a.x-b.x,a.y-b.y);}
   lines(points,colour,opacity=.5,parent=this.group){const T=this.T,g=new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p))),o=new T.LineSegments(g,new T.LineBasicMaterial({color:colour,transparent:true,opacity,depthWrite:false}));parent.add(o);return o;}
-  anchorPoint(a){if(a.kind==='geosphere'){const p=this.sphere.geometry.attributes.position,i=(a.index-1)*3;return [0,1,2].map(k=>(p.array[i*3+k]+p.array[(i+1)*3+k]+p.array[(i+2)*3+k])/3);}return targetPoint({...a,face:a.side},PRESETS.nested);}
+  anchorPoint(a){if(a.kind==='geosphere')return this.globe.centres[a.index-1];return targetPoint({...a,face:a.side},PRESETS.nested);}
   clearGroup(){this.group.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});this.group.clear();}
   update(records,selected,related=[]){
     this.records=records;this.selected=selected;this.clearGroup();const T=this.T;
@@ -60,7 +79,7 @@ export class VectorLabScene{
   }
   pick(e){const T=this.T,p=framePoint(this.canvas,e);this.raycaster.setFromCamera(new T.Vector2(p.u*2-1,1-p.v*2),this.camera);
     if(this.target==='memories'){const hit=this.points&&this.raycaster.intersectObject(this.points)[0];if(hit)this.onPick({record:this.visible[hit.index].id});}
-    else{const globe=this.target==='geosphere',mesh=globe?this.sphere:this.shells[Number(this.target)],hit=this.raycaster.intersectObject(mesh)[0];if(hit)this.onPick({address:globe?{kind:'geosphere',index:hit.faceIndex+1,side:this.inside?'I':'O'}:{kind:'facet',shell:Number(this.target),index:Math.floor(hit.faceIndex/2)+1,side:this.inside?'I':'O'}});}
+    else{const globe=this.target==='geosphere',mesh=globe?this.sphere:this.shells[Number(this.target)],hit=this.raycaster.intersectObject(mesh)[0];if(hit)this.onPick({address:globe?{kind:'geosphere',index:Math.floor(hit.faceIndex/this.globe.trianglesPerFacet)+1,side:this.inside?'I':'O'}:{kind:'facet',shell:Number(this.target),index:Math.floor(hit.faceIndex/2)+1,side:this.inside?'I':'O'}});}
   }
   dispose(){this.disposed=true;cancelAnimationFrame(this.frame);this.events.abort();this.observer.disconnect();this.scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});this.renderer.dispose();this.renderer.forceContextLoss();}
 }
