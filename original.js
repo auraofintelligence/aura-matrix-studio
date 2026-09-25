@@ -1,5 +1,6 @@
 import {visitHistory} from './visit-history.js?v=0.4.17';
-import {addExtraPages} from './extra-pages.js?v=0.4.17';
+import {addExtraPages} from './extra-pages.js?v=0.4.19';
+import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.19';
 import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.17';
 import {mountMerch,MERCH} from './merch-ui.js?v=0.4.17';
 import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.15';
@@ -157,6 +158,8 @@ export async function startOriginal(){
     if([HOME,PROGRAMMER].includes(current.id))menuCamera=mountMenuCamera($('original-screen'));
     if(current.id===DATA_TRANSFER)live=mountDataTransfer({screen:$('original-screen'),go});
     if(current.id===MERCH)live=mountMerch({screen:$('original-screen'),go});
+    if(current.id===PROGRAMMER)live=mountProgrammerTools({page:current,screen:$('original-screen'),go});
+    if(current.id===VECTOR_LAB)live=mountVectorLab({screen:$('original-screen'),go});
     fit();
   }
   function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}

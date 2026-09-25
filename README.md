@@ -6,6 +6,16 @@ Aura brings the scattered parts of everyday life into one personal interface: fa
 
 Aura Matrix Studio is the current working web implementation of Luke Nathan Hayes' Aura of Intelligence. It combines the original phone app's layouts and icons with a programmable, fixed 12 x 24 matrix. The matrix is one part of the wider Aura interface. This is a developing public-source application; some original screens still contain design placeholders.
 
+## Experimental Vector Space
+
+[Open Vector Space](https://auraofintelligence.github.io/aura-matrix-studio/?page=aura-vector-space), or use the compact tools at the bottom of Enter the Matrix. This separate experimental page places memory vectors in the same scene as seven nested horn tori and an addressable geosphere. Drag to orbit, pinch to zoom, select memories, and link them to geometry. Back now sits in the bottom navigation row on Enter the Matrix, clear of its text.
+
+Import text, Markdown, CSV, simple message JSON or ChatGPT-style conversation JSON, or load explicitly labelled examples. Choose word TF-IDF or words plus pairs; a worker calculates the numerical vectors and a repeatable three-component PCA layout. Similarity scores use the full vectors. These are local word-pattern algorithms, not neural semantic embeddings or an LLM analysis service. Text messages retain their authorship, branch references and source metadata where available; non-text attachments and ZIP archives are not imported.
+
+Each memory has editable colour, direction, signed charge, pulse frequency and a pinned position. Charge currently controls arrow length, not a force simulation. Pulses are display oscillations; timestamped recalls and property changes have a separate activity log. Memories can reference multiple torus facets, edges, vertices, stack-layer addresses and geosphere faces. Lab associations do not create or edit stacks in the main Aura. Inside/outside controls the view and address side, not access permissions.
+
+The lab has its own IndexedDB storage and **Export lab / Restore lab** controls. Main Aura backups do not include it yet. It sends no imported records to a model service, but browser storage is not an encrypted vault. Keep a lab export before clearing browser data. Analysis uses up to 768 vocabulary features; the renderer shows up to 600 points plus the selection while every record remains searchable. Import files are limited to 20 MB and restore files to 50 MB in this prototype. Neural models, automatic agent execution, encrypted storage, geospatial data on the geosphere and integration with Social Media remain later work.
+
 ## Start with your everyday life
 
 The app opens at **Starting Point Aura / QuickStart**. Each original frame keeps its designed portrait or landscape orientation regardless of how the phone is held. If the available viewport has the opposite orientation, Aura rotates the entire frame, including its controls, instead of rearranging or shrinking it into a strip. This preserves the frame design without requiring full-screen mode. The book accepts clicks, touch and horizontal swipes, with animated page turns. Its short questions collect:

@@ -2,6 +2,8 @@
 
 Design baseline: 25 September 2026. This is a proposed development programme, not a claim that the agent runtime, secure vault, encryption or zero-knowledge proofs are implemented.
 
+Prototype update, 26 September 2026: a separate [Vector Space page](https://auraofintelligence.github.io/aura-matrix-studio/?page=aura-vector-space) now tests text imports, selectable local word-pattern algorithms, numerical vectors, a PCA display layout, seven nested tori, a geosphere and traceable geometry associations. It is accessed from Enter the Matrix and does not integrate with or modify existing Aura records. See the [README](README.md#experimental-vector-space) for its limits. This implements an exploratory slice of the shared-volume design described in *Blend Aura to Unity* and page 8 of *Version7 Aura of Intelligence 2023 July*, rather than claiming the full ML or security architecture is complete.
+
 ## Purpose
 
 Develop Aura as a personal interface through which many small AI agents and ordinary software routines retrieve, place, connect and interpret information; prepare or make authorised decisions; act; and record what happened. Their work spans seven dual-surface horn tori and a dual-sided geosphere, within one chakra or across several.
