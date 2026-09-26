@@ -25,6 +25,7 @@ jobs:
         run: node --test tests/*.test.js
       - name: Check scripts
         run: |
+          node --check demo-guide.js
           node --check vector-lab-ui.js
           node --check vector-lab-data.js
           node --check vector-lab-scene.js
@@ -86,6 +87,7 @@ jobs:
       - name: Prepare public files only
         run: |
           mkdir -p _site/tools
+          cp demo-guide.js demo-guide.css _site/
           cp vector-lab*.js vector-lab.css _site/
           cp frame-dialog.js backup-data.js data-transfer-ui.js merch-ui.js visit-history.js extra-pages.js _site/
           cp connection-flow.js navigation-ui.js chakra-workspace.js shell-style.js navigation-tree.js chakra-art.js palace-media.js palace-capture-ui.js attraction-data.js connection-sharing.js connection-inputs.js dating-data.js friendship-data.js dating-ui.js local-tools.js preferences-ui.js palace-ui.js social-ui.js affinity-ui.js life-data.js life-ui.js measurement-ui.js eye-photos.js personal-space-data.js personal-space-ui.js avatar-data.js avatar-ui.js earth-map.js earth-data.js timing-data.js timing-ui.js timing-ideas.js solar-system.js frame-display.js favourite-groups.js _site/

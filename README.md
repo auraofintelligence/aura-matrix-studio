@@ -6,9 +6,15 @@ Aura brings the scattered parts of everyday life into one personal interface: fa
 
 Aura Matrix Studio is the current working web implementation of Luke Nathan Hayes' Aura of Intelligence. It combines the original phone app's layouts and icons with a programmable, fixed 12 x 24 matrix. The matrix is one part of the wider Aura interface. This is a developing public-source application; some original screens still contain design placeholders.
 
+## How the demo works
+
+Open [How the demo works](https://auraofintelligence.github.io/aura-matrix-studio/?page=aura-demo-guide) from QuickStart or the main menu. It gives a short first-use walkthrough, links to the working tools, explains local storage and separate lab backups, and distinguishes working features from proposed extensions. The [original matrix guide](guide.html) remains available for detailed instructions.
+
 ## Experimental Vector Space
 
 [Open Vector Space](https://auraofintelligence.github.io/aura-matrix-studio/?page=aura-vector-space), or use the compact tools at the bottom of Enter the Matrix. This separate experimental page places memory vectors in the same scene as seven nested horn tori and an addressable geosphere. Drag to orbit, pinch to zoom, select memories, and link them to geometry. Back now sits in the bottom navigation row on Enter the Matrix, clear of its text.
+
+Before analysis, a neutral demonstration cloud fills the cubic volume. Hover or tap a point for feedback. It is explicitly labelled as an illustration, not an actual embedding vector field, and creates no saved records. The corner X/Y/Z indicator follows the camera; Y is the vertical axis. Analysed word-pattern points replace the demonstration cloud.
 
 Import text, Markdown, CSV, simple message JSON or ChatGPT-style conversation JSON, or load explicitly labelled examples. Choose word TF-IDF or words plus pairs; a worker calculates the numerical vectors and a repeatable three-component PCA layout. Similarity scores use the full vectors. These are local word-pattern algorithms, not neural semantic embeddings or an LLM analysis service. Text messages retain their authorship, branch references and source metadata where available; non-text attachments and ZIP archives are not imported.
 
