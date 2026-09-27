@@ -22,8 +22,8 @@ const chapters=[
   {at:.77,title:'Signals in the wake',number:'CHAPTER 06 · FIELD RESPONSE',copy:'A plasma disturbance may affect fields and radio signals. The glowing arcs are a relationship trace, not measured wave amplitudes.',alt:'Low Earth orbit · schematic',shell:5},
   {at:.91,title:'Compare what remains',number:'CHAPTER 07 · EVIDENCE',copy:'Trace the proposed effect back to its event, reaction and measurement. Compare the event with a no-event baseline before drawing conclusions.',alt:'Observation window · illustrative',shell:6}
 ];
-const $=id=>document.getElementById(id),time=$('time'),play=$('play'),baseline=$('baseline');
-let progress=0,playing=false,noEvent=false,chosen=null,lastFrame=0,dirty=true;
+const $=id=>document.getElementById(id),time=$('time'),play=$('play'),baseline=$('baseline'),fieldButton=$('vector-field');
+let progress=0,playing=false,noEvent=false,vectorOn=true,chosen=null,lastFrame=0,dirty=true;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 const colour=i=>new T.Color(SHELLS[i][1]);
 const smoother=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
@@ -67,6 +67,27 @@ const plumeGeo=new T.BufferGeometry();plumeGeo.setAttribute('position',new T.Buf
 const plume=new T.Points(plumeGeo,new T.PointsMaterial({color:0xefd1a7,size:.035,transparent:true,opacity:.75,depthWrite:false}));earth.group.add(plume);
 const halo=new T.Mesh(new T.SphereGeometry(.45,22,14),material('#86bff0',.10));earth.group.add(halo);
 
+// A directional diagram with no physical units. The toggle hides both field
+// layers while preserving the event, trajectory and Aura shell selection.
+function vectorLayer(parent,count,tint,place,initialSeed){
+  let state=initialSeed;const random=()=>{state=(state*1664525+1013904223)>>>0;return state/4294967296;};
+  const origins=Array.from({length:count},()=>place(random));
+  const array=new Float32Array(count*18),geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(array,3));
+  const lines=new T.LineSegments(geometry,new T.LineBasicMaterial({color:tint,transparent:true,opacity:.50,depthWrite:false}));parent.add(lines);
+  const up=new T.Vector3(0,1,0),wing=new T.Vector3(),tip=new T.Vector3(),back=new T.Vector3();
+  return {lines,update(direction){let n=0;const put=p=>{array[n++]=p.x;array[n++]=p.y;array[n++]=p.z;};
+    for(const origin of origins){const dir=direction(origin).normalize();wing.crossVectors(dir,up);if(wing.lengthSq()<.001)wing.set(1,0,0);wing.normalize();
+      tip.copy(origin).addScaledVector(dir,.18);back.copy(tip).addScaledVector(dir,-.065);
+      put(origin);put(tip);put(tip);put(back.clone().addScaledVector(wing,.043));put(tip);put(back.clone().addScaledVector(wing,-.043));
+    }geometry.attributes.position.needsUpdate=true;
+  }};
+}
+const earthVectors=vectorLayer(earth.group,175,0x96c9d9,random=>{
+  const y=random()*2-1,a=random()*Math.PI*2,r=3.43+random()*.7,v=Math.sqrt(1-y*y);
+  return new T.Vector3(r*v*Math.cos(a),r*y,r*v*Math.sin(a));
+},31583);
+const patternVectors=vectorLayer(pattern.group,220,0xd6c498,random=>new T.Vector3((random()-.5)*5.8,(random()-.5)*5.8,(random()-.5)*5.8),78211);
+
 // Actual 12 x 24 horn-torus geometry from Aura core: identities survive the
 // cinematic rendering. Facet 137 is highlighted on each shell as a shared key.
 const meshes=[],markers=[],threads=[];
@@ -106,6 +127,11 @@ function draw(){
     plumeGeo.attributes.position.needsUpdate=true;halo.position.copy(centre);halo.scale.setScalar(1+age*1.7);
   }
   halo.visible=plume.visible&&progress>=.60;
+  earthVectors.lines.visible=vectorOn;patternVectors.lines.visible=vectorOn;
+  if(vectorOn){const plumeCentre=route(phase),target=markers[active].position;
+    earthVectors.update(origin=>{const tangent=new T.Vector3(-origin.z,.14,origin.x).normalize();const pull=plumeCentre.clone().sub(origin),distance=pull.length();return tangent.addScaledVector(pull.normalize(),noEvent?0:Math.max(0,1-distance/2)*1.8);});
+    patternVectors.update(origin=>{const swirl=new T.Vector3(-origin.z,.08,origin.x).multiplyScalar(.5);return target.clone().sub(origin).add(swirl);});
+  }
   bands.forEach((b,i)=>b.material.opacity=(progress>.18+i*.15&&!noEvent)?.07:.022);
   meshes.forEach((m,i)=>{const passed=progress>=chapters[Math.min(i,6)].at+.08;m.material.opacity=noEvent?.018:i===active?.16:passed?.08:.035;markers[i].material.opacity=noEvent?.12:i===active?1:passed?.7:.25;markers[i].scale.setScalar(i===active?1.6:1);});
   threads.forEach((l,i)=>l.material.opacity=noEvent?.035:progress>=chapters[Math.min(i+1,6)].at?.54:.10);
@@ -116,5 +142,6 @@ function tick(now){const dt=Math.min(.06,(now-lastFrame)/1000||0);lastFrame=now;
 play.addEventListener('click',()=>{if(progress>=1)progress=0;playing=!playing;play.innerHTML=playing?'Ⅱ <span>Pause journey</span>':'▶ <span>Play journey</span>';play.setAttribute('aria-label',playing?'Pause sequence':'Play sequence');updateText();});
 time.addEventListener('input',()=>{progress=Number(time.value)/1000;chosen=null;updateText();dirty=true;});
 baseline.addEventListener('click',()=>{noEvent=!noEvent;baseline.setAttribute('aria-pressed',String(noEvent));baseline.textContent=noEvent?'Show event':'Without event';updateText();dirty=true;});
+fieldButton.addEventListener('click',()=>{vectorOn=!vectorOn;fieldButton.setAttribute('aria-pressed',String(vectorOn));fieldButton.textContent=`Vector field: ${vectorOn?'on':'off'}`;dirty=true;});
 reduce.addEventListener('change',()=>{if(reduce.matches&&playing){playing=false;play.innerHTML='▶ <span>Play journey</span>';}});
 updateText();requestAnimationFrame(tick);
