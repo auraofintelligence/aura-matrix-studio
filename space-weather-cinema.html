@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070d18">
+  <meta name="description" content="A cinematic, inspectable demonstration of launch plumes moving through the atmosphere and seven Aura pattern systems.">
+  <title>Earth–Space Observatory · Aura Matrix Studio</title>
+  <link rel="icon" href="assets/aura.png">
+  <link rel="stylesheet" href="space-weather-cinema.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html?page=aura-vector-space" aria-label="Back to Aura Vector Space"><span class="brand-mark">A</span><span>Aura <small>/ Matrix Studio</small></span></a>
+    <span class="edition">Earth–Space Observatory <span class="edition-rule"></span> Concept scene 01</span>
+    <a class="back" href="index.html?page=aura-vector-space">← Vector Space</a>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div class="eyebrow"><span class="signal"></span> An inspectable journey through one introduced plume</div>
+      <h1 id="title">A spark at Earth.<br><em>Seven ways to see its wake.</em></h1>
+      <p>A launch crosses a changing atmosphere. Follow an illustrative plume through physical space, then watch the same event propagate across seven addressable Aura shells.</p>
+      <div class="truth"><strong>Illustrative model</strong><span>Positions, intensities and timing are a designed example, not a measured launch, forecast or health assessment.</span></div>
+    </section>
+
+    <section class="observatory" aria-label="Synchronised physical and pattern-space views">
+      <div class="scene-panel earth-panel">
+        <div class="scene-heading"><span class="number">01 / PHYSICAL VOLUME</span><strong>Earth and atmosphere</strong></div>
+        <canvas id="earth-scene" aria-label="Rotatable three-dimensional Earth with atmospheric bands, launch trajectory and illustrative plume"></canvas>
+        <div class="scene-caption"><span id="altitude">Ground · 0 km</span><span>Drag to orbit</span></div>
+      </div>
+      <div class="scene-panel pattern-panel">
+        <div class="scene-heading"><span class="number">02 / PATTERN SPACE</span><strong>Seven nested horn tori</strong></div>
+        <canvas id="pattern-scene" aria-label="Rotatable seven-shell Aura horn torus with facets illuminated by the selected event"></canvas>
+        <div class="scene-caption"><span id="address">Red · O137</span><span>12 × 24 / shell</span></div>
+      </div>
+      <div class="centre-label" aria-hidden="true">ONE EVENT <span>↔</span> TWO VIEWS</div>
+    </section>
+
+    <section class="transport" aria-label="Playback controls">
+      <button id="play" type="button" class="play" aria-label="Play sequence">▶ <span>Play journey</span></button>
+      <label class="scrubber"><span class="sr-only">Journey position</span><input id="time" type="range" min="0" max="1000" value="0"></label>
+      <span id="time-label" class="time-label">00:00 / 01:40</span>
+      <button id="baseline" type="button" class="baseline" aria-pressed="false">Without event</button>
+    </section>
+
+    <section class="story" aria-label="Event details">
+      <div class="story-main"><p class="kicker" id="stage-number">CHAPTER 01 · SOURCE</p><h2 id="stage-title">Before ignition</h2><p id="stage-copy">The background atmosphere and seven linked pattern systems are in view. Press Play or drag the timeline to introduce the event.</p></div>
+      <div class="readout" aria-live="polite"><span class="readout-title">Selected interaction</span><strong id="selected-title">Propellant source</strong><p id="selected-copy">An illustrative source event starts the trace. Select a shell below to inspect a different interaction.</p><dl><div><dt>Address</dt><dd id="selected-address">Red O137</dd></div><div><dt>Evidence</dt><dd id="selected-evidence">Demonstration only</dd></div></dl></div>
+    </section>
+    <nav class="shell-nav" id="shell-nav" aria-label="Inspect the seven pattern systems"></nav>
+    <footer><span>Geometry: Aura’s fixed 12 × 24 lattice · seven nested shells</span><span>Prototype data: local, deterministic, illustrative</span></footer>
+  </main>
+  <script src="vendor/three.min.js"></script>
+  <script type="module" src="space-weather-cinema.js"></script>
+</body>
+</html>
