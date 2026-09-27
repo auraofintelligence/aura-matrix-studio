@@ -1,7 +1,7 @@
 import {visitHistory} from './visit-history.js?v=0.4.17';
 import {mountDemoGuide,mountGuideEntry,DEMO_GUIDE} from './demo-guide.js?v=0.4.23';
 import {addExtraPages} from './extra-pages.js?v=0.4.23';
-import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.23';
+import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.24';
 import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.17';
 import {mountMerch,MERCH} from './merch-ui.js?v=0.4.17';
 import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.15';
@@ -54,6 +54,9 @@ export function screenLayout(page,availableWidth,availableHeight){
   const scale=fitOriginal(page.width,page.height,rotated?availableHeight:availableWidth,rotated?availableWidth:availableHeight);
   return {rotated,scale,width:(rotated?page.height:page.width)*scale,height:(rotated?page.width:page.height)*scale,
     transform:rotated?`translateX(${page.height*scale}px) rotate(90deg) scale(${scale})`:`scale(${scale})`};
+}
+export function displayLayout(page,availableWidth,availableHeight){
+  return page.id===VECTOR_LAB?{rotated:false,scale:1,width:availableWidth,height:availableHeight,transform:'none'}:screenLayout(page,availableWidth,availableHeight);
 }
 
 export async function startOriginal(){
@@ -165,7 +168,7 @@ export async function startOriginal(){
     if(current.id===DEMO_GUIDE)live=mountDemoGuide({screen:$('original-screen'),go});
     fit();
   }
-  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}
+  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),fullWidth=current.id===VECTOR_LAB,layout=displayLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);Object.assign($('original-screen').style,{width:(fullWidth?layout.width:current.width)+'px',height:(fullWidth?layout.height:current.height)+'px',transform:layout.transform});Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}
   for(const page of source.pages){const option=make('option',null,(page.parent?'  ':'')+page.name);option.value=page.id;$('original-page').append(option);}
   $('original-page').onchange=()=>go($('original-page').value);$('original-back').onclick=()=>go('command:back');$('original-home').onclick=()=>go(source.home);
   $('original-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{warn('Fullscreen is unavailable in this browser.');}};

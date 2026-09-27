@@ -27,7 +27,7 @@ export function roundGeosphere(base,radius,steps=8){
 }
 export class VectorLabScene{
   constructor(canvas,onPick){
-    const T=globalThis.THREE;this.T=T;this.canvas=canvas;this.onPick=onPick;this.theta=.7;this.phi=.35;this.zoom=1;this.inside=false;this.target='memories';this.selected=null;this.records=[];this.rays=false;this.playing=false;this.disposed=false;
+    const T=globalThis.THREE;this.T=T;this.canvas=canvas;this.onPick=onPick;this.theta=.7;this.phi=.35;this.zoom=1;this.inside=false;this.target='memories';this.selected=null;this.records=[];this.rays=false;this.playing=false;this.showDemoField=true;this.disposed=false;
     this.scene=new T.Scene();this.scene.background=new T.Color('#101723');this.camera=new T.PerspectiveCamera(42,1,.025,100);
     this.renderer=new T.WebGLRenderer({canvas,antialias:true});this.renderer.setPixelRatio(Math.min(devicePixelRatio,2));this.group=new T.Group();this.scene.add(this.group);this.shells=[];this.shellLines=[];this.shellVisibility=Array(7).fill(true);
     for(let s=0;s<7;s++){
@@ -104,7 +104,7 @@ export class VectorLabScene{
   render(){
     if(this.disposed)return;cancelAnimationFrame(this.frame);const radius=this.inside?1.3/this.zoom:15/this.zoom;
     const mapView=this.target==='geosphere';this.sphere.material.opacity=mapView?1:.10;this.sphere.material.depthWrite=mapView;this.graticule.material.opacity=mapView?.48:.24;
-    this.demoArrows.visible=!this.hasVectors&&!mapView;this.demoArrows.material.opacity=this.target==='memories'?.54:.16;
+    this.demoArrows.visible=this.showDemoField&&!this.hasVectors&&!mapView;this.demoArrows.material.opacity=this.target==='memories'?.54:.16;
     this.shells.forEach((mesh,i)=>{mesh.visible=this.shellVisibility[i];this.shellLines[i].visible=mesh.visible;this.shellLines[i].material.opacity=this.target===String(i)?.72:.20;});
     this.camera.position.set(radius*Math.sin(this.theta)*Math.cos(this.phi),radius*Math.sin(this.phi),radius*Math.cos(this.theta)*Math.cos(this.phi));
     if(this.inside){const d=this.camera.position.clone().normalize();this.camera.lookAt(this.camera.position.clone().add(d));}else this.camera.lookAt(0,0,0);

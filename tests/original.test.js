@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
-import {bounds,linkBounds,fitOriginal,colour,MATRIX_PAGES,openingPage,screenLayout} from '../original.js';
+import {bounds,linkBounds,fitOriginal,colour,MATRIX_PAGES,openingPage,screenLayout,displayLayout} from '../original.js';
 import {HOME,CAMERA_VARIANTS} from '../original-routes.js';
 import {QUICKSTART} from '../quickstart.js';
 import {framePoint,frameOrientation} from '../frame-display.js';
@@ -45,6 +45,13 @@ test('uniform scaling keeps the original screen and hit areas in view without re
   assert.deepEqual(linkBounds({coords:'(12,3,80,29)'},{w:100,h:40}),[12,3,68,26]);
   assert.deepEqual(linkBounds(null,{w:100,h:40}),[0,0,100,40]);
   assert.equal(colour('4294901760'),'rgba(255,0,0,1)');
+});
+
+test('Vector Space fills the available phone width without scaling the scene to the source frame',()=>{
+  const page={id:'aura-vector-space',width:360,height:720};
+  assert.deepEqual(displayLayout(page,390,664),{rotated:false,scale:1,width:390,height:664,transform:'none'});
+  assert.deepEqual(displayLayout(page,568,320),{rotated:false,scale:1,width:568,height:320,transform:'none'});
+  assert.deepEqual(displayLayout(pages.get(HOME),390,664),screenLayout(pages.get(HOME),390,664));
 });
 
 test('inside and outside source maps route to the fixed working model',()=>{
