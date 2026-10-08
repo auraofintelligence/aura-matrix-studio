@@ -1,7 +1,7 @@
-import {GLOW_PATTERNS,glowPoint,validateAuraGlow} from './aura-glow-data.js?v=0.4.24';
-import {readPersonalSpace,SPACE_LAYERS} from './personal-space-data.js?v=0.4.24';
-import {humanReference,svgNode} from './aura-human.js?v=0.4.24';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
+import {GLOW_PATTERNS,glowPoint,validateAuraGlow} from './aura-glow-data.js?v=0.4.26';
+import {readPersonalSpace,SPACE_LAYERS} from './personal-space-data.js?v=0.4.26';
+import {humanReference,svgNode} from './aura-human.js?v=0.4.26';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.26';
 export const GLOW_UP='aura-glow-up';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function mountAuraGlow({screen,go,onContinue=null,compact=false}){

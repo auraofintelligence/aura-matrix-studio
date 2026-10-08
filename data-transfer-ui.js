@@ -1,6 +1,6 @@
-import {make,button,panelFor,header,hero,download} from './local-tools.js?v=0.4.24';
-import {readTravelProject} from './travel-data.js?v=0.4.24';
-import {exportAura,parseBackup,restoreBackup,backupSummary} from './backup-data.js?v=0.4.24';
+import {make,button,panelFor,header,hero,download} from './local-tools.js?v=0.4.26';
+import {readTravelProject} from './travel-data.js?v=0.4.26';
+import {exportAura,parseBackup,restoreBackup,backupSummary} from './backup-data.js?v=0.4.26';
 export const DATA_TRANSFER='aura-data-transfer';
 export function mountDataTransfer({screen,go}){
  const panel=panelFor(screen,'data-transfer-panel');header(panel,'Your Aura data',()=>go('command:back'));

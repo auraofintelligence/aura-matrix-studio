@@ -1,6 +1,6 @@
-import {saveLife} from './life-data.js?v=0.4.24';
-import {saveTiming} from './timing-data.js?v=0.4.24';
-import {allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.24';
+import {saveLife} from './life-data.js?v=0.4.26';
+import {saveTiming} from './timing-data.js?v=0.4.26';
+import {allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.26';
 
 export const QUICK_SECTIONS=[
  {label:'Birthdays',intro:'Add a birthday, its context and any reminder preferences.'},

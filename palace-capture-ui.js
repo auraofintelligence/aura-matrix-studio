@@ -1,7 +1,7 @@
-import {make,button,rows,panelFor,header,hero,tile,grid,download} from './local-tools.js?v=0.4.24';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
-import {pageIcon} from './page-icons.js?v=0.4.24';
-import {PLACE_TABLE,MEDIA_TABLE,CAPTURE_ACCEPT,savePlace,attachMedia,reconstructionBrief,storeMedia,loadMedia,deleteMedia} from './palace-media.js?v=0.4.24';
+import {make,button,rows,panelFor,header,hero,tile,grid,download} from './local-tools.js?v=0.4.26';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.26';
+import {pageIcon} from './page-icons.js?v=0.4.26';
+import {PLACE_TABLE,MEDIA_TABLE,CAPTURE_ACCEPT,savePlace,attachMedia,reconstructionBrief,storeMedia,loadMedia,deleteMedia} from './palace-media.js?v=0.4.26';
 const PALACE='F9CE754E-27BE-49C3-AD43-F39BCEC0B3E8';
 export function mountPalaceCapture({page,screen,pages,go}){
  const panel=panelFor(screen,'palace-capture');let generation=0,disposed=false,urls=[];

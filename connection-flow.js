@@ -1,4 +1,4 @@
-import {rows} from './local-tools.js?v=0.4.24';
+import {rows} from './local-tools.js?v=0.4.26';
 export const REUSE='Reused answers';
 const shared=new Set(['Based near','Weekly availability','Availability','Time zone','My height']);
 export function reuseMap(profile){try{return JSON.parse(profile[REUSE]||'{}');}catch{return {};}}

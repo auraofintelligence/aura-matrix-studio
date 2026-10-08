@@ -1,13 +1,13 @@
-import {conciseChapters,reuseCandidate,reuseMap,reusePatch,detachAnswer} from './connection-flow.js?v=0.4.24';
-import {framePoint} from './frame-display.js?v=0.4.24';
-import {make,button,header,download} from './local-tools.js?v=0.4.24';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
-import {DATING_CHAPTERS,LOVE_LANGUAGES,DAYS,DAY_PARTS,datingProfile,listValue,loveValue,chapterProgress,fieldAnswered,saveDatingProfile,numericRange} from './dating-data.js?v=0.4.24';
+import {conciseChapters,reuseCandidate,reuseMap,reusePatch,detachAnswer} from './connection-flow.js?v=0.4.26';
+import {framePoint} from './frame-display.js?v=0.4.26';
+import {make,button,header,download} from './local-tools.js?v=0.4.26';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.26';
+import {DATING_CHAPTERS,LOVE_LANGUAGES,DAYS,DAY_PARTS,datingProfile,listValue,loveValue,chapterProgress,fieldAnswered,saveDatingProfile,numericRange} from './dating-data.js?v=0.4.26';
 
-import {FRIENDSHIP_CHAPTERS,friendshipProfile,saveFriendshipProfile} from './friendship-data.js?v=0.4.24';
-import {suggestionsFor,relatedSuggestions,answerParts,answerPatch,ownNote,notePatch,focusValue,focusPatch,rankPatch} from './connection-inputs.js?v=0.4.24';
+import {FRIENDSHIP_CHAPTERS,friendshipProfile,saveFriendshipProfile} from './friendship-data.js?v=0.4.26';
+import {suggestionsFor,relatedSuggestions,answerParts,answerPatch,ownNote,notePatch,focusValue,focusPatch,rankPatch} from './connection-inputs.js?v=0.4.26';
 
-import {AUDIENCES,audienceFor,disclosurePatch,disclosurePreview,disclosurePacket} from './connection-sharing.js?v=0.4.24';
+import {AUDIENCES,audienceFor,disclosurePatch,disclosurePreview,disclosurePacket} from './connection-sharing.js?v=0.4.26';
 
 const paths={
  heart:'M12 21S2 15 2 8a5 5 0 0 1 10-2A5 5 0 0 1 22 8c0 7-10 13-10 13Z',

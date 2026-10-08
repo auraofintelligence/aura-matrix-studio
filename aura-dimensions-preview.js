@@ -1,5 +1,5 @@
-import {SPACE_LAYERS,spaceShells} from './personal-space-data.js?v=0.4.24';
-import {humanReference,svgNode} from './aura-human.js?v=0.4.24';
+import {SPACE_LAYERS,spaceShells} from './personal-space-data.js?v=0.4.26';
+import {humanReference,svgNode} from './aura-human.js?v=0.4.26';
 export const shellEnvelopeHeight=(height,radius)=>height+radius*.5;
 export function mountDimensionsPreview(host,initial){
  let state=initial,view='front',zoom=1,pan={x:0,y:0},fit=false,disposed=false;const pointers=new Map();

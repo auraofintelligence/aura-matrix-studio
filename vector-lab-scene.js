@@ -1,6 +1,6 @@
-import {shellPoint,PRESETS,SHELLS} from './core.js?v=0.4.24';
-import {framePoint} from './frame-display.js?v=0.4.24';
-import {targetPoint} from './spatial.js?v=0.4.24';
+import {shellPoint,PRESETS,SHELLS} from './core.js?v=0.4.26';
+import {framePoint} from './frame-display.js?v=0.4.26';
+import {targetPoint} from './spatial.js?v=0.4.26';
 export const geoPoint=(lat,lon,radius=4.35)=>{const a=lat*Math.PI/180,b=lon*Math.PI/180;return [radius*Math.cos(a)*Math.cos(b),radius*Math.sin(a),-radius*Math.cos(a)*Math.sin(b)];};
 export const geoCoordinates=p=>{const r=Math.hypot(...p);return {lat:Math.asin(Math.max(-1,Math.min(1,p[1]/r)))*180/Math.PI,lon:Math.atan2(-p[2],p[0])*180/Math.PI};};
 // Illustrative positions only. These never enter the record store or analysis.
@@ -27,7 +27,7 @@ export function roundGeosphere(base,radius,steps=8){
 }
 export class VectorLabScene{
   constructor(canvas,onPick){
-    const T=globalThis.THREE;this.T=T;this.canvas=canvas;this.onPick=onPick;this.theta=.7;this.phi=.35;this.zoom=1;this.inside=false;this.target='memories';this.selected=null;this.records=[];this.rays=false;this.playing=false;this.disposed=false;
+    const T=globalThis.THREE;this.T=T;this.canvas=canvas;this.onPick=onPick;this.theta=.7;this.phi=.35;this.zoom=1;this.inside=false;this.target='memories';this.selected=null;this.records=[];this.rays=false;this.playing=false;this.showDemoField=true;this.showGeosphere=true;this.disposed=false;
     this.scene=new T.Scene();this.scene.background=new T.Color('#101723');this.camera=new T.PerspectiveCamera(42,1,.025,100);
     this.renderer=new T.WebGLRenderer({canvas,antialias:true});this.renderer.setPixelRatio(Math.min(devicePixelRatio,2));this.group=new T.Group();this.scene.add(this.group);this.shells=[];this.shellLines=[];this.shellVisibility=Array(7).fill(true);
     for(let s=0;s<7;s++){
@@ -92,19 +92,19 @@ export class VectorLabScene{
     const positions=this.visible.flatMap(r=>r.position.map(x=>x*4.1)),colours=this.visible.flatMap(r=>new T.Color(r.colour).toArray()),g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('color',new T.Float32BufferAttribute(colours,3));
     this.points=new T.Points(g,new T.PointsMaterial({size:.16,vertexColors:true,transparent:true,opacity:.92,depthTest:false}));this.group.add(this.points);
     if(selected?.values.length){const pos=selected.position.map(x=>x*4.1),sphere=new T.Mesh(new T.SphereGeometry(.12,12,8),new T.MeshBasicMaterial({color:selected.colour,wireframe:true,depthTest:false}));sphere.position.fromArray(pos);this.group.add(sphere);this.marker=sphere;
-      for(const a of selected.anchors)this.lines([pos,this.anchorPoint(a)],'#f8de98',.95);
+      for(const a of selected.anchors)if(a.kind!=='geosphere'||this.showGeosphere)this.lines([pos,this.anchorPoint(a)],'#f8de98',.95);
       for(const {record:r} of related)this.lines([pos,r.position.map(x=>x*4.1)],'#a1e3db',.5);
       const v=new T.Vector3(...selected.direction);if(v.length()>0){const arrow=new T.ArrowHelper(v.normalize(),new T.Vector3(...pos),.4+Math.abs(selected.charge)*1.2,selected.colour,.18,.09);this.group.add(arrow);}
-      if(this.rays){this.lines([[0,0,0],pos],selected.colour,.8);for(const a of selected.anchors)this.lines([[0,0,0],this.anchorPoint(a)],'#f8de98',.6);}
+      if(this.rays){this.lines([[0,0,0],pos],selected.colour,.8);for(const a of selected.anchors)if(a.kind!=='geosphere'||this.showGeosphere)this.lines([[0,0,0],this.anchorPoint(a)],'#f8de98',.6);}
     }else this.marker=null;
-    if(this.address){const pos=this.anchorPoint(this.address),m=new T.Mesh(new T.SphereGeometry(.10,10,8),new T.MeshBasicMaterial({color:'#fff3b0',depthTest:false}));m.position.fromArray(pos);this.group.add(m);}
+    if(this.address&&(this.address.kind!=='geosphere'||this.showGeosphere)){const pos=this.anchorPoint(this.address),m=new T.Mesh(new T.SphereGeometry(.10,10,8),new T.MeshBasicMaterial({color:'#fff3b0',depthTest:false}));m.position.fromArray(pos);this.group.add(m);}
     this.render();
   }
   resize(){const w=this.canvas.clientWidth,h=this.canvas.clientHeight;if(!w||!h)return;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();this.render();}
   render(){
     if(this.disposed)return;cancelAnimationFrame(this.frame);const radius=this.inside?1.3/this.zoom:15/this.zoom;
-    const mapView=this.target==='geosphere';this.sphere.material.opacity=mapView?1:.10;this.sphere.material.depthWrite=mapView;this.graticule.material.opacity=mapView?.48:.24;
-    this.demoArrows.visible=!this.hasVectors&&!mapView;this.demoArrows.material.opacity=this.target==='memories'?.54:.16;
+    const mapView=this.target==='geosphere';this.sphere.visible=this.showGeosphere;this.graticule.visible=this.showGeosphere;this.sphere.material.opacity=mapView?1:.10;this.sphere.material.depthWrite=mapView;this.graticule.material.opacity=mapView?.48:.24;
+    this.demoArrows.visible=this.showDemoField&&!this.hasVectors&&!mapView;this.demoArrows.material.opacity=this.target==='memories'?.54:.16;
     this.shells.forEach((mesh,i)=>{mesh.visible=this.shellVisibility[i];this.shellLines[i].visible=mesh.visible;this.shellLines[i].material.opacity=this.target===String(i)?.72:.20;});
     this.camera.position.set(radius*Math.sin(this.theta)*Math.cos(this.phi),radius*Math.sin(this.phi),radius*Math.cos(this.theta)*Math.cos(this.phi));
     if(this.inside){const d=this.camera.position.clone().normalize();this.camera.lookAt(this.camera.position.clone().add(d));}else this.camera.lookAt(0,0,0);

@@ -1,8 +1,8 @@
-import {loadMap} from './market-map.js?v=0.4.24';
-import {EARTH,EARTH_WIDE,earthRows,filterEarth,clusterEarth,pickEarthMarker,personalEarthRows,importEarthPoints,saveEarthPoints} from './earth-data.js?v=0.4.24';
-import {readTravelProject,writeTravelProject,CELESTIAL} from './travel-data.js?v=0.4.24';
-import {CROWN} from './original-routes.js?v=0.4.24';
-import {framePoint} from './frame-display.js?v=0.4.24';
+import {loadMap} from './market-map.js?v=0.4.26';
+import {EARTH,EARTH_WIDE,earthRows,filterEarth,clusterEarth,pickEarthMarker,personalEarthRows,importEarthPoints,saveEarthPoints} from './earth-data.js?v=0.4.26';
+import {readTravelProject,writeTravelProject,CELESTIAL} from './travel-data.js?v=0.4.26';
+import {CROWN} from './original-routes.js?v=0.4.26';
+import {framePoint} from './frame-display.js?v=0.4.26';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(label,fn)=>{const b=make('button','',label);b.type='button';b.onclick=fn;return b;};
 

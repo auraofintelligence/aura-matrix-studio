@@ -1,4 +1,4 @@
-import {validateProject} from './core.js?v=0.4.24';
+import {validateProject} from './core.js?v=0.4.26';
 export const AVATAR_PHOTOS='FFF3392C-C4CD-452E-9121-EC51530743CD';
 export const PROFILE_PHOTO_TABLE='avatar-profile-photos';
 export const MAX_PROFILE_PHOTOS=10;

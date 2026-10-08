@@ -1,4 +1,4 @@
-import {make,button} from './local-tools.js?v=0.4.24';
+import {make,button} from './local-tools.js?v=0.4.26';
 export const DEMO_GUIDE='aura-demo-guide';
 const HOME='72917D84-7C55-42C9-A552-27AC4CB15FE7',QUICK='D203ACAB-C2D1-4433-8EE2-3522C47CC3D0';
 export function mountGuideEntry({screen,page,go}){

@@ -1,8 +1,8 @@
-import {validateShellStyles} from './shell-style.js?v=0.4.24';
-import {defaultAuraGlow,validateAuraGlow} from './aura-glow-data.js?v=0.4.24';
-import {validateTables,validateQuickStart} from './dataset-schema.js?v=0.4.24';
-import {emptyFavourites,validateFavourites} from './favourites-data.js?v=0.4.24';
-import {validateSpatial,validateTarget} from './spatial.js?v=0.4.24';
+import {validateShellStyles} from './shell-style.js?v=0.4.26';
+import {defaultAuraGlow,validateAuraGlow} from './aura-glow-data.js?v=0.4.26';
+import {validateTables,validateQuickStart} from './dataset-schema.js?v=0.4.26';
+import {emptyFavourites,validateFavourites} from './favourites-data.js?v=0.4.26';
+import {validateSpatial,validateTarget} from './spatial.js?v=0.4.26';
 // Based on Luke Nathan Hayes' aura-horn-torus roll path and aura-spatial-perception addressing.
 // The drawing can change shape. These dimensions and semantic addresses cannot.
 export const ROWS = 12, COLS = 24, CELLS = 288, LATTICE = 'aura-lattice/1.0.0';

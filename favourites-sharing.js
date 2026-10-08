@@ -1,4 +1,4 @@
-import {validateFavourites} from './favourites-data.js?v=0.4.24';
+import {validateFavourites} from './favourites-data.js?v=0.4.26';
 export const SHORTCUT_FORMAT='aura-shortcut-map/1';
 const keys=(value,allowed)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(k=>allowed.includes(k));
 export function exportShortcutMenu(favourites,menuId){

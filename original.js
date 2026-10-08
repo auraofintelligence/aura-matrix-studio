@@ -1,38 +1,38 @@
-import {visitHistory} from './visit-history.js?v=0.4.24';
-import {mountDemoGuide,mountGuideEntry,DEMO_GUIDE} from './demo-guide.js?v=0.4.24';
-import {addExtraPages} from './extra-pages.js?v=0.4.24';
-import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.24';
-import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.24';
-import {mountMerch,MERCH} from './merch-ui.js?v=0.4.24';
-import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.24';
-import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.24';
-import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.24';
-import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.24';
-import {PALACE_PAGES} from './palace-ui.js?v=0.4.24';
-import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.24';
-import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.24';
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.24';
-import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.24';
-import {mountLife} from './life-ui.js?v=0.4.24';
-import {mountAvatar} from './avatar-ui.js?v=0.4.24';
-import {mountAvatarPhotos,AVATAR_PHOTOS} from './avatar-photo-ui.js?v=0.4.24';
-import {mountAuraGlow,GLOW_UP} from './aura-glow-ui.js?v=0.4.24';
-import {mountEarth} from './earth-map.js?v=0.4.24';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.24';
-import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.24';
-import {mountMatrixSymbols} from './chakra-art.js?v=0.4.24';
-import {TIMING_PAGES} from './timing-data.js?v=0.4.24';
-import {mountTravel} from './travel-ui.js?v=0.4.24';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.24';
-import {mountCelestial} from './celestial-clock.js?v=0.4.24';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.24';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.24';
-import {mountMenuCamera} from './menu-camera.js?v=0.4.24';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.24';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.24';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.24';
-import {mountLiveMatrix} from './original-live.js?v=0.4.24';
-import {frameOrientation} from './frame-display.js?v=0.4.24';
+import {visitHistory} from './visit-history.js?v=0.4.26';
+import {mountDemoGuide,mountGuideEntry,DEMO_GUIDE} from './demo-guide.js?v=0.4.26';
+import {addExtraPages} from './extra-pages.js?v=0.4.26';
+import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.26';
+import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.26';
+import {mountMerch,MERCH} from './merch-ui.js?v=0.4.26';
+import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.26';
+import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.26';
+import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.26';
+import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.26';
+import {PALACE_PAGES} from './palace-ui.js?v=0.4.26';
+import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.26';
+import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.26';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.26';
+import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.26';
+import {mountLife} from './life-ui.js?v=0.4.26';
+import {mountAvatar} from './avatar-ui.js?v=0.4.26';
+import {mountAvatarPhotos,AVATAR_PHOTOS} from './avatar-photo-ui.js?v=0.4.26';
+import {mountAuraGlow,GLOW_UP} from './aura-glow-ui.js?v=0.4.26';
+import {mountEarth} from './earth-map.js?v=0.4.26';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.26';
+import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.26';
+import {mountMatrixSymbols} from './chakra-art.js?v=0.4.26';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.26';
+import {mountTravel} from './travel-ui.js?v=0.4.26';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.26';
+import {mountCelestial} from './celestial-clock.js?v=0.4.26';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.26';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.26';
+import {mountMenuCamera} from './menu-camera.js?v=0.4.26';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.26';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.26';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.26';
+import {mountLiveMatrix} from './original-live.js?v=0.4.26';
+import {frameOrientation} from './frame-display.js?v=0.4.26';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -56,6 +56,9 @@ export function screenLayout(page,availableWidth,availableHeight){
   const scale=fitOriginal(page.width,page.height,rotated?availableHeight:availableWidth,rotated?availableWidth:availableHeight);
   return {rotated,scale,width:(rotated?page.height:page.width)*scale,height:(rotated?page.width:page.height)*scale,
     transform:rotated?`translateX(${page.height*scale}px) rotate(90deg) scale(${scale})`:`scale(${scale})`};
+}
+export function displayLayout(page,availableWidth,availableHeight){
+  return page.id===VECTOR_LAB?{rotated:false,scale:1,width:availableWidth,height:availableHeight,transform:'none'}:screenLayout(page,availableWidth,availableHeight);
 }
 
 export async function startOriginal(){
@@ -172,7 +175,7 @@ export async function startOriginal(){
     const quickstep=new URLSearchParams(location.search).get('quickstep');quickReturn.hidden=!quickstep||current.id===QUICKSTART;quickReturn.onclick=()=>go(QUICKSTART,{step:quickstep,resume:'1'});
     fit();
   }
-  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}
+  function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),fullWidth=current.id===VECTOR_LAB,layout=displayLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);Object.assign($('original-screen').style,{width:(fullWidth?layout.width:current.width)+'px',height:(fullWidth?layout.height:current.height)+'px',transform:layout.transform});Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}
   for(const page of source.pages){const option=make('option',null,(page.parent?'  ':'')+page.name);option.value=page.id;$('original-page').append(option);}
   $('original-page').onchange=()=>go($('original-page').value);$('original-back').onclick=()=>go('command:back');$('original-home').onclick=()=>go(source.home);
   $('original-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{warn('Fullscreen is unavailable in this browser.');}};

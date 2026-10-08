@@ -1,7 +1,7 @@
-import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.24';
-import {readPersonalSpace} from './personal-space-data.js?v=0.4.24';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
-import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.24';
+import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.26';
+import {readPersonalSpace} from './personal-space-data.js?v=0.4.26';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.26';
+import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.26';
 
 // Landmarks are artwork coordinates, not inferred measurements of the user.
 const guides={

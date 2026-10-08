@@ -1,2 +1,2 @@
-import {analyseRecords} from './vector-lab-data.js?v=0.4.24';
+import {analyseRecords} from './vector-lab-data.js?v=0.4.26';
 self.onmessage=({data})=>{try{self.postMessage({result:analyseRecords(data.records,data.algorithm)});}catch(e){self.postMessage({error:e.message});}};

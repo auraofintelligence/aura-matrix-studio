@@ -1,10 +1,10 @@
-import {fitFrameDialog} from './frame-dialog.js?v=0.4.24';
-import {AuraView} from './renderer.js?v=0.4.24';
-import {blankProject,validateProject,SHELLS,PRESETS} from './core.js?v=0.4.24';
-import {target,remember,remembered,selectFacetGroup,targetLabel,KIND_NAMES,rayTargets,rayDescriptor,recordsAt,setFacetStacks} from './spatial.js?v=0.4.24';
-import {allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.24';
-import {defaultShellStyle} from './shell-style.js?v=0.4.24';
-import {chakraImage} from './chakra-art.js?v=0.4.24';
+import {fitFrameDialog} from './frame-dialog.js?v=0.4.26';
+import {AuraView} from './renderer.js?v=0.4.26';
+import {blankProject,validateProject,SHELLS,PRESETS} from './core.js?v=0.4.26';
+import {target,remember,remembered,selectFacetGroup,targetLabel,KIND_NAMES,rayTargets,rayDescriptor,recordsAt,setFacetStacks} from './spatial.js?v=0.4.26';
+import {allocateTable,pendingRows} from './dataset-allocation.js?v=0.4.26';
+import {defaultShellStyle} from './shell-style.js?v=0.4.26';
+import {chakraImage} from './chakra-art.js?v=0.4.26';
 export const CHAKRA_PAGES=['8160FF62-D46D-4AF0-8375-E4798C520429','2BDE73C0-BD43-4C5E-B2BE-53127BF17459','11F0F73F-5FDB-4E5F-8756-64A0DD3B64B7','65CD056B-11C7-4710-B1BA-8D5C6B624ED5','700114F3-0E83-4204-8F8B-B2F12C2EA81D','EE380EEB-191F-4218-B721-830A3F9FEA5F','C0D4D5A5-7432-4EC7-B0D5-BC312FD3139D'];
 const KEY='aura-matrix-studio:v4:project';
 export function mountChakra({page,screen,go}){

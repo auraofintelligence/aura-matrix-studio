@@ -1,7 +1,7 @@
-import {AVATAR_PHOTOS,AVATAR_PHOTO_VIEWS,profilePhotos,saveProfilePhoto,MAX_PROFILE_PHOTOS} from './avatar-photos-data.js?v=0.4.24';
-import {localPhoto} from './measurement-ui.js?v=0.4.24';
-import {readPersonalSpace} from './personal-space-data.js?v=0.4.24';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
+import {AVATAR_PHOTOS,AVATAR_PHOTO_VIEWS,profilePhotos,saveProfilePhoto,MAX_PROFILE_PHOTOS} from './avatar-photos-data.js?v=0.4.26';
+import {localPhoto} from './measurement-ui.js?v=0.4.26';
+import {readPersonalSpace} from './personal-space-data.js?v=0.4.26';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.26';
 export {AVATAR_PHOTOS};
 export function mountAvatarPhotos({screen,go,onContinue=null,compact=false}){
  const make=(tag,cls='',text)=>{const node=document.createElement(tag);node.className=cls;if(text!==undefined)node.textContent=text;return node;},button=(label,fn)=>{const node=make('button',compact?'quick-secondary':'',label);node.type='button';node.onclick=fn;return node;};
