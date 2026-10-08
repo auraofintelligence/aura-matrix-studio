@@ -1,5 +1,5 @@
-import {validateProject} from './core.js?v=0.4.17';
-import {EYE_POSES,eyePhotos} from './eye-photos.js?v=0.4.17';
+import {validateProject} from './core.js?v=0.4.24';
+import {EYE_POSES,eyePhotos} from './eye-photos.js?v=0.4.24';
 export const AVATAR_HOME='DD2667DF-4A8C-461B-9196-655447A018F3';
 export const AVATAR_CREATION='3A178076-5EF1-41A0-8229-62636BE4F256';
 const choice=(id,label,options)=>({id,label,options:[...options,'Prefer not to say'],unit:'',kind:'choice'});
@@ -23,6 +23,7 @@ export const AVATAR_SECTIONS=[
  {id:'8EEAE4F6-2A46-4447-A9B7-EBE9C528D2C8',key:'shoulders',title:'Shoulders and arm span',summary:'Width, shoulder height and outward reach',icon:'shoulders',intro:'Record your natural proportions without stretching beyond a comfortable position.',dataset:'body',steps:[{title:'Shoulder measurements',fields:[measure('body-shoulder-height','Floor to top of shoulder'),measure('body-arm-span','Fingertip to fingertip, arms out'),measure('body-shoulder-width','Shoulder width')],help:'Leave anything you cannot measure comfortably blank. These inputs prepare your avatar scale.'}]}
 ];
 export const AVATAR_PAGES=Object.fromEntries(AVATAR_SECTIONS.map(s=>[s.id,s]));
+AVATAR_SECTIONS[0].steps.push({title:'Body and clothing details',fields:[measure('body-weight','Weight','kg'),note('clothing-top','Top or shirt size'),note('clothing-bottom','Trouser or skirt size'),note('clothing-shoes','Shoe size'),note('clothing-size-context','Sizing system, brand or fit notes')],help:'Clothing sizes vary by sizing system and brand. Include the context you use rather than converting it automatically.'});
 export const fieldsFor=s=>s.steps.flatMap(p=>p.fields);
 const tableId=s=>s.dataset==='body'?'quickstart-body':'avatar-boundaries';
 export function avatarValues(project,section){const t=project.tables.find(t=>t.id===tableId(section));return Object.fromEntries(fieldsFor(section).map(f=>{const r=t?.rows.find(r=>r.id===f.id);return [f.id,r?.values[t.columns.indexOf('Measurement')]||''];}));}

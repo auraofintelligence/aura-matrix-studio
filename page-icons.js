@@ -1,4 +1,4 @@
-import {canonicalPage} from './original-routes.js?v=0.4.15';
+import {canonicalPage} from './original-routes.js?v=0.4.24';
 // Explicit destination artwork. Navigation arrows are never destination icons.
 export const PAGE_ICONS={
   'aura-demo-guide':'aura-guide.svg',

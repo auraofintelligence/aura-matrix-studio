@@ -1,9 +1,10 @@
-import {framePoint} from './frame-display.js?v=0.4.15';
-import {favouriteGroups} from './favourite-groups.js?v=0.4.15';
-import {pageIcon,favouriteIcon} from './page-icons.js?v=0.4.17';
-import {blankProject,validateProject} from './core.js?v=0.4.17';
-import {updateFavourite} from './favourites-data.js?v=0.4.15';
-import {mapPages,pageTitle} from './original-sitemap.js?v=0.4.17';
+import {framePoint} from './frame-display.js?v=0.4.24';
+import {favouriteGroups} from './favourite-groups.js?v=0.4.24';
+import {pageIcon,favouriteIcon} from './page-icons.js?v=0.4.24';
+import {blankProject,validateProject} from './core.js?v=0.4.24';
+import {updateFavourite} from './favourites-data.js?v=0.4.24';
+import {mapPages,pageTitle} from './original-sitemap.js?v=0.4.24';
+import {exportShortcutMenu,reviewShortcutMap,importShortcutMap} from './favourites-sharing.js?v=0.4.24';
 export const FAVOURITES='B47A9839-38E6-49D8-B255-0D9E428E521C';
 const KEY='aura-matrix-studio:v4:project';
 export function mountFavourites({page,screen,pages,go}){
@@ -33,6 +34,18 @@ export function mountFavourites({page,screen,pages,go}){
  const dialog=make('dialog','favourite-dialog'),head=make('header'),heading=make('h2'),close=button('Done',()=>dialog.close()),body=make('div','favourite-dialog-body'),status=make('p','favourite-status');status.setAttribute('role','status');head.append(heading,close);dialog.append(head,body,status);document.body.append(dialog);
  let refreshChoices=null;const resizePicker=()=>{if(dialog.open)refreshChoices?.();};window.addEventListener('resize',resizePicker);
  const safe=fn=>{try{fn();}catch(e){status.textContent=e.message;}};
+ function sharing(){
+  refreshChoices=null;body.classList.remove('is-browsing');heading.textContent='Share favourite pages';body.replaceChildren();status.textContent='';
+  body.append(make('p','','Share the selected shortcut menu: its name, page references, icons and positions. Answers, tables, media, encryption keys and access permissions are excluded. Importing adds a new menu; its pages open your own Aura data.'));
+  body.append(button('Export this shortcut menu',()=>safe(()=>{read();const data=exportShortcutMenu(project.favourites,active().id),blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=make('a');a.href=url;a.download='aura-shortcut-map.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status.textContent='Shortcut map exported. Review menu names before sharing.';})));
+  const file=make('input');file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label','Import shortcut map');body.append(field('Import a shared shortcut map',file));
+  const preview=make('div');body.append(preview);
+  let revision=0;file.onchange=async()=>{const current=++revision;preview.replaceChildren();status.textContent='';try{const f=file.files[0];if(!f)return;if(f.size>250000)throw Error('Choose a shortcut map under 250 KB.');const text=await f.text();if(current!==revision||!dialog.open||disposed)return;const reviewed=reviewShortcutMap(JSON.parse(text),new Set(pages.keys()),new Set(icons.keys()));preview.append(make('p','','Review before importing. Existing menus and answers will be kept.'));
+   for(const menu of reviewed){preview.append(make('h3','',menu.name));const list=make('ol');for(const [i,slot]of menu.slots.entries())if(slot)list.append(make('li','',`Position ${i+1}: ${pageTitle(pages.get(slot.pageId))}`));preview.append(list);}
+   preview.append(button('Add imported shortcut menus',()=>safe(()=>{change(p=>{p.favourites=importShortcutMap(p.favourites,reviewed);return p;});dialog.close();})));status.textContent=`${reviewed.length} menu(s) ready for review. No personal answers are included.`;
+  }catch(e){if(current===revision)status.textContent=e.message;}};
+  if(!dialog.open)dialog.showModal();
+ }
  const image=(file,alt='')=>{const img=make('img');img.src='assets/mockplus/'+file;img.alt=alt;return img;};
  function draw(){
   const menu=active();title.textContent=menu.name;edit.textContent=editing?'Done':'Edit';edit.setAttribute('aria-pressed',String(editing));hint.textContent=editing?'Tap an icon to replace, move or clear it.':'Tap a square to add a favourite.';
@@ -61,5 +74,6 @@ export function mountFavourites({page,screen,pages,go}){
   refreshChoices=results;groupSelect.onchange=()=>{groupId=groupSelect.value;resultPage=0;results();};search.oninput=()=>{query=search.value;resultPage=0;results();};results();if(chosenPage)body.append(button('Back to favourite',()=>{stage='details';renderPicker();}));
  }
  function openMenu(isNew){safe(()=>{refreshChoices=null;body.classList.remove('is-browsing');read();menuId=active().id;heading.textContent=isNew?'New shortcut menu':'Your shortcut menus';body.replaceChildren();status.textContent='';const name=make('input');name.value=isNew?'':active().name;name.maxLength=80;name.setAttribute('aria-label','Menu name');body.append(field('Menu name',name),button(isNew?'Create menu':'Save name',()=>safe(()=>{if(!name.value.trim())throw Error('Enter a menu name.');change(p=>{if(isNew){const id=crypto.randomUUID();p.favourites.menus.push({id,name:name.value.trim(),slots:Array(25).fill(null)});p.favourites.activeId=id;}else p.favourites.menus.find(m=>m.id===menuId).name=name.value.trim();return p;});dialog.close();})));if(!isNew){const menus=make('select');menus.setAttribute('aria-label','Choose shortcut menu');for(const m of project.favourites.menus){const o=make('option','',m.name);o.value=m.id;menus.append(o);}menus.value=project.favourites.activeId;menus.onchange=()=>safe(()=>{change(p=>{p.favourites.activeId=menus.value;return p;});dialog.close();});body.prepend(field('Choose shortcut menu',menus));body.append(button('New menu',()=>openMenu(true)));}if(!dialog.open)dialog.showModal();});}
+ const share=button('Import / export',sharing);share.className='favourites-sharing';screen.append(share);
  dialog.addEventListener('close',()=>{if(!disposed)safe(()=>{read();draw();});});draw();return {resize(){},dispose(){disposed=true;window.removeEventListener('resize',resizePicker);turnAnimation?.cancel();dialog.remove();}};
 }

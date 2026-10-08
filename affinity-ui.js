@@ -1,7 +1,7 @@
-import {MARKET_PAGES,MARKET_CATEGORIES,filterMarket,mountMarket} from './market-map.js?v=0.4.15';
-import {pageIcon} from './page-icons.js?v=0.4.17';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
-import {validateProject} from './core.js?v=0.4.17';
+import {MARKET_PAGES,MARKET_CATEGORIES,filterMarket,mountMarket} from './market-map.js?v=0.4.24';
+import {pageIcon} from './page-icons.js?v=0.4.24';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
+import {validateProject} from './core.js?v=0.4.24';
 export const AFFINITY_HOME='6421758D-777D-4139-8ECE-4183D8677670';
 const VISION='8FB85C5E-2F15-442C-943C-21EC70C4B06A',SEARCH='9BF63D63-6482-4050-8630-8D632BB10DDF',RESULTS='C62804F4-68A6-4814-AA4E-CA454CE9CF91',MARKET='9635446B-1F60-4AF2-A62C-E40C90E1806E',LEDGER='B3D6AB82-6839-4427-9C86-6AD29EF7476B',MEMBER='C23C161A-2089-4A2C-AE70-B932874E955D';
 export const AFFINITY_PAGES=new Set([AFFINITY_HOME,VISION,SEARCH,RESULTS,LEDGER,MEMBER,...Object.keys(MARKET_PAGES)]);

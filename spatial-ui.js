@@ -1,5 +1,5 @@
-import {SHELLS} from './core.js?v=0.4.17';
-import {KINDS,KIND_NAMES,target,targetLabel,targetKey,parseValues,sequenceStep,sequenceLength,recordsAt,stackColour,agentPackage,STACK_DRAW_LIMIT,setFacetStacks} from './spatial.js?v=0.4.17';
+import {SHELLS} from './core.js?v=0.4.24';
+import {KINDS,KIND_NAMES,target,targetLabel,targetKey,parseValues,sequenceStep,sequenceLength,recordsAt,stackColour,agentPackage,STACK_DRAW_LIMIT,setFacetStacks} from './spatial.js?v=0.4.24';
 
 export function mountSpatial(api){
   const $=id=>document.getElementById(id),node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};

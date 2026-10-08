@@ -1,8 +1,8 @@
-import {resolvedProfile,prepareReusedAnswers} from './connection-flow.js?v=0.4.17';
-import {rows,saveRow} from './local-tools.js?v=0.4.17';
-import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.15';
-import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.15';
-import {validateDisclosure} from './connection-sharing.js?v=0.4.15';
+import {resolvedProfile,prepareReusedAnswers} from './connection-flow.js?v=0.4.24';
+import {rows,saveRow} from './local-tools.js?v=0.4.24';
+import {validateGuidance,ownNote} from './connection-inputs.js?v=0.4.24';
+import {ATTRACTION_FIELDS,FRAMEWORK_FIELDS} from './attraction-data.js?v=0.4.24';
+import {validateDisclosure} from './connection-sharing.js?v=0.4.24';
 
 export const RHYTHM_FIELDS=[
  {key:'Planning style',label:'How planned or spontaneous?',type:'scale',options:['Fully planned','Mostly planned','A mix','Mostly spontaneous','In the moment'],hint:'Choose how much advance planning feels right. You can add exceptions in your own words.'},

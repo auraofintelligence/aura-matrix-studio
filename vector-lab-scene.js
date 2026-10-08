@@ -1,6 +1,6 @@
-import {shellPoint,PRESETS,SHELLS} from './core.js?v=0.4.17';
-import {framePoint} from './frame-display.js?v=0.4.15';
-import {targetPoint} from './spatial.js?v=0.4.17';
+import {shellPoint,PRESETS,SHELLS} from './core.js?v=0.4.24';
+import {framePoint} from './frame-display.js?v=0.4.24';
+import {targetPoint} from './spatial.js?v=0.4.24';
 export const geoPoint=(lat,lon,radius=4.35)=>{const a=lat*Math.PI/180,b=lon*Math.PI/180;return [radius*Math.cos(a)*Math.cos(b),radius*Math.sin(a),-radius*Math.cos(a)*Math.sin(b)];};
 export const geoCoordinates=p=>{const r=Math.hypot(...p);return {lat:Math.asin(Math.max(-1,Math.min(1,p[1]/r)))*180/Math.PI,lon:Math.atan2(-p[2],p[0])*180/Math.PI};};
 // Illustrative positions only. These never enter the record store or analysis.

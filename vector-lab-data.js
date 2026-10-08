@@ -1,4 +1,4 @@
-import {parseCSV} from './core.js?v=0.4.17';
+import {parseCSV} from './core.js?v=0.4.24';
 
 export const LAB_FORMAT='aura-vector-lab/1';
 export const ALGORITHMS={words:'Word patterns · TF-IDF',phrases:'Words + pairs · TF-IDF'};

@@ -1,4 +1,4 @@
-import {canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.4.15';
+import {canonicalPage,CAMERA_VARIANTS,PAGE_ALIASES,PAGE_PARENTS} from './original-routes.js?v=0.4.24';
 
 export const TREE_ROOT='aura-site';
 // Page registration and parent overrides own the hierarchy. New pages appear automatically.

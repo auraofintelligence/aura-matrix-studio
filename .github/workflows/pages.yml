@@ -42,6 +42,14 @@ jobs:
           node --check original.js
           node --check original-live.js
           node --check quickstart.js
+          node --check quickstart-data.js
+          node --check avatar-photos-data.js
+          node --check avatar-photo-ui.js
+          node --check aura-human.js
+          node --check aura-dimensions-preview.js
+          node --check aura-glow-data.js
+          node --check aura-glow-ui.js
+          node --check favourites-sharing.js
           node --check original-sitemap.js
           node --check navigation-ui.js
           node --check navigation-tree.js
@@ -88,6 +96,7 @@ jobs:
         run: |
           mkdir -p _site/tools
           cp demo-guide.js demo-guide.css _site/
+          cp quickstart-data.js avatar-photos-data.js avatar-photo-ui.js aura-human.js aura-dimensions-preview.js aura-glow-data.js aura-glow-ui.js favourites-sharing.js _site/
           cp vector-lab*.js vector-lab.css _site/
           cp frame-dialog.js backup-data.js data-transfer-ui.js merch-ui.js visit-history.js extra-pages.js _site/
           cp connection-flow.js navigation-ui.js chakra-workspace.js shell-style.js navigation-tree.js chakra-art.js palace-media.js palace-capture-ui.js attraction-data.js connection-sharing.js connection-inputs.js dating-data.js friendship-data.js dating-ui.js local-tools.js preferences-ui.js palace-ui.js social-ui.js affinity-ui.js life-data.js life-ui.js measurement-ui.js eye-photos.js personal-space-data.js personal-space-ui.js avatar-data.js avatar-ui.js earth-map.js earth-data.js timing-data.js timing-ui.js timing-ideas.js solar-system.js frame-display.js favourite-groups.js _site/

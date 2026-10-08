@@ -1,7 +1,8 @@
-import {mountPersonalSpace} from './personal-space-ui.js?v=0.4.17';
-import {mountMeasurements} from './measurement-ui.js?v=0.4.17';
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_SECTIONS,AVATAR_PAGES,avatarValues,avatarProgress,saveAvatar,avatarRatios} from './avatar-data.js?v=0.4.17';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
+import {mountPersonalSpace} from './personal-space-ui.js?v=0.4.24';
+import {mountMeasurements} from './measurement-ui.js?v=0.4.24';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_SECTIONS,AVATAR_PAGES,avatarValues,avatarProgress,saveAvatar,avatarRatios} from './avatar-data.js?v=0.4.24';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
+import {profilePhotos,AVATAR_PHOTOS} from './avatar-photos-data.js?v=0.4.24';
 const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const n=make('button',cls,text);n.type='button';n.onclick=fn;return n;};
 const paths={person:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M4 22v-3a8 8 0 0 1 16 0v3',space:'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14M8 2h8M8 22h8',eyes:'M1 12s4-6 11-6 11 6 11 6-4 6-11 6S1 12 1 12M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6',reach:'M12 7v14M8 22l4-7 4 7M5 2l7 9 7-9M12 2v1',shoulders:'M2 12h20M12 10v12M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6'};
@@ -16,11 +17,11 @@ export function mountAvatar({page,screen,go}){
  try{project=readTravelProject();values=section?avatarValues(project,section):{};}catch(e){panel.append(make('h1','','Avatar data could not be opened'),make('p','',e.message),button('Back',()=>go('command:back')));return {resize(){},dispose(){}};}
  const header=title=>{const head=make('header','avatar-header');head.append(button('‹',()=>go('command:back'),'avatar-back'),make('h1','',title));head.firstChild.setAttribute('aria-label','Back');panel.append(head);};
  function home(){panel.classList.add('avatar-home');panel.replaceChildren();header('Your avatar');
-  const hero=make('div','avatar-hero'),image=make('img');image.src='assets/mockplus/D52CE30DEF548874D92448790837F294.jpg';image.alt='Original Aura body and colour rings';const copy=make('div');copy.append(make('h2','','Make Aura fit you'),make('p','','Your preferences, personal space and body proportions. Start anywhere.'));hero.append(copy,image);panel.append(hero);
+  const hero=make('div','avatar-hero'),image=make('img'),photos=profilePhotos(project);image.src=photos[0]?.Asset||'assets/mockplus/D52CE30DEF548874D92448790837F294.jpg';image.alt=photos.length?'Your main avatar photo reference':'Original Aura body and colour rings';const copy=make('div');copy.append(make('h2','','Make Aura fit you'),make('p','','Your preferences, personal space and body proportions. Start anywhere.'));hero.append(copy,image);panel.append(hero);
   const menu=make('nav','avatar-menu');menu.setAttribute('aria-label','Avatar setup sections');for(const s of AVATAR_SECTIONS){const count=avatarProgress(project,s),b=button('',()=>go(s.id),'avatar-card'),symbol=make('span','avatar-symbol'),copy=make('span','avatar-card-copy');symbol.append(icon(s.icon));copy.append(make('strong','',s.title),make('small','',s.summary));const progress=make('span','avatar-count',count.filled?`${count.filled}/${count.total}`:'›');progress.setAttribute('aria-label',count.filled?`${count.filled} of ${count.total} answered`:'Open section');b.append(symbol,copy,progress);menu.append(b);}panel.append(menu);
   panel.append(make('p','avatar-footnote','Optional inputs, saved on this browser. Measurements prepare your avatar; they do not yet resize the live matrix.'));
   const ratios=avatarRatios(project),summary=[];if(ratios.reach!==null)summary.push(`Overhead reach / height: ${ratios.reach.toFixed(2)}`);if(ratios.span!==null)summary.push(`Arm span / height: ${ratios.span.toFixed(2)}`);if(summary.length)panel.append(make('p','avatar-ratio',summary.join(' · ')));
-  const foot=make('footer','avatar-footer');foot.append(button('QuickStart',()=>go('D203ACAB-C2D1-4433-8EE2-3522C47CC3D0')),button('Pose tools',()=>go('962597DE-3BC2-4A07-8EBF-1FAA1BB3CA5E')));panel.append(foot);
+  const foot=make('footer','avatar-footer');foot.append(button('QuickStart',()=>go('D203ACAB-C2D1-4433-8EE2-3522C47CC3D0')),button('Photos & face overlays',()=>go(AVATAR_PHOTOS)),button('Pose tools',()=>go('962597DE-3BC2-4A07-8EBF-1FAA1BB3CA5E')));panel.append(foot);
  }
  function draw(){panel.replaceChildren();header(section.title);panel.append(make('p','avatar-intro',section.intro));
   const tabs=make('nav','avatar-steps');tabs.setAttribute('aria-label','Question pages');section.steps.forEach((step,i)=>{const b=button(String(i+1),()=>{index=i;draw();});b.title=step.title;b.setAttribute('aria-label',step.title);b.setAttribute('aria-current',index===i?'step':'false');tabs.append(b);});tabs.append(make('span','',`${index+1} / ${section.steps.length}`));if(section.steps.length>1)panel.append(tabs);

@@ -12,6 +12,16 @@ Agents can maintain ongoing responsibilities without running model inference con
 
 The current browser edition supplies interfaces, records, geometry and local persistence. It is not a secure vault or an autonomous agent service. See the [README](README.md) for current capabilities and limitations.
 
+## Ornate Aura conversion
+
+Design clarification, 8 October 2026: page 13 of the supplied *Aura OZ Developers March 20_2018* deck names "Phase 2: Complex Ornate Aura's to Overlay Basic Aura" and shows luminous fields, flowing filaments and layered forms around a person. Luke identifies this as the intended customisation tool. Plasma imagery and etheric descriptions inform its visual language; the source illustrations are aesthetic references, not measurements of a person's energy field.
+
+The basic seven-chakra computational matrix supplies stable addresses. A separate algorithmic skin conversion maps that structure into a personalised ornate form which can evolve over time. Recolouring the tori, applying an image texture or changing a material does not fulfil this requirement. The avatar and saved Aura dimensions inform the body's surrounding visual form. Existing data keeps its identity and references across changes in appearance.
+
+The local Aura Glow-Up prototype now stores an `aura-glow/1` definition, seed and parameters separately from personal answers. Filaments, petal weaves and luminous veils evolve with elapsed visual time, with proportions informed by body height and Aura radii. A repeatable mapping gives every torus facet a point on the ornate surface. Existing record identities and computational addresses remain unchanged. This is an exploratory visual implementation; surface picking, additional address kinds, version migration, saved form history and evolution driven by authorised personal inputs remain to be designed. The prototype does not infer medical or emotional readings.
+
+Luke also intends this conversion tool to add a further layer of data protection. Its cryptographic mechanism, key handling and recovery are still to be designed and evaluated. A changed or concealed visual mapping alone is not encryption. The current prototype implements visual conversion without additional encryption.
+
 ## Keep these decisions separate
 
 | Concern | Design principle |

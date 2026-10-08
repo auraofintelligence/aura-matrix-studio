@@ -1,4 +1,4 @@
-import {make,panelFor,header} from './local-tools.js?v=0.4.17';
+import {make,panelFor,header} from './local-tools.js?v=0.4.24';
 export const MERCH='aura-merch-store';
 export function mountMerch({screen,go}){
  const panel=panelFor(screen,'merch-panel');header(panel,'Merch',()=>go('command:back'));

@@ -1,36 +1,38 @@
-import {visitHistory} from './visit-history.js?v=0.4.17';
-import {mountDemoGuide,mountGuideEntry,DEMO_GUIDE} from './demo-guide.js?v=0.4.23';
-import {addExtraPages} from './extra-pages.js?v=0.4.23';
-import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.23';
-import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.17';
-import {mountMerch,MERCH} from './merch-ui.js?v=0.4.17';
-import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.15';
-import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.18';
-import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.17';
-import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.17';
-import {PALACE_PAGES} from './palace-ui.js?v=0.4.17';
-import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.17';
-import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.17';
-import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.17';
-import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.17';
-import {mountLife} from './life-ui.js?v=0.4.17';
-import {mountAvatar} from './avatar-ui.js?v=0.4.17';
-import {mountEarth} from './earth-map.js?v=0.4.17';
-import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.17';
-import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.17';
-import {mountMatrixSymbols} from './chakra-art.js?v=0.4.15';
-import {TIMING_PAGES} from './timing-data.js?v=0.4.17';
-import {mountTravel} from './travel-ui.js?v=0.4.17';
-import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.17';
-import {mountCelestial} from './celestial-clock.js?v=0.4.17';
-import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.15';
-import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.17';
-import {mountMenuCamera} from './menu-camera.js?v=0.4.15';
-import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.17';
-import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.17';
-import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.15';
-import {mountLiveMatrix} from './original-live.js?v=0.4.18';
-import {frameOrientation} from './frame-display.js?v=0.4.15';
+import {visitHistory} from './visit-history.js?v=0.4.24';
+import {mountDemoGuide,mountGuideEntry,DEMO_GUIDE} from './demo-guide.js?v=0.4.24';
+import {addExtraPages} from './extra-pages.js?v=0.4.24';
+import {mountVectorLab,mountProgrammerTools,VECTOR_LAB} from './vector-lab-ui.js?v=0.4.24';
+import {mountDataTransfer,DATA_TRANSFER} from './data-transfer-ui.js?v=0.4.24';
+import {mountMerch,MERCH} from './merch-ui.js?v=0.4.24';
+import {NAV_ARROW_FILES,enhanceNavigation} from './navigation-ui.js?v=0.4.24';
+import {mountChakra,CHAKRA_PAGES} from './chakra-workspace.js?v=0.4.24';
+import {mountAffinity,AFFINITY_PAGES} from './affinity-ui.js?v=0.4.24';
+import {mountPreferences,underPage,PREFERENCES} from './preferences-ui.js?v=0.4.24';
+import {PALACE_PAGES} from './palace-ui.js?v=0.4.24';
+import {mountPalaceCapture} from './palace-capture-ui.js?v=0.4.24';
+import {mountSocial,isSocialPage,addSocialPages} from './social-ui.js?v=0.4.24';
+import {AVATAR_HOME,AVATAR_CREATION,AVATAR_PAGES} from './avatar-data.js?v=0.4.24';
+import {LIFE_PAGES,SOCIAL_HOME} from './life-data.js?v=0.4.24';
+import {mountLife} from './life-ui.js?v=0.4.24';
+import {mountAvatar} from './avatar-ui.js?v=0.4.24';
+import {mountAvatarPhotos,AVATAR_PHOTOS} from './avatar-photo-ui.js?v=0.4.24';
+import {mountAuraGlow,GLOW_UP} from './aura-glow-ui.js?v=0.4.24';
+import {mountEarth} from './earth-map.js?v=0.4.24';
+import {EARTH,EARTH_WIDE} from './earth-data.js?v=0.4.24';
+import {mountTiming,mountTimingHome} from './timing-ui.js?v=0.4.24';
+import {mountMatrixSymbols} from './chakra-art.js?v=0.4.24';
+import {TIMING_PAGES} from './timing-data.js?v=0.4.24';
+import {mountTravel} from './travel-ui.js?v=0.4.24';
+import {TRAVEL,TIMELINES,CELESTIAL} from './travel-data.js?v=0.4.24';
+import {mountCelestial} from './celestial-clock.js?v=0.4.24';
+import {mountMarket,MARKET_PAGES} from './market-map.js?v=0.4.24';
+import {mountFavourites,FAVOURITES} from './original-favourites.js?v=0.4.24';
+import {mountMenuCamera} from './menu-camera.js?v=0.4.24';
+import {mountQuickStart,QUICKSTART} from './quickstart.js?v=0.4.24';
+import {mountSiteMap,SITEMAP} from './original-sitemap.js?v=0.4.24';
+import {livePage,parentPage,HOME,PROGRAMMER,canonicalPage,CAMERA_VARIANTS} from './original-routes.js?v=0.4.24';
+import {mountLiveMatrix} from './original-live.js?v=0.4.24';
+import {frameOrientation} from './frame-display.js?v=0.4.24';
 const $=id=>document.getElementById(id);
 export const MATRIX_PAGES={
   '1FE14FC9-F981-4E27-B038-BDF3FF404838':'O',
@@ -68,6 +70,7 @@ export async function startOriginal(){
     if(CAMERA_VARIANTS[id]===current.id){menuCamera?.toggle();return;}id=canonicalPage(id);
     if(!pages.has(id)){warn('This control has no destination in the original Mockplus file.');return;}
     if(id===current.id)return;
+    const returning=new URLSearchParams(location.search).get('quickstep');if(returning&&id!==QUICKSTART&&id!==HOME)extra={quickstep:returning,...extra};
     const query=new URLSearchParams({page:id,...extra});if(document.body.dataset.inspect)query.set('inspect','1');
     visits.push(`?${query}`);show(id);
   }
@@ -149,6 +152,8 @@ export async function startOriginal(){
     if(LIFE_PAGES[current.id])live=mountLife({screen:$('original-screen'),section:LIFE_PAGES[current.id],go});
     if(current.id===TIMELINES){live=mountTimingHome({screen:$('original-screen'),go});document.title='Timing and Signals | Aura of Intelligence';}
     if(current.id===AVATAR_HOME||current.id===AVATAR_CREATION||AVATAR_PAGES[current.id])live=mountAvatar({page:current,screen:$('original-screen'),go});
+    if(current.id===AVATAR_PHOTOS)live=mountAvatarPhotos({screen:$('original-screen'),go});
+    if(current.id===GLOW_UP)live=mountAuraGlow({screen:$('original-screen'),go});
     if(TIMING_PAGES[current.id])live=mountTiming({page:current,screen:$('original-screen'),go});
     if([EARTH,EARTH_WIDE].includes(current.id)){live=mountEarth({page:current,screen:$('original-screen'),go});document.title='Earth map | Aura of Intelligence';}
     if(current.id===CELESTIAL)live=mountCelestial({page:current,screen:$('original-screen'),go});
@@ -163,6 +168,8 @@ export async function startOriginal(){
     if(current.id===VECTOR_LAB)live=mountVectorLab({screen:$('original-screen'),go});
     if([HOME,QUICKSTART].includes(current.id))mountGuideEntry({screen:$('original-screen'),page:current,go});
     if(current.id===DEMO_GUIDE)live=mountDemoGuide({screen:$('original-screen'),go});
+    let quickReturn=document.getElementById('quickstart-return');if(!quickReturn){quickReturn=make('button','','Return to QuickStart');quickReturn.id='quickstart-return';document.body.append(quickReturn);}
+    const quickstep=new URLSearchParams(location.search).get('quickstep');quickReturn.hidden=!quickstep||current.id===QUICKSTART;quickReturn.onclick=()=>go(QUICKSTART,{step:quickstep,resume:'1'});
     fit();
   }
   function fit(){if(!current)return;const rect=$('original-viewport').getBoundingClientRect(),layout=screenLayout(current,rect.width,rect.height);$('original-screen').dataset.frameRotated=String(layout.rotated);$('original-screen').dataset.frameOrientation=frameOrientation(current);$('original-screen').style.transform=layout.transform;Object.assign($('original-frame').style,{width:layout.width+'px',height:layout.height+'px'});live?.resize();$('rotate-note').hidden=true;}

@@ -14,5 +14,18 @@ export function validateTables(raw=[]){
   });
 }
 export function validateQuickStart(raw={step:0}){
-  if(!raw||!Number.isInteger(raw.step)||raw.step<0||raw.step>9)throw Error('Invalid QuickStart page.');return {step:raw.step};
+  if(!raw||!Number.isInteger(raw.step)||raw.step<0||raw.step>9)throw Error('Invalid QuickStart page.');
+  const entries={};for(const key of ['family','dates','timing','favourites','favourites-value','favourites-experience','favourites-item','skills','goals']){const entry=raw.entries?.[key];if(entry){const tableId=text(entry.tableId,'QuickStart table ID',200),id=text(entry.id,'QuickStart row ID',200);if(tableId&&id)entries[key]={tableId,id};}}
+  const result={step:raw.step};if(Object.keys(entries).length)result.entries=entries;
+  if(['birthday','body','avatar-photos','avatar','aura-dimensions','aura-setup','favourites','social-preferences','dating','family','ready','skills','goals','dates','timing','travel','allocate'].includes(raw.stage))result.stage=raw.stage;
+  if(raw.drafts!==undefined){
+    if(!raw.drafts||typeof raw.drafts!=='object'||Array.isArray(raw.drafts))throw Error('Invalid QuickStart drafts.');
+    const drafts={};for(const key of ['birthday','avatar','aura-dimensions','favourites','social-preferences','dating','family','skills','goals','dates','timing','travel-Visited','travel-Want to go','travel-goal']){
+      const fields=raw.drafts[key];if(fields===undefined)continue;
+      if(!fields||typeof fields!=='object'||Array.isArray(fields)||Object.keys(fields).length>100)throw Error('Invalid QuickStart draft fields.');
+      drafts[key]={};for(const [label,value]of Object.entries(fields)){text(label,'QuickStart draft field',200);if(!label||['__proto__','constructor','prototype'].includes(label))throw Error('Invalid QuickStart draft field.');drafts[key][label]=typeof value==='boolean'?value:text(value,'QuickStart draft value',20000);}
+    }
+    if(Object.keys(drafts).length)result.drafts=drafts;
+  }
+  return result;
 }

@@ -1,7 +1,7 @@
-import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.17';
-import {readPersonalSpace} from './personal-space-data.js?v=0.4.17';
-import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.17';
-import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.17';
+import {AVATAR_HOME,avatarValues,fieldsFor,saveAvatar} from './avatar-data.js?v=0.4.24';
+import {readPersonalSpace} from './personal-space-data.js?v=0.4.24';
+import {readTravelProject,writeTravelProject} from './travel-data.js?v=0.4.24';
+import {EYE_POSES,eyePhotos,saveEyePhoto} from './eye-photos.js?v=0.4.24';
 
 // Landmarks are artwork coordinates, not inferred measurements of the user.
 const guides={
@@ -20,7 +20,7 @@ const make=(tag,cls='',text)=>{const n=document.createElement(tag);n.className=c
 const button=(text,fn,cls='')=>{const n=make('button',cls,text);n.type='button';n.onclick=fn;return n;};
 const svgNode=(tag,attrs={},text)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n;};
 
-function diagram(field,figure){
+export function measurementDiagram(field,figure){
  const g=guides[field.id],svg=svgNode('svg',{viewBox:g.crop.join(' '),role:'img',tabindex:0,'aria-label':`${figure==='female'?'Female':'Male'} reference: ${g.ends}`,'data-measurement':field.id,'data-figure':figure});
  svg.append(svgNode('title',{},g.ends));
  const defs=svgNode('defs'),clip=svgNode('clipPath',{id:'measurement-crop'});clip.append(svgNode('rect',{x:g.crop[0],y:g.crop[1],width:g.crop[2],height:g.crop[3]}));defs.append(clip);svg.append(defs);
@@ -70,7 +70,7 @@ export function mountMeasurements({screen,go,section}){
    const jump=button(field.kind==='photo'?'Measurements':'Look positions',()=>{index=field.kind==='photo'?9:0;draw();},'measurement-jump');progress.append(jump,make('span','',field.kind==='photo'?`Photo ${index+1} / 9`:`Measurement ${index-8} / 3`));
   }else{fields.forEach((f,i)=>{const b=button(String(i+1),()=>{index=i;draw();});b.setAttribute('aria-label',guides[f.id].title);b.setAttribute('aria-current',i===index?'step':'false');progress.append(b);});progress.append(make('span','',`${index+1} / ${fields.length}`));}panel.append(progress);
   const form=make('form','measurement-form');form.id='measurement-form';form.append(make('h2','',guide.title));
-  const visual=make('figure','measurement-visual'),svg=diagram(field,figure),caption=make('figcaption','','Swipe to browse · hold figure to change male/female');visual.append(svg,caption);form.append(visual);
+  const visual=make('figure','measurement-visual'),svg=measurementDiagram(field,figure),caption=make('figcaption','','Swipe to browse · hold figure to change male/female');visual.append(svg,caption);form.append(visual);
   svg.oncontextmenu=e=>e.preventDefault();
   const point=e=>{const p=new DOMPoint(e.clientX,e.clientY);return p.matrixTransform(svg.getScreenCTM().inverse());};
   svg.onpointerdown=e=>{if(pointer||e.button>0)return;svg.setPointerCapture(e.pointerId);const p=point(e);pointer={id:e.pointerId,x:p.x,y:p.y,held:false};holdTimer=setTimeout(()=>{if(!pointer||disposed)return;pointer.held=true;figure=figure==='male'?'female':'male';draw();status.textContent=`${figure==='female'?'Female':'Male'} reference. Your measurements stay unchanged.`;},600);};
@@ -96,7 +96,7 @@ export function mountMeasurements({screen,go,section}){
  draw();return {resize(){},dispose(){disposed=true;clearTimeout(holdTimer);pointer=null;}};
 }
 
-async function localPhoto(file){
+export async function localPhoto(file){
  if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Choose a JPEG, PNG or WebP photo.');
  const url=URL.createObjectURL(file);
  try{const image=new Image();image.src=url;await image.decode();const canvas=document.createElement('canvas');let size=960;

@@ -1,6 +1,6 @@
-import {validateProject} from './core.js?v=0.4.17';
-import {loadMedia,storeMedia,deleteMedia} from './palace-media.js?v=0.4.17';
-import {readTravelProject,PROJECT_KEY} from './travel-data.js?v=0.4.17';
+import {validateProject} from './core.js?v=0.4.24';
+import {loadMedia,storeMedia,deleteMedia} from './palace-media.js?v=0.4.24';
+import {readTravelProject,PROJECT_KEY} from './travel-data.js?v=0.4.24';
 export const BACKUP_FORMAT='aura-complete-backup-v1';
 export function mediaReferences(project){const table=project.tables.find(t=>t.id==='aura-palace-media');return (table?.rows||[]).filter(r=>r.values[table.columns.indexOf('Storage')]==='This browser').map(r=>({id:r.id,name:r.values[table.columns.indexOf('Title')],bytes:Number(r.values[table.columns.indexOf('Bytes')])}));}
 export function backupSummary(project,media=[]){return {tables:project.tables.length,rows:project.tables.reduce((n,t)=>n+t.rows.length,0),records:project.records.length,files:media.length};}

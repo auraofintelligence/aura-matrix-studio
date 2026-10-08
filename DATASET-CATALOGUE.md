@@ -4,6 +4,23 @@ Recommendations from all 145 original page records. Philosophical associations a
 
 The seven chakras are used here as complementary philosophical perspectives. A dataset may relate to several; the user chooses its actual facet or stack address. Inside and outside remain address spaces, not access-control enforcement.
 
+## QuickStart journey
+
+Know Thy Self is an evolving design gateway for personal data and future self-reflection models. The setup batches existing segments: profile, illustrated avatar photographs, body and avatar details, Aura dimensions, Aura Glow-Up, values and favourites, friendships and dating. Detailed calibration remains in the full sections. Glow-Up stores its procedural visual definition separately from personal answers; additional encryption is future work. The table below lists dataset entry points rather than a fixed setup sequence.
+
+| Step | Introduction |
+| --- | --- |
+| Add your birthday | Your date of birth. |
+| Build your avatar | Start with avatar preferences, then explore personal space and measurements. |
+| Add your family | Names and relationships from Build Your Family Tree. |
+| Add key dates | Birthdays, milestones and ceremonies. |
+| Timing and signals | Schedules, reminders, counters and actions. |
+| Add favourites | Books, music, films, places and experiences you enjoy. |
+| Add your skills | Skills you have and skills you are learning. |
+| Add your goals | Wish lists, life goals and things you want to do. |
+| Your travels | Where have you travelled, and where do you want to go? |
+| Place your data | Allocate your tables to facets or stack steps. |
+
 ## Philosophical perspectives
 
 | Colour / chakra | Perspective |

@@ -1,9 +1,9 @@
-import {fitFrameDialog} from './frame-dialog.js?v=0.4.18';
-import {AuraView} from './renderer.js?v=0.4.18';
-import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.17';
-import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.17';
-import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.15';
-import {chakraImage} from './chakra-art.js?v=0.4.15';
+import {fitFrameDialog} from './frame-dialog.js?v=0.4.24';
+import {AuraView} from './renderer.js?v=0.4.24';
+import {SHELLS,PRESETS,blankProject,validateProject} from './core.js?v=0.4.24';
+import {target,remember,remembered,selectFacetGroup,targetLabel,recordsAt} from './spatial.js?v=0.4.24';
+import {HOME,PROGRAMMER,stageBounds} from './original-routes.js?v=0.4.24';
+import {chakraImage} from './chakra-art.js?v=0.4.24';
 const KEY='aura-matrix-studio:v4:project',LEGACY='aura-matrix-studio:v3:project';
 export function mountLiveMatrix({page,screen,config,go}){
   let {shell,face,shape}=config,project,selection,view,multi=false,disposed=false,readError=false;

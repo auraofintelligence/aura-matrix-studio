@@ -1,8 +1,8 @@
-import {make,button,download} from './local-tools.js?v=0.4.17';
-import {emptyLab,parseImport,mergeImport,record,exampleRecords,validateLab,nearest,ALGORITHMS,COLOURS} from './vector-lab-data.js?v=0.4.23';
-import {VectorLabScene} from './vector-lab-scene.js?v=0.4.23';
-import {openLabStore} from './vector-lab-store.js?v=0.4.23';
-import {SHELLS} from './core.js?v=0.4.17';
+import {make,button,download} from './local-tools.js?v=0.4.24';
+import {emptyLab,parseImport,mergeImport,record,exampleRecords,validateLab,nearest,ALGORITHMS,COLOURS} from './vector-lab-data.js?v=0.4.24';
+import {VectorLabScene} from './vector-lab-scene.js?v=0.4.24';
+import {openLabStore} from './vector-lab-store.js?v=0.4.24';
+import {SHELLS} from './core.js?v=0.4.24';
 export const VECTOR_LAB='aura-vector-space';
 const coordinateLabel=a=>`${Math.abs(a.lat).toFixed(2)}°${a.lat<0?'S':'N'} · ${Math.abs(a.lon).toFixed(2)}°${a.lon<0?'W':'E'}`;
 const addressLabel=a=>a.kind==='geosphere'&&Number.isFinite(a.lat)?'Earth '+coordinateLabel(a):a.kind==='geosphere'?`Geosphere ${a.side}${a.index}`:`${SHELLS[a.shell][0]} ${a.side}${a.index}${a.kind==='facet'?'':' · '+a.kind}${a.kind==='stack'?' '+a.layer:''}`;
@@ -57,7 +57,7 @@ export function mountVectorLab({screen,go}){
       body.append(make('p','vl-copy','Local mathematical word patterns, not a neural language model. Cosine scores measure shared vocabulary. PCA places the vectors in this volume.'));
       const algorithm=selectField(body,'Algorithm',Object.entries(ALGORITHMS),state.algorithm);algorithm.disabled=!!worker;algorithm.onchange=()=>{state.algorithm=algorithm.value;persist();};
       const row=make('div','vl-row'),run=button(worker?'Analysing…':'Analyse '+state.records.length+' memories',()=>{
-        if(!state.records.length)return;stop();worker=new Worker(new URL('./vector-lab-worker.js?v=0.4.23',import.meta.url),{type:'module'});const job=worker;report('Calculating vectors and positions on this device…');drawPanel();
+        if(!state.records.length)return;stop();worker=new Worker(new URL('./vector-lab-worker.js?v=0.4.24',import.meta.url),{type:'module'});const job=worker;report('Calculating vectors and positions on this device…');drawPanel();
         job.onmessage=({data})=>{if(worker!==job||disposed)return;stop();if(data.error){report(data.error);drawPanel();return;}state.records=data.result.records;state.projection=data.result.projection;state.runs.push(data.result.run);event('analysis',{runId:data.result.run.id});persist();drawPanel();drawScene();};
         job.onerror=()=>{stop();report('Analysis could not run. Your input is unchanged.');drawPanel();};job.postMessage({records:state.records,algorithm:state.algorithm});
       },'vl-primary');run.disabled=!!worker||!state.records.length;row.append(run);if(worker)row.append(button('Cancel',()=>{stop();drawPanel();report('Analysis cancelled.');}));body.append(row);

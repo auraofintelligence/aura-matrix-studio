@@ -13,7 +13,7 @@ chakras = [
     ('Indigo', 'Brow', 'Attention, interpretation, patterns and discernment'),
     ('Violet', 'Crown', 'Meaning, values, integration and wider perspective'),
 ]
-steps = [
+categories = [
     ('self', 'Personal details and avatar', 'Avatar questions, preferences, embodiment, boundaries and values.'),
     ('people', 'People and relationships', 'Relationships, communication and commitments.'),
     ('time', 'Time and everyday life', 'Life events, schedules, counters and ceremonies.'),
@@ -78,14 +78,14 @@ for s in specs:
     s['sourcePages']=[pages[n-1]['id'] for n in s.pop('sourceNumbers')]
 reader_steps = [
  dict(id='birthday',title='Add your birthday',description='Your date of birth.',datasets=['life-events']),
- dict(id='avatar',title='Build your avatar',description='The eight questions from your original Avatar Questionnaire.',datasets=['body','boundaries','accessibility']),
+ dict(id='avatar',title='Build your avatar',description='Start with avatar preferences, then explore personal space and measurements.',datasets=['body','boundaries','accessibility']),
  dict(id='family',title='Add your family',description='Names and relationships from Build Your Family Tree.',datasets=['relationships','commitments']),
  dict(id='dates',title='Add key dates',description='Birthdays, milestones and ceremonies.',datasets=['life-events','ceremonies']),
  dict(id='timing',title='Timing and signals',description='Schedules, reminders, counters and actions.',datasets=['schedules','counters']),
  dict(id='favourites',title='Add favourites',description='Books, music, films, places and experiences you enjoy.',datasets=['inspiration']),
  dict(id='skills',title='Add your skills',description='Skills you have and skills you are learning.',datasets=['learning','work']),
  dict(id='goals',title='Add your goals',description='Wish lists, life goals and things you want to do.',datasets=['goals']),
- dict(id='travel',title='Your travels',description='Where have you travelled, and where do you want to go?',datasets=['journeys']+[s['id'] for s in specs if s['id']!='journeys']),
+ dict(id='travel',title='Your travels',description='Where have you travelled, and where do you want to go?',datasets=['journeys','places','celestial']),
  dict(id='allocate',title='Place your data',description='Allocate your tables to facets or stack steps.',datasets=[]),
 ]
 catalogue=dict(format='aura-dataset-catalogue/1',basis='Recommendations from all 145 original page records. Philosophical associations are editable suggestions, not measured properties.',
@@ -94,9 +94,9 @@ catalogue=dict(format='aura-dataset-catalogue/1',basis='Recommendations from all
 (root/'assets/dataset-catalogue.json').write_text(json.dumps(catalogue,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 lines=['# Recommended Aura datasets and chakra associations','',catalogue['basis'],'',
        'The seven chakras are used here as complementary philosophical perspectives. A dataset may relate to several; the user chooses its actual facet or stack address. Inside and outside remain address spaces, not access-control enforcement.','',
-       '## Philosophical perspectives','', '| Colour / chakra | Perspective |','| --- | --- |']
+       '## QuickStart journey','', 'Know Thy Self is an evolving design gateway for personal data and future self-reflection models. The setup batches existing segments: profile, illustrated avatar photographs, body and avatar details, Aura dimensions, Aura Glow-Up, values and favourites, friendships and dating. Detailed calibration remains in the full sections. Glow-Up stores its procedural visual definition separately from personal answers; additional encryption is future work. The table below lists dataset entry points rather than a fixed setup sequence.','', '| Step | Introduction |','| --- | --- |', *[f"| {s['title']} | {s['description']} |" for s in reader_steps], '', '## Philosophical perspectives','', '| Colour / chakra | Perspective |','| --- | --- |']
 lines += [f'| {c} / {n} | {m} |' for c,n,m in chakras]
-for step,title,description in steps:
+for step,title,description in categories:
     lines += ['', '## '+title,'',description,'']
     if step=='allocate':
         lines += ['Review the table and its source, edit the suggested chakra tags, choose a shell and side, then choose consecutive facets or an outward stack. Preview the placement before allocating. Existing allocations are retained; repeated allocation adds only new rows. The complete tables and QuickStart position travel with the normal project backup.']
@@ -110,4 +110,4 @@ lines += ['## Review of every original page','','| Original page | Recommended d
 byid={s['id']:s['name'] for s in specs}
 lines += ['| '+p['page']+' (`'+p['pageId']+'`) | '+', '.join(byid[d] for d in p['datasets'])+' |' for p in coverage]
 (root/'DATASET-CATALOGUE.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
-print(f'{len(specs)} dataset recommendations; {len(coverage)} original pages reviewed; {len(steps)} QuickStart cards.')
+print(f'{len(specs)} dataset recommendations; {len(coverage)} original pages reviewed; {len(reader_steps)} QuickStart cards.')
