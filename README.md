@@ -259,7 +259,7 @@ Each colour workspace keeps the torus as the main surface, with clearer facet bo
 
 Advanced users can select rays as separate addresses, attach records and instructions, add them to sequences, or export their origins, endpoints and lengths. Ray kinds are `ray-facet`, `ray-vertex`, `ray-edge-u` and `ray-edge-v`; their surface endpoint retains its own separate data. Coordinates use the existing Aura geometry units.
 
-## Know Thy Self quick setup and shared shortcuts (0.4.26)
+## Know Thy Self quick setup and shared shortcuts (0.4.27)
 
 Know Thy Self is a preliminary gateway for building a personal dataset for future self-sovereign nano LLMs and a dialogue loop of self-reflection. It is a design prototype between an ordinary profile and the later clinical Aura of Intelligence. The current journey batches existing segments into profile details, avatar photographs, body and avatar preferences, Aura dimensions, Aura Glow-Up, values and favourites, friendships and dating. It collects and stores inputs; model training, clinical assessment and automatic avatar reconstruction are future capabilities.
 
