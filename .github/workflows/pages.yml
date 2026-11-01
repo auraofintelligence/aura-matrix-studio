@@ -96,6 +96,7 @@ jobs:
       - name: Prepare public files only
         run: |
           mkdir -p _site/tools
+          cp robots.txt sitemap.xml _site/
           cp demo-guide.js demo-guide.css _site/
           cp quickstart-data.js avatar-photos-data.js avatar-photo-ui.js aura-human.js aura-dimensions-preview.js aura-glow-data.js aura-glow-ui.js favourites-sharing.js _site/
           cp vector-lab*.js vector-lab.css _site/
